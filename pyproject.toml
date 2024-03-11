@@ -1,0 +1,27 @@
+[project]
+name = "class_inspector"
+authors = [
+    {name="Ed Cuss"},
+]
+description = "class inspector class"
+readme = "README.md"
+requires-python = ">=3.8"
+version = "0.0.1"
+dependencies = []
+
+[project.optional-dependencies]
+lint = [
+    "black<24",
+    "ruff",
+]
+dev = [
+    "trading_functions[lint]",
+]
+
+[tool.black]
+line-length = 79
+
+[tool.ruff]
+lint.extend-select = ["I", "W"]
+ignore = ["E741"]
+line-length = 79
