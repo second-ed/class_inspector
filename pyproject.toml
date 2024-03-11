@@ -23,5 +23,5 @@ line-length = 79
 
 [tool.ruff]
 lint.extend-select = ["I", "W"]
-ignore = ["E741"]
+lint.ignore = ["E741"]
 line-length = 79

@@ -1,5 +1,5 @@
-from typing import List
 import inspect
+from typing import List, Optional
 
 
 class ClassInspector:
@@ -45,9 +45,13 @@ class ClassInspector:
         strip_underscores(item) -> str
     """
 
-    def __init__(self, obj) -> None:
-        self.obj = obj
+    def __init__(
+        self,
+        obj: object,
+    ) -> None:
+        self.obj: object = obj
         self.dir_list: List[str] = dir(self.obj)
+        self.class_name: Optional[str] = type(self.obj).__name__
         self.set_private_attrs()
         self.set_derived_attrs()
         self.set_public_attrs()
@@ -145,9 +149,12 @@ class ClassInspector:
     def get_methods(self) -> List[str]:
         return self.methods
 
+    def get_item_type(self, item) -> str:
+        return type(getattr(self.obj, item)).__name__
+
     def get_setter_getter_methods(self, item) -> str:
         item_no_underscores = self.strip_underscores(item)
-        item_type = type(getattr(self.obj, item)).__name__
+        item_type = self.get_item_type(item)
         if self.is_derived(item):
             setter = ""
         else:
@@ -164,12 +171,33 @@ class ClassInspector:
     def get_primary_methods(self, item_list) -> List[str]:
         return [self.get_setter_getter_methods(item) for item in item_list]
 
+    def get_init_setter(self, item: str) -> str:
+        item_no_underscores = self.strip_underscores(item)
+        if not self.is_derived(item):
+            return f"self.set_{item_no_underscores}({item_no_underscores})"
+        return ""
+
+    def get_init_setters(self) -> str:
+        s = "\n    "
+        init_args = f"def __init__({s}self,"
+        init_setters = ""
+        for attr in self.get_attrs():
+            if self.is_derived(attr):
+                continue
+            attr_type: str = self.get_item_type(attr)
+            init_args += f"{s}{self.strip_underscores(attr)}: {attr_type},"
+            init_setters += f"{s}{self.get_init_setter(attr)}"
+        init_args += "\n) -> None:"
+        return init_args + init_setters + "\n"
+
     def get_attrs_docstrings(self) -> str:
         s = "\n    "
         attr_docstrings = "Attributes:"
         for attr in self.get_attrs():
-            attr_docstrings += f"{s}{attr}: {type(getattr(self.obj, attr)).__name__}"
-        return attr_docstrings
+            attr_docstrings += (
+                f"{s}{attr}: {type(getattr(self.obj, attr)).__name__}"
+            )
+        return attr_docstrings + "\n"
 
     def get_methods_docstrings(self) -> str:
         s = "\n    "
@@ -181,9 +209,12 @@ class ClassInspector:
 
     def print_docstring(self) -> None:
         print(f"{type(self.obj).__name__} class\n")
-        print(self.get_attrs_docstrings(), end="\n\n")
+        print(self.get_attrs_docstrings())
         print(self.get_methods_docstrings())
 
     def print_primary_methods(self) -> None:
         for i in self.get_primary_methods(self.get_attrs()):
             print(i)
+
+    def print_init_setters(self) -> None:
+        print(self.get_init_setters())
