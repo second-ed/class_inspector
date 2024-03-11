@@ -7,11 +7,12 @@ class ClassInspector:
 
     Attributes:
         attrs: list
+        class_name: str
         derived_attrs: list
         derived_methods: list
         dir_list: list
         methods: list
-        obj: Object
+        obj: TestClass
         private_attrs: list
         private_methods: list
         public_attrs: list
@@ -22,6 +23,9 @@ class ClassInspector:
         get_attrs_docstrings() -> str
         get_derived_attrs() -> List[str]
         get_derived_methods() -> List[str]
+        get_init_setter(item: str) -> str
+        get_init_setters() -> str
+        get_item_type(item) -> str
         get_methods() -> List[str]
         get_methods_docstrings() -> str
         get_primary_methods(item_list) -> List[str]
@@ -31,10 +35,12 @@ class ClassInspector:
         get_public_methods() -> List[str]
         get_setter_getter_methods(item) -> str
         is_derived(item) -> bool
+        is_method(item) -> bool
         is_not_dunder(item) -> bool
         is_private(item) -> bool
         is_public(item) -> bool
         print_docstring() -> None
+        print_init_setters() -> None
         print_primary_methods() -> None
         set_derived_attrs() -> None
         set_derived_methods() -> None
