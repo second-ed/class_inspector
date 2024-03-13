@@ -170,11 +170,11 @@ class ClassInspector:
         property_method: str = (
             f"@{item_no_underscores}.setter\n"
             + f"def {item_no_underscores}(self, {item_no_underscores}: {item_type}) -> None:"
-            + f"\n    self.{item}: {item_type} = {item_no_underscores}\n\n"
+            + f"\n    self.{item}: {item_type} = {item_no_underscores}\n"
         )
         setter_method: str = (
             f"def set_{item_no_underscores}(self, {item_no_underscores}: {item_type}) -> None:"
-            + f"\n    self.{item}: {item_type} = {item_no_underscores}\n\n"
+            + f"\n    self.{item}: {item_type} = {item_no_underscores}\n"
         )
         if self.use_properties:
             return property_method
@@ -186,11 +186,11 @@ class ClassInspector:
         property_method: str = (
             "@property\n"
             + f"def {item_no_underscores}(self) -> {item_type}:"
-            + f"\n    return self.{item}\n"
+            + f"\n    return self.{item}\n\n"
         )
         getter_method: str = (
             f"def get_{item_no_underscores}(self) -> {item_type}:"
-            + f"\n    return self.{item}\n"
+            + f"\n    return self.{item}\n\n"
         )
         if self.use_properties:
             return property_method
@@ -258,3 +258,27 @@ class ClassInspector:
 
     def print_init_setters(self) -> None:
         print(self.get_init_setters())
+
+    def get_test_instance_fixture(self) -> str:
+        return f"@pytest.fixture\ndef get_instance() -> {self.class_name}:\n    return {self.class_name}()\n\n\n"
+
+    def get_test_instance(self) -> str:
+        return f"def test_init(get_instance: {self.class_name}) -> None:\n    assert isinstance(get_instance, {self.class_name})\n\n\n"
+
+    def set_test_methods(self) -> None:
+        self.test_functions = []
+        for method in self.methods:
+            self.test_functions.append(
+                f"def test_{self.strip_underscores(method)}(get_instance: {self.class_name}) -> None:\n    assert get_instance.{method}() == \n\n\n"
+            )
+
+    def get_tests(self) -> str:
+        tests_str = "import pytest\n\n"
+        tests_str += self.get_test_instance_fixture()
+        tests_str += self.get_test_instance()
+        tests_str += "".join(self.test_functions)
+        return tests_str
+
+    def print_tests(self) -> None:
+        self.set_test_methods()
+        print(self.get_tests())

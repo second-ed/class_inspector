@@ -22,12 +22,16 @@ def test_get_derived_methods(get_instance: ClassInspector) -> None:
 @pytest.mark.parametrize(
     "item, use_properties, result",
     [
-        ("_x", True, "@property\ndef x(self) -> int:\n    return self._x\n"),
-        ("y", True, "@property\ndef y(self) -> float:\n    return self.y\n"),
-        ("z_", True, "@property\ndef z(self) -> bool:\n    return self.z_\n"),
-        ("_x", False, "def get_x(self) -> int:\n    return self._x\n"),
-        ("y", False, "def get_y(self) -> float:\n    return self.y\n"),
-        ("z_", False, "def get_z(self) -> bool:\n    return self.z_\n"),
+        ("_x", True, "@property\ndef x(self) -> int:\n    return self._x\n\n"),
+        ("y", True, "@property\ndef y(self) -> float:\n    return self.y\n\n"),
+        (
+            "z_",
+            True,
+            "@property\ndef z(self) -> bool:\n    return self.z_\n\n",
+        ),
+        ("_x", False, "def get_x(self) -> int:\n    return self._x\n\n"),
+        ("y", False, "def get_y(self) -> float:\n    return self.y\n\n"),
+        ("z_", False, "def get_z(self) -> bool:\n    return self.z_\n\n"),
     ],
 )
 def test_get_getter(
@@ -97,32 +101,32 @@ def test_get_public_methods(get_instance: ClassInspector) -> None:
         (
             "_x",
             True,
-            "@x.setter\ndef x(self, x: int) -> None:\n    self._x: int = x\n\n",
+            "@x.setter\ndef x(self, x: int) -> None:\n    self._x: int = x\n",
         ),
         (
             "y",
             True,
-            "@y.setter\ndef y(self, y: float) -> None:\n    self.y: float = y\n\n",
+            "@y.setter\ndef y(self, y: float) -> None:\n    self.y: float = y\n",
         ),
         (
             "z_",
             True,
-            "@z.setter\ndef z(self, z: bool) -> None:\n    self.z_: bool = z\n\n",
+            "@z.setter\ndef z(self, z: bool) -> None:\n    self.z_: bool = z\n",
         ),
         (
             "_x",
             False,
-            "def set_x(self, x: int) -> None:\n    self._x: int = x\n\n",
+            "def set_x(self, x: int) -> None:\n    self._x: int = x\n",
         ),
         (
             "y",
             False,
-            "def set_y(self, y: float) -> None:\n    self.y: float = y\n\n",
+            "def set_y(self, y: float) -> None:\n    self.y: float = y\n",
         ),
         (
             "z_",
             False,
-            "def set_z(self, z: bool) -> None:\n    self.z_: bool = z\n\n",
+            "def set_z(self, z: bool) -> None:\n    self.z_: bool = z\n",
         ),
     ],
 )
