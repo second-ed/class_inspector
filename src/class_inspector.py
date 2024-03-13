@@ -1,5 +1,5 @@
 import inspect
-from typing import List, Optional
+from typing import List
 
 
 class ClassInspector:
@@ -51,13 +51,11 @@ class ClassInspector:
         strip_underscores(item) -> str
     """
 
-    def __init__(
-        self,
-        obj: object,
-    ) -> None:
+    def __init__(self, obj: object, use_properties: bool = True) -> None:
         self.obj: object = obj
         self.dir_list: List[str] = dir(self.obj)
-        self.class_name: Optional[str] = type(self.obj).__name__
+        self.class_name: str = type(self.obj).__name__
+        self._use_properties: bool = use_properties
         self.set_private_attrs()
         self.set_derived_attrs()
         self.set_public_attrs()
@@ -70,6 +68,14 @@ class ClassInspector:
         self.methods: List[str] = (
             self.private_methods + self.public_methods + self.derived_methods
         )
+
+    @property
+    def use_properties(self) -> bool:
+        return self._use_properties
+
+    @use_properties.setter
+    def use_properties(self, use_properties: bool) -> None:
+        self._use_properties: bool = use_properties
 
     def strip_underscores(self, item) -> str:
         return item.strip("_")
@@ -158,30 +164,58 @@ class ClassInspector:
     def get_item_type(self, item) -> str:
         return type(getattr(self.obj, item)).__name__
 
-    def get_setter_getter_methods(self, item) -> str:
+    def get_setter(self, item: str) -> str:
         item_no_underscores = self.strip_underscores(item)
-        item_type = self.get_item_type(item)
-        if self.is_derived(item):
-            setter = ""
-        else:
-            setter: str = (
-                f"def set_{item_no_underscores}(self, {item_no_underscores}: {item_type}) -> None:"
-                + f"\n    self.{item}: {item_type} = {item_no_underscores}\n\n"
-            )
-        getter: str = (
+        item_type: str = self.get_item_type(item)
+        property_method: str = (
+            f"@{item_no_underscores}.setter\n"
+            + f"def {item_no_underscores}(self, {item_no_underscores}: {item_type}) -> None:"
+            + f"\n    self.{item}: {item_type} = {item_no_underscores}\n\n"
+        )
+        setter_method: str = (
+            f"def set_{item_no_underscores}(self, {item_no_underscores}: {item_type}) -> None:"
+            + f"\n    self.{item}: {item_type} = {item_no_underscores}\n\n"
+        )
+        if self.use_properties:
+            return property_method
+        return setter_method
+
+    def get_getter(self, item: str) -> str:
+        item_no_underscores: str = self.strip_underscores(item)
+        item_type: str = self.get_item_type(item)
+        property_method: str = (
+            "@property\n"
+            + f"def {item_no_underscores}(self) -> {item_type}:"
+            + f"\n    return self.{item}\n"
+        )
+        getter_method: str = (
             f"def get_{item_no_underscores}(self) -> {item_type}:"
             + f"\n    return self.{item}\n"
         )
-        return setter + getter
+        if self.use_properties:
+            return property_method
+        return getter_method
+
+    def get_setter_getter_methods(self, item) -> str:
+        if self.is_derived(item):
+            setter = ""
+        else:
+            setter: str = self.get_setter(item)
+        getter: str = self.get_getter(item)
+        return getter + setter
 
     def get_primary_methods(self, item_list) -> List[str]:
         return [self.get_setter_getter_methods(item) for item in item_list]
 
     def get_init_setter(self, item: str) -> str:
         item_no_underscores = self.strip_underscores(item)
-        if not self.is_derived(item):
+        item_type: str = self.get_item_type(item)
+        if self.is_derived(item):
+            return ""
+        if self.use_properties:
+            return f"self.item: {item_type} = {item_no_underscores}"
+        else:
             return f"self.set_{item_no_underscores}({item_no_underscores})"
-        return ""
 
     def get_init_setters(self) -> str:
         s = "\n    "
@@ -214,7 +248,7 @@ class ClassInspector:
         return method_docstrings
 
     def print_docstring(self) -> None:
-        print(f"{type(self.obj).__name__} class\n")
+        print(f"{self.class_name} class\n")
         print(self.get_attrs_docstrings())
         print(self.get_methods_docstrings())
 
