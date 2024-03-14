@@ -170,7 +170,7 @@ class ClassInspector:
         property_method: str = (
             f"@{item_no_underscores}.setter\n"
             + f"def {item_no_underscores}(self, {item_no_underscores}: {item_type}) -> None:"
-            + f"\n    self.{item}: {item_type} = {item_no_underscores}\n"
+            + f"\n    self._{item_no_underscores}: {item_type} = {item_no_underscores}\n"
         )
         setter_method: str = (
             f"def set_{item_no_underscores}(self, {item_no_underscores}: {item_type}) -> None:"
@@ -213,7 +213,7 @@ class ClassInspector:
         if self.is_derived(item):
             return ""
         if self.use_properties:
-            return f"self.item: {item_type} = {item_no_underscores}"
+            return f"self.{item}: {item_type} = {item_no_underscores}"
         else:
             return f"self.set_{item_no_underscores}({item_no_underscores})"
 

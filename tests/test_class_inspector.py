@@ -106,12 +106,12 @@ def test_get_public_methods(get_instance: ClassInspector) -> None:
         (
             "y",
             True,
-            "@y.setter\ndef y(self, y: float) -> None:\n    self.y: float = y\n",
+            "@y.setter\ndef y(self, y: float) -> None:\n    self._y: float = y\n",
         ),
         (
             "z_",
             True,
-            "@z.setter\ndef z(self, z: bool) -> None:\n    self.z_: bool = z\n",
+            "@z.setter\ndef z(self, z: bool) -> None:\n    self._z: bool = z\n",
         ),
         (
             "_x",
