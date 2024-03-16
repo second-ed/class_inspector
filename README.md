@@ -12,3 +12,4 @@
 
 # TODO
 [ ] add `__repr__` method
+[ ] leading underscores for public attrs when use_properties

@@ -1,3 +1,5 @@
+from typing import List
+
 import pytest
 
 from src.class_inspector import ClassInspector
@@ -7,8 +9,15 @@ def test_init(get_instance: ClassInspector) -> None:
     assert isinstance(get_instance, ClassInspector)
 
 
-def test_get_attrs(get_instance: ClassInspector) -> None:
-    assert get_instance.get_attrs() == ["_x", "y", "z_"]
+@pytest.mark.parametrize(
+    "use_properties, result",
+    [(True, ["_x", "y", "z_"]), (False, ["_x", "y", "z_"])],
+)
+def test_get_attrs(
+    get_instance: ClassInspector, use_properties: bool, result: List[str]
+) -> None:
+    get_instance.use_properties = use_properties
+    assert get_instance.get_attrs() == result
 
 
 def test_get_derived_attrs(get_instance: ClassInspector) -> None:
@@ -23,7 +32,11 @@ def test_get_derived_methods(get_instance: ClassInspector) -> None:
     "item, use_properties, result",
     [
         ("_x", True, "@property\ndef x(self) -> int:\n    return self._x\n\n"),
-        ("y", True, "@property\ndef y(self) -> float:\n    return self.y\n\n"),
+        (
+            "y",
+            True,
+            "@property\ndef y(self) -> float:\n    return self._y\n\n",
+        ),
         (
             "z_",
             True,
@@ -87,8 +100,15 @@ def test_get_private_methods(get_instance: ClassInspector) -> None:
     assert get_instance.get_private_methods() == ["_do_something_internally"]
 
 
-def test_get_public_attrs(get_instance: ClassInspector) -> None:
-    assert get_instance.get_public_attrs() == ["y"]
+@pytest.mark.parametrize(
+    "use_properties, result",
+    [(True, ["y"]), (False, ["y"])],
+)
+def test_get_public_attrs(
+    get_instance: ClassInspector, use_properties: bool, result: str
+) -> None:
+    get_instance.use_properties = use_properties
+    assert get_instance.get_public_attrs() == result
 
 
 def test_get_public_methods(get_instance: ClassInspector) -> None:
@@ -111,7 +131,7 @@ def test_get_public_methods(get_instance: ClassInspector) -> None:
         (
             "z_",
             True,
-            "@z.setter\ndef z(self, z: bool) -> None:\n    self._z: bool = z\n",
+            "@z.setter\ndef z(self, z: bool) -> None:\n    self.z_: bool = z\n",
         ),
         (
             "_x",

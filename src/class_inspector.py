@@ -56,12 +56,7 @@ class ClassInspector:
         self.dir_list: List[str] = dir(self.obj)
         self.class_name: str = type(self.obj).__name__
         self._use_properties: bool = use_properties
-        self.set_private_attrs()
-        self.set_derived_attrs()
-        self.set_public_attrs()
-        self.set_private_methods()
-        self.set_derived_methods()
-        self.set_public_methods()
+        self.reset()
         self.attrs: List[str] = (
             self.private_attrs + self.public_attrs + self.derived_attrs
         )
@@ -76,6 +71,20 @@ class ClassInspector:
     @use_properties.setter
     def use_properties(self, use_properties: bool) -> None:
         self._use_properties: bool = use_properties
+        self.reset()
+
+    def reset(self) -> None:
+        self.set_private_attrs()
+        self.set_derived_attrs()
+        self.set_public_attrs()
+        self.set_private_methods()
+        self.set_derived_methods()
+        self.set_public_methods()
+
+    def check_public_property(self, item: str) -> str:
+        if self.use_properties and self.is_public(item):
+            item = f"_{item}"
+        return item
 
     def strip_underscores(self, item) -> str:
         return item.strip("_")
@@ -167,10 +176,13 @@ class ClassInspector:
     def get_setter(self, item: str) -> str:
         item_no_underscores = self.strip_underscores(item)
         item_type: str = self.get_item_type(item)
+
+        item = self.check_public_property(item)
+
         property_method: str = (
             f"@{item_no_underscores}.setter\n"
             + f"def {item_no_underscores}(self, {item_no_underscores}: {item_type}) -> None:"
-            + f"\n    self._{item_no_underscores}: {item_type} = {item_no_underscores}\n"
+            + f"\n    self.{item}: {item_type} = {item_no_underscores}\n"
         )
         setter_method: str = (
             f"def set_{item_no_underscores}(self, {item_no_underscores}: {item_type}) -> None:"
@@ -183,6 +195,9 @@ class ClassInspector:
     def get_getter(self, item: str) -> str:
         item_no_underscores: str = self.strip_underscores(item)
         item_type: str = self.get_item_type(item)
+
+        item = self.check_public_property(item)
+
         property_method: str = (
             "@property\n"
             + f"def {item_no_underscores}(self) -> {item_type}:"
@@ -208,12 +223,12 @@ class ClassInspector:
         return [self.get_setter_getter_methods(item) for item in item_list]
 
     def get_init_setter(self, item: str) -> str:
-        item_no_underscores = self.strip_underscores(item)
-        item_type: str = self.get_item_type(item)
+        item_no_underscores: str = self.strip_underscores(item)
         if self.is_derived(item):
             return ""
         if self.use_properties:
-            return f"self.{item}: {item_type} = {item_no_underscores}"
+            item = self.check_public_property(item)
+            return f"self.{item} = {item_no_underscores}"
         else:
             return f"self.set_{item_no_underscores}({item_no_underscores})"
 
