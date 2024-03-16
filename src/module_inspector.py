@@ -51,3 +51,9 @@ class ModuleInspector:
         self.custom_classes_ = {
             k: v for k, v in self._module_vars.items() if inspect.isclass(v)
         }
+
+    def print_function_tests(self):
+        for k,v in self.custom_functions_.items():
+            sig = str(inspect.signature(v)).split(") ->")[0]
+            print(f"def test_{k}{sig}, expected_result) -> None:\n    assert {k}{sig}) == \n\n")
+
