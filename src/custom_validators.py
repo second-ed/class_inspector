@@ -13,7 +13,7 @@ __all__: list[str] = [
     "validate_set",
     "validate_none",
     "validate_not_none",
-    "validate_non_empty_string",
+    "validate_non_empty_str",
     "validate_non_negative",
     "validate_non_positive",
     "validate_positive",
@@ -28,35 +28,35 @@ __all__: list[str] = [
 def validate_int(instance, attribute, value) -> None:
     if not isinstance(value, int):
         raise TypeError(
-            f"{attribute.name} expecting an integer, received {type(value)}"
+            f"{attribute.name} expecting type int, received {type(value)}"
         )
 
 
 def validate_str(instance, attribute, value) -> None:
     if not isinstance(value, str):
         raise TypeError(
-            f"{attribute.name} expecting a string, received {type(value)}"
+            f"{attribute.name} expecting type string, received {type(value)}"
         )
 
 
 def validate_float(instance, attribute, value) -> None:
     if not isinstance(value, float):
         raise TypeError(
-            f"{attribute.name} expecting a float, received {type(value)}"
+            f"{attribute.name} expecting type float, received {type(value)}"
         )
 
 
 def validate_bool(instance, attribute, value) -> None:
     if not isinstance(value, bool):
         raise TypeError(
-            f"{attribute.name} expecting a boolean, received {type(value)}"
+            f"{attribute.name} expecting type boolean, received {type(value)}"
         )
 
 
 def validate_list(instance, attribute, value) -> None:
     if not isinstance(value, list):
         raise TypeError(
-            f"{attribute.name} expecting a list, received {type(value)}"
+            f"{attribute.name} expecting type list, received {type(value)}"
         )
 
 
@@ -70,21 +70,21 @@ def validate_not_empty_list(instance, attribute, value) -> None:
 def validate_dict(instance, attribute, value) -> None:
     if not isinstance(value, dict):
         raise TypeError(
-            f"{attribute.name} expecting a dictionary, received {type(value)}"
+            f"{attribute.name} expecting type dictionary, received {type(value)}"
         )
 
 
 def validate_tuple(instance, attribute, value) -> None:
     if not isinstance(value, tuple):
         raise TypeError(
-            f"{attribute.name} expecting a tuple, received {type(value)}"
+            f"{attribute.name} expecting type tuple, received {type(value)}"
         )
 
 
 def validate_set(instance, attribute, value) -> None:
     if not isinstance(value, set):
         raise TypeError(
-            f"{attribute.name} expecting a set, received {type(value)}"
+            f"{attribute.name} expecting type set, received {type(value)}"
         )
 
 
@@ -100,7 +100,7 @@ def validate_not_none(instance, attribute, value) -> None:
         )
 
 
-def validate_non_empty_string(instance, attribute, value) -> None:
+def validate_non_empty_str(instance, attribute, value) -> None:
     if not isinstance(value, str) or len(value.strip()) == 0:
         raise ValueError(
             f"{attribute.name} expecting a non-empty string, received {value}"
@@ -139,7 +139,7 @@ def validate_range(min_value, max_value) -> Callable[..., None]:
     def validate_inner(instance, attribute, value) -> None:
         if not min_value <= value <= max_value:
             raise ValueError(
-                f"{attribute.name} expecting value in the range [{min_value}, {max_value}], received {value}"
+                f"{attribute.name} expecting a value in the range [{min_value}, {max_value}], received {value}"
             )
 
     return validate_inner
