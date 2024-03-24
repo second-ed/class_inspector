@@ -44,7 +44,10 @@ class AttrInspector:
 
     def get_validated_attr(self, item) -> str:
         item_type: str = self.get_item_type(item)
-        return f"    {self.strip_underscores(item)}: {item_type} = attr.ib(\n        validator=[attr.validators.instance_of({item_type})],\n        on_setattr = attr.setters.validate\n    )"
+        return (f"    {self.strip_underscores(item)}: {item_type} = attr.ib(\n"
+                + "        validator=[attr.validators.instance_of({item_type})],\n"
+                + "        on_setattr = attr.setters.validate\n    )"
+        )
 
     def print_attrs_class(self) -> None:
         print(self.get_imports())
