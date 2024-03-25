@@ -16,10 +16,10 @@ def test_init(get_instance: ModuleInspector) -> None:
 
 
 def test_extract_custom_classes(get_instance: ModuleInspector) -> None:
-    for k, v in get_instance.custom_classes.items():
+    for _, v in get_instance.custom_classes.items():
         assert type(v) == type.__class__
 
 
 def test_extract_custom_functions(get_instance: ModuleInspector) -> None:
-    for k, v in get_instance.custom_functions.items():
+    for _, v in get_instance.custom_functions.items():
         assert type(v) == FunctionType
