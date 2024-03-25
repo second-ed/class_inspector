@@ -34,4 +34,3 @@ class FunctionInspector:
             + f"def test_{self._name}({sig}, expected_result) -> None:\n"
             + f"    assert {self._name}({sig}) == expected_result\n\n"
         )
-

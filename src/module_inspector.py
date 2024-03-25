@@ -59,4 +59,3 @@ class ModuleInspector:
         for k, v in self.custom_functions_.items():
             self.function_inspector.analyse(v)
             print(self.function_inspector.get_test())
-
