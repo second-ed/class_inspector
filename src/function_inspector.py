@@ -32,6 +32,6 @@ class FunctionInspector:
         return (
             self.get_parametrize_decorator()
             + f"def test_{self._name}({sig}, expected_result) -> None:\n"
-            + f"    assert {self._name}({sig}) == expected_result\n\n\n"
+            + f"    assert {self._name}({sig}) == expected_result\n\n"
         )
 
