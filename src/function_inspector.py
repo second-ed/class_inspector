@@ -20,17 +20,39 @@ class FunctionInspector:
     def get_params_str(self) -> str:
         return ", ".join(list(self._parameters.keys()))
 
+    def get_params_types(self):
+        return ", ".join([t.__name__ for t in self._parameters.values()])
+
     def get_pytest_imports(self) -> str:
         return "import pytest\n\n"
 
-    def get_parametrize_decorator(self) -> str:
+    def get_parametrize_decorator_values(self) -> str:
         args = self.get_params_str()
         return f'@pytest.mark.parametrize(\n    "{args}, expected_result",\n    [\n        ({args}, expected_result),\n    ]\n)\n'
 
-    def get_test(self) -> str:
+    def get_test_values(self) -> str:
         sig: str = self.get_params_str()
         return (
-            self.get_parametrize_decorator()
+            self.get_parametrize_decorator_values()
             + f"def test_{self._name}({sig}, expected_result) -> None:\n"
-            + f"    assert {self._name}({sig}) == expected_result\n\n"
+            + f"    actual_result = {self._name}({sig})\n"
+            f"    assert actual_result == expected_result\n"
+            + f"    assert isinstance(actual_result, {self.get_return_annotations().__qualname__})\n\n"
         )
+
+    def get_parametrize_decorator_types(self) -> str:
+        args: str = self.get_params_str()
+        types: str = self.get_params_types()
+        return f'@pytest.mark.parametrize(\n    "{args}",\n    [\n        ({types}),\n    ]\n)\n'
+
+    def get_test_types(self) -> str:
+        sig: str = self.get_params_str()
+        return (
+            self.get_parametrize_decorator_types()
+            + f"def test_{self._name}_types({sig}) -> None:\n"
+            + "    with pytest.raises(TypeError):\n"
+            + f"        {self._name}({sig})\n\n"
+        )
+
+    def get_tests(self):
+        return self.get_test_values() + "\n" + self.get_test_types()
