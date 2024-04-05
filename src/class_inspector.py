@@ -1,6 +1,8 @@
 import inspect
 from typing import List
 
+from function_inspector import FunctionInspector
+
 
 class ClassInspector:
     """ClassInspector class
@@ -63,6 +65,7 @@ class ClassInspector:
         self.methods: List[str] = (
             self.private_methods + self.public_methods + self.derived_methods
         )
+        self.function_inspector = FunctionInspector()
 
     @property
     def use_properties(self) -> bool:
@@ -277,20 +280,31 @@ class ClassInspector:
     def get_test_instance_fixture(self) -> str:
         return f"@pytest.fixture\ndef get_instance() -> {self.class_name}:\n    return {self.class_name}()\n\n\n"
 
-    def get_test_instance(self) -> str:
+    def get_test_init(self) -> str:
         return f"def test_init(get_instance: {self.class_name}) -> None:\n    assert isinstance(get_instance, {self.class_name})\n\n\n"
 
     def set_test_methods(self) -> None:
         self.test_functions = []
         for method in self.methods:
-            self.test_functions.append(
-                f"def test_{self.strip_underscores(method)}(get_instance: {self.class_name}) -> None:\n    assert get_instance.{method}() == \n\n\n"
-            )
+            self.function_inspector.analyse(getattr(self.obj, method))
+            sig = self.function_inspector.get_params_str()
+            if self.function_inspector._parameters:
+                self.test_functions.append(
+                    self.function_inspector.get_parametrize_decorator_values()
+                    + f"def test_{self.strip_underscores(method)}(get_instance: {self.class_name}, {sig}, expected_result) -> None:\n"
+                    + f"    actual_result = get_instance.{method}({sig})\n"
+                    + "    assert actual_result == expected_result\n"
+                    + f"    assert isinstance(actual_result, {self.function_inspector.get_return_annotations().__qualname__})\n\n\n"
+                    + self.function_inspector.get_parametrize_decorator_types()
+                    + f"def test_{self.strip_underscores(method)}_types(get_instance: {self.class_name}, {sig}) -> None:\n"
+                    + "    with pytest.raises(TypeError):\n"
+                    + f"        get_instance.{method}({sig})\n\n\n"
+                )
 
     def get_tests(self) -> str:
         tests_str = "import pytest\n\n"
         tests_str += self.get_test_instance_fixture()
-        tests_str += self.get_test_instance()
+        tests_str += self.get_test_init()
         tests_str += "".join(self.test_functions)
         return tests_str
 
