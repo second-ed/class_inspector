@@ -20,7 +20,7 @@ class FunctionInspector:
     def get_params_str(self) -> str:
         return ", ".join(list(self._parameters.keys()))
 
-    def get_params_types(self):
+    def get_params_types(self) -> str:
         return ", ".join([t.__qualname__ for t in self._parameters.values()])
 
     def get_pytest_imports(self) -> str:
@@ -30,15 +30,20 @@ class FunctionInspector:
         args = self.get_params_str()
         return f'@pytest.mark.parametrize(\n    "{args}, expected_result",\n    [\n        ({args}, expected_result),\n    ]\n)\n'
 
+    def get_return_type_test(self) -> str:
+        if self.get_return_annotations() is not None:
+            return f"assert isinstance(actual_result, {self.get_return_annotations().__qualname__})"
+        return "assert actual_result is None"
+
     def get_test_values(self) -> str:
-        sig: str = self.get_params_str()
         if self._parameters:
+            sig: str = self.get_params_str()
             return (
                 self.get_parametrize_decorator_values()
                 + f"def test_{self._name}({sig}, expected_result) -> None:\n"
                 + f"    actual_result = {self._name}({sig})\n"
                 + "    assert actual_result == expected_result\n"
-                + f"    assert isinstance(actual_result, {self.get_return_annotations().__qualname__})\n\n"
+                + f"    {self.get_return_type_test()}\n\n"
             )
         return ""
 
@@ -48,8 +53,8 @@ class FunctionInspector:
         return f'@pytest.mark.parametrize(\n    "{args}",\n    [\n        ({types}),\n    ]\n)\n'
 
     def get_test_types(self) -> str:
-        sig: str = self.get_params_str()
         if self._parameters:
+            sig: str = self.get_params_str()
             return (
                 self.get_parametrize_decorator_types()
                 + f"def test_{self._name}_types({sig}) -> None:\n"

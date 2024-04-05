@@ -294,7 +294,7 @@ class ClassInspector:
                     + f"def test_{self.strip_underscores(method)}(get_instance: {self.class_name}, {sig}, expected_result) -> None:\n"
                     + f"    actual_result = get_instance.{method}({sig})\n"
                     + "    assert actual_result == expected_result\n"
-                    + f"    assert isinstance(actual_result, {self.function_inspector.get_return_annotations().__qualname__})\n\n\n"
+                    + f"    {self.function_inspector.get_return_type_test()}\n\n\n"
                     + self.function_inspector.get_parametrize_decorator_types()
                     + f"def test_{self.strip_underscores(method)}_types(get_instance: {self.class_name}, {sig}) -> None:\n"
                     + "    with pytest.raises(TypeError):\n"
