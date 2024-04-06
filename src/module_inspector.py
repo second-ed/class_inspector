@@ -58,4 +58,4 @@ class ModuleInspector:
     def print_parametrized_function_tests(self):
         for k, v in self.custom_functions_.items():
             self.function_inspector.analyse(v)
-            print(self.function_inspector.get_test())
+            print(self.function_inspector.get_tests())

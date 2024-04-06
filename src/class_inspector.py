@@ -287,19 +287,7 @@ class ClassInspector:
         self.test_functions = []
         for method in self.methods:
             self.function_inspector.analyse(getattr(self.obj, method))
-            sig = self.function_inspector.get_params_str()
-            if self.function_inspector._parameters:
-                self.test_functions.append(
-                    self.function_inspector.get_parametrize_decorator_values()
-                    + f"def test_{self.strip_underscores(method)}(get_instance: {self.class_name}, {sig}, expected_result) -> None:\n"
-                    + f"    actual_result = get_instance.{method}({sig})\n"
-                    + "    assert actual_result == expected_result\n"
-                    + f"    {self.function_inspector.get_return_type_test()}\n\n\n"
-                    + self.function_inspector.get_parametrize_decorator_types()
-                    + f"def test_{self.strip_underscores(method)}_types(get_instance: {self.class_name}, {sig}) -> None:\n"
-                    + "    with pytest.raises(TypeError):\n"
-                    + f"        get_instance.{method}({sig})\n\n\n"
-                )
+            self.test_functions.append(self.function_inspector.get_tests())
 
     def get_tests(self) -> str:
         tests_str = "import pytest\n\n"
