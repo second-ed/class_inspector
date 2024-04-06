@@ -95,3 +95,4 @@ class FunctionInspector:
         if self._parameters:
             return self.get_test_values() + self.get_test_types()
         return ""
+
