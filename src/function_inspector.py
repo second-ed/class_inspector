@@ -83,7 +83,7 @@ class FunctionInspector:
             + "\n\n"
         )
 
-    def get_test_types(self) -> str:
+    def get_test_raises_type_error(self) -> str:
         return (
             self.get_parametrize_decorator_types()
             + self.get_test_types_sig()
@@ -93,6 +93,6 @@ class FunctionInspector:
 
     def get_tests(self) -> str:
         if self._parameters:
-            return self.get_test_values() + self.get_test_types()
+            return self.get_test_values() + self.get_test_raises_type_error()
         return ""
 
