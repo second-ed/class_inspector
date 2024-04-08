@@ -22,7 +22,12 @@ class FunctionInspector:
         return ", ".join(list(self._parameters.keys()))
 
     def get_params_types(self) -> str:
-        return ", ".join([t.__qualname__ for t in self._parameters.values()])
+        return ", ".join(
+            [
+                t.__name__ if hasattr(t, "__name__") else "no_type"
+                for t in self._parameters.values()
+            ]
+        )
 
     def get_class_name(self) -> str:
         return self._object.__self__.__class__.__name__
