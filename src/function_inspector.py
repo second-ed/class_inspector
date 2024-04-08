@@ -10,6 +10,7 @@ class FunctionInspector:
             for k, v in inspect.signature(self._object).parameters.items()
         }
         self._return_annotations = self.get_return_annotations()
+        self._t: str = "    "
 
     def get_return_annotations(self) -> str:
         annot = inspect.signature(self._object).return_annotation
@@ -48,15 +49,19 @@ class FunctionInspector:
         args = self.get_params_str()
         return (
             "@pytest.mark.parametrize(\n"
-            + f'    "{args}, expected_result",\n'
-            + f"    [\n        ({args}, expected_result),"
-            + "\n    ]\n)\n"
+            + f'{self._t}"{args}, expected_result",\n'
+            + f"{self._t}[\n{self._t * 2}({args}, expected_result),"
+            + f"\n{self._t}]\n)\n"
         )
 
     def get_parametrize_decorator_types(self) -> str:
         args: str = self.get_params_str()
         types: str = self.get_params_types()
-        return f'@pytest.mark.parametrize(\n    "{args}",\n    [\n        ({types}),\n    ]\n)\n'
+        types_parametrized = f"{self._t * 2}({types}),\n" * len(self._parameters)
+        return (
+            f'@pytest.mark.parametrize(\n{self._t}"{args}",\n'
+            + f'{self._t}[\n{types_parametrized}{self._t}]\n)\n'
+        )
 
     def get_instance_call(self) -> str:
         sig: str = self.get_params_str()
@@ -67,7 +72,7 @@ class FunctionInspector:
         return f"{self._name}({sig}) "
 
     def get_test_body(self) -> str:
-        test_body = "    "
+        test_body = f"{self._t}"
         test_body += self.get_instance_call()
         if self._return_annotations != "None":
             test_body += "== expected_result\n"
@@ -87,8 +92,8 @@ class FunctionInspector:
         return (
             self.get_parametrize_decorator_types()
             + self.get_test_types_sig()
-            + "    with pytest.raises(TypeError):\n"
-            + f"        {self.get_instance_call()}\n\n\n"
+            + f"{self._t}with pytest.raises(TypeError):\n"
+            + f"{self._t * 2}{self.get_instance_call()}\n\n\n"
         )
 
     def get_tests(self) -> str:
