@@ -1,108 +1,121 @@
 import inspect
 
+import attr
+from attr.validators import instance_of
 
+
+@attr.define
 class FunctionInspector:
+    name: str = attr.ib(init=False, validator=[instance_of(str)])
+    parameters: dict = attr.ib(init=False, validator=[instance_of(dict)])
+    return_annotation: str = attr.ib(init=False, validator=[instance_of(str)])
+    t: str = attr.ib(init=False, default="    ", validator=[instance_of(str)])
+    obj = attr.ib(init=False)
+
     def analyse(self, object_) -> None:
-        self._object = object_
-        self._name = self._object.__name__
-        self._parameters = {
+        self.obj = object_
+        self.name = self.obj.__name__
+        self.parameters = {
             v.name: v.annotation
-            for k, v in inspect.signature(self._object).parameters.items()
+            for k, v in inspect.signature(self.obj).parameters.items()
         }
-        self._return_annotations = self.get_return_annotations()
-        self._t: str = "    "
+        self.return_annotation = self.get_return_annotations()
+        self.t: str = "    "
 
     def get_return_annotations(self) -> str:
-        annot = inspect.signature(self._object).return_annotation
+        annot = inspect.signature(self.obj).return_annotation
         if annot is not inspect._empty:
-            return str(annot)
+            return annot.__name__
         return "None"
 
     def get_params_str(self) -> str:
-        return ", ".join(list(self._parameters.keys()))
+        return ", ".join(list(self.parameters.keys()))
 
     def get_params_types(self) -> str:
         return ", ".join(
             [
-                t.__name__ if hasattr(t, "__name__") else "no_type"
-                for t in self._parameters.values()
+                t_.__name__ if hasattr(t_, "__name__") else "no_type"
+                for t_ in self.parameters.values()
             ]
         )
 
     def get_class_name(self) -> str:
-        return self._object.__self__.__class__.__name__
+        if inspect.ismethod(self.obj):
+            return self.obj.__self__.__class__.__name__
+        return self.name
 
     def strip_underscores(self, item: str) -> str:
+        if not isinstance(item, str):
+            raise TypeError(f"item must be of type str, got {type(item)}")
         return item.strip("_")
 
     def get_instance_sig(self) -> str:
-        if inspect.ismethod(self._object):
+        if inspect.ismethod(self.obj):
             return f"get_instance: {self.get_class_name()}, "
-        elif inspect.isfunction(self._object):
+        elif inspect.isfunction(self.obj):
             return ""
         return ""
 
     def get_test_values_sig(self) -> str:
         sig = self.get_instance_sig() + self.get_params_str()
-        return f"def test_values_{self.strip_underscores(self._name)}({sig}, expected_result) -> None:\n"
+        return f"def test_values_{self.strip_underscores(self.name)}({sig}, expected_result) -> None:\n"
 
     def get_test_types_sig(self) -> str:
         sig = self.get_instance_sig() + self.get_params_str()
-        return f"def test_types_{self.strip_underscores(self._name)}({sig}) -> None:\n"
+        return f"def test_types_{self.strip_underscores(self.name)}({sig}) -> None:\n"
 
     def get_parametrize_decorator_values(self) -> str:
         args = self.get_params_str()
         return (
             "@pytest.mark.parametrize(\n"
-            + f'{self._t}"{args}, expected_result",\n'
-            + f"{self._t}[\n{self._t * 2}({args}, expected_result),"
-            + f"\n{self._t}]\n)\n"
+            + f'{self.t}"{args}, expected_result",\n'
+            + f"{self.t}[\n{self.t * 2}({args}, expected_result),"
+            + f"\n{self.t}]\n)\n"
         )
 
     def get_parametrize_decorator_types(self) -> str:
         args: str = self.get_params_str()
         types: str = self.get_params_types()
-        types_parametrized = f"{self._t * 2}({types}),\n" * len(self._parameters)
+        types_parametrized = f"{self.t * 2}({types}),\n" * len(self.parameters)
         return (
-            f'@pytest.mark.parametrize(\n{self._t}"{args}",\n'
-            + f'{self._t}[\n{types_parametrized}{self._t}]\n)\n'
+            f'@pytest.mark.parametrize(\n{self.t}"{args}",\n'
+            + f"{self.t}[\n{types_parametrized}{self.t}]\n)\n"
         )
 
     def get_instance_call(self) -> str:
         sig: str = self.get_params_str()
-        if inspect.ismethod(self._object):
-            return f"get_instance.{self._name}({sig}) "
-        elif inspect.isfunction(self._object):
-            return f"{self._name}({sig}) "
-        return f"{self._name}({sig}) "
+        if inspect.ismethod(self.obj):
+            return f"get_instance.{self.name}({sig}) "
+        elif inspect.isfunction(self.obj):
+            return f"{self.name}({sig}) "
+        return f"{self.name}({sig}) "
 
     def get_test_body(self) -> str:
-        test_body = f"{self._t}"
+        test_body = f"{self.t}"
         test_body += self.get_instance_call()
-        if self._return_annotations != "None":
+        if self.return_annotation != "None":
             test_body += "== expected_result\n"
         else:
             test_body += "is None\n"
         return test_body
 
     def get_test_values(self) -> str:
-        return (
-            self.get_parametrize_decorator_values()
-            + self.get_test_values_sig()
-            + self.get_test_body()
-            + "\n\n"
-        )
+        test_full = ""
+        if self.parameters:
+            test_full += self.get_parametrize_decorator_values()
+        test_full += self.get_test_values_sig()
+        test_full += self.get_test_body()
+        test_full += "\n\n"
+        return test_full
 
     def get_test_raises_type_error(self) -> str:
-        return (
-            self.get_parametrize_decorator_types()
-            + self.get_test_types_sig()
-            + f"{self._t}with pytest.raises(TypeError):\n"
-            + f"{self._t * 2}{self.get_instance_call()}\n\n\n"
-        )
+        test_full = ""
+        if self.parameters:
+            test_full += self.get_parametrize_decorator_types()
+            test_full += self.get_test_types_sig()
+            test_full += f"{self.t}with pytest.raises(TypeError):\n"
+            test_full += f"{self.t * 2}{self.get_instance_call()}\n\n\n"
+        return test_full
 
     def get_tests(self) -> str:
-        if self._parameters:
-            return self.get_test_values() + self.get_test_raises_type_error()
-        return ""
-
+        return self.get_test_values() + self.get_test_raises_type_error()
