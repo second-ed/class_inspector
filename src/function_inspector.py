@@ -119,3 +119,4 @@ class FunctionInspector:
 
     def get_tests(self) -> str:
         return self.get_test_values() + self.get_test_raises_type_error()
+
