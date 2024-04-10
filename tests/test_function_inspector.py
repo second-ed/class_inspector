@@ -64,7 +64,7 @@ def test_values_strip_underscores(
     get_instance: FunctionInspector, item, expected_result
 ) -> None:
     get_instance.analyse(test_function)
-    get_instance.strip_underscores(item) == expected_result
+    assert get_instance.strip_underscores(item) == expected_result
 
 
 @pytest.mark.parametrize(
