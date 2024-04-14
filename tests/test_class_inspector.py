@@ -1,8 +1,7 @@
 from typing import List
 
 import pytest
-
-from src.class_inspector import ClassInspector
+from class_inspector.class_inspector import ClassInspector
 
 
 def test_init(get_instance: ClassInspector) -> None:

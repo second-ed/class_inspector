@@ -1,5 +1,5 @@
 import pytest
-from function_inspector import FunctionInspector
+from class_inspector.function_inspector import FunctionInspector
 
 
 @pytest.fixture

@@ -1,7 +1,7 @@
 from types import FunctionType
 
 import pytest
-from module_inspector import ModuleInspector
+from class_inspector.module_inspector import ModuleInspector
 
 from tests.mock_package import mock_module
 

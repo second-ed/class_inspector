@@ -1,7 +1,7 @@
 import inspect
 from typing import List
 
-from function_inspector import FunctionInspector
+from class_inspector.function_inspector import FunctionInspector
 
 
 class ClassInspector:

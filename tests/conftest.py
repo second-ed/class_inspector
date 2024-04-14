@@ -1,6 +1,6 @@
 import pytest
 
-from src.class_inspector import ClassInspector
+from src.class_inspector.class_inspector import ClassInspector
 
 
 class TestClass:

@@ -1,7 +1,7 @@
 import inspect
 from types import ModuleType
 
-from function_inspector import FunctionInspector
+from class_inspector.function_inspector import FunctionInspector
 
 
 class ModuleInspector:
