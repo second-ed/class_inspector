@@ -119,3 +119,27 @@ class FunctionInspector:
 
     def get_tests(self) -> str:
         return self.get_test_values() + self.get_test_raises_type_error()
+
+    def get_guards(self) -> str:
+        expected_types = ", ".join(
+            [arg.__name__ for arg in self.parameters.values()]
+        )
+        received_types = ", ".join(
+            [f"{{type({arg}).__name__}}" for arg in self.parameters.keys()]
+        )
+        guards: str = (
+            f"{self.t}if not all(["
+            + ", ".join(
+                [
+                    f"isinstance({k}, {v.__name__})"
+                    for k, v in self.parameters.items()
+                ]
+            )
+            + "]):\n"
+        )
+        raises = (
+            f'{self.t * 2}raise TypeError(f"'
+            + f"{self.name} expects arg types: [{expected_types}],"
+            + f' received: [{received_types}]")\n\n'
+        )
+        return guards + raises

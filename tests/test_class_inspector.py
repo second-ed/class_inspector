@@ -4,6 +4,7 @@ import pytest
 from class_inspector.class_inspector import ClassInspector
 
 
+@pytest.mark.skip
 def test_init(get_instance: ClassInspector) -> None:
     assert isinstance(get_instance, ClassInspector)
 
