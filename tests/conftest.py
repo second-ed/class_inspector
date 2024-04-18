@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import pytest
 
 from src.class_inspector.class_inspector import ClassInspector

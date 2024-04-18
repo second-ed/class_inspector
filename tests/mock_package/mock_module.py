@@ -1,3 +1,6 @@
+from __future__ import annotations
+
+
 class TestClass:
     def __init__(self, x: int, y: float) -> None:
         self._x: int = x
