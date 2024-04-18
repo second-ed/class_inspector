@@ -15,7 +15,7 @@ lint = [
     "ruff",
 ]
 dev = [
-    "trading_functions[lint]",
+    "class_inspector[lint]",
 ]
 
 [tool.black]
