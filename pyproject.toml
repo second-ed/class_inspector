@@ -20,7 +20,7 @@ lint = [
     "ruff",
 ]
 dev = [
-    "class_inspector[lint]",
+    "class_inspector[test,lint]",
 ]
 
 [tool.black]
