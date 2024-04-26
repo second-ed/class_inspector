@@ -3,61 +3,41 @@ from __future__ import annotations
 import inspect
 from types import ModuleType
 
+import attr
+from attr.validators import instance_of
+
 from class_inspector.function_inspector import FunctionInspector
 
 
+@attr.define
 class ModuleInspector:
-    def __init__(self, inp_module: ModuleType) -> None:
-        self._module = inp_module
-        self._module_vars = vars(inp_module)
-        self._module_name = inp_module.__name__
+    module: ModuleType = attr.ib(validator=[instance_of(ModuleType)])
+    module_vars: dict = attr.ib(init=False, validator=[instance_of(dict)])
+    module_name: str = attr.ib(init=False, validator=[instance_of(str)])
+    function_inspector: FunctionInspector = attr.ib(
+        default=FunctionInspector(),
+        validator=[instance_of(FunctionInspector)],
+    )
+    custom_functions: dict = attr.ib(init=False, validator=[instance_of(dict)])
+    custom_classes: dict = attr.ib(init=False, validator=[instance_of(dict)])
+
+    def __attrs_post_init__(self):
+        self.module_vars = vars(self.module)
+        self.module_name = self.module.__name__
         self.extract_custom_classes()
         self.extract_custom_functions()
-        self.function_inspector = FunctionInspector()
-
-    @property
-    def module(self) -> ModuleType:
-        return self._module
-
-    @module.setter
-    def module(self, module: ModuleType) -> None:
-        self._module: ModuleType = module
-
-    @property
-    def module_name(self) -> str:
-        return self._module_name
-
-    @module_name.setter
-    def module_name(self, module_name: str) -> None:
-        self._module_name: str = module_name
-
-    @property
-    def module_vars(self) -> dict:
-        return self._module_vars
-
-    @module_vars.setter
-    def module_vars(self, module_vars: dict) -> None:
-        self._module_vars: dict = module_vars
-
-    @property
-    def custom_classes(self) -> dict:
-        return self.custom_classes_
-
-    @property
-    def custom_functions(self) -> dict:
-        return self.custom_functions_
 
     def extract_custom_functions(self) -> None:
-        self.custom_functions_ = {
-            k: v for k, v in self._module_vars.items() if inspect.isfunction(v)
+        self.custom_functions = {
+            k: v for k, v in self.module_vars.items() if inspect.isfunction(v)
         }
 
     def extract_custom_classes(self) -> None:
-        self.custom_classes_ = {
-            k: v for k, v in self._module_vars.items() if inspect.isclass(v)
+        self.custom_classes = {
+            k: v for k, v in self.module_vars.items() if inspect.isclass(v)
         }
 
     def print_parametrized_function_tests(self):
-        for k, v in self.custom_functions_.items():
+        for k, v in self.custom_functions.items():
             self.function_inspector.analyse(v)
             print(self.function_inspector.get_tests())

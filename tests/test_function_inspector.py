@@ -163,7 +163,10 @@ def test_get_tests(get_instance: FunctionInspector) -> None:
 
 def test_get_guards(get_instance: FunctionInspector) -> None:
     get_instance.analyse(test_function)
-    assert (
-        get_instance.get_guards()
-        == '    if not all([isinstance(param1, float), isinstance(param2, int), isinstance(param3, bool)]):\n        raise TypeError(f"test_function expects arg types: [float, int, bool], received: [{type(param1).__name__}, {type(param2).__name__}, {type(param3).__name__}]")\n\n'
+    assert get_instance.get_guards() == (
+        "    if not all([isinstance(param1, float), isinstance(param2, int),"
+        " isinstance(param3, bool)]):\n        raise TypeError"
+        '(f"test_function expects arg types: [float, int, bool], received:'
+        " [{type(param1).__name__}, {type(param2).__name__}, "
+        '{type(param3).__name__}]")\n\n'
     )
