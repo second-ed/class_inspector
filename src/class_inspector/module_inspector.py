@@ -37,7 +37,7 @@ class ModuleInspector:
             k: v for k, v in self.module_vars.items() if inspect.isclass(v)
         }
 
-    def print_parametrized_function_tests(self):
-        for k, v in self.custom_functions.items():
+    def print_parametrized_function_tests(self) -> None:
+        for _, v in self.custom_functions.items():
             self.function_inspector.analyse(v)
             print(self.function_inspector.get_tests())

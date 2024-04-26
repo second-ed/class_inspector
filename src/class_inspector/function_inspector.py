@@ -11,8 +11,8 @@ class FunctionInspector:
     name: str = attr.ib(init=False, validator=[instance_of(str)])
     parameters: dict = attr.ib(init=False, validator=[instance_of(dict)])
     return_annotation: str = attr.ib(init=False, validator=[instance_of(str)])
-    t: str = attr.ib(init=False, default="    ", validator=[instance_of(str)])
-    obj = attr.ib(init=False)
+    t: str = attr.ib(default="    ", validator=[instance_of(str)], init=False)
+    obj: object = attr.ib(init=False)
 
     def analyse(self, object_) -> None:
         self.obj = object_
