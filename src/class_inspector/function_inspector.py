@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import inspect
+from typing import Callable
 
 import attr
 from attr.validators import instance_of
@@ -11,8 +12,8 @@ class FunctionInspector:
     name: str = attr.ib(init=False, validator=[instance_of(str)])
     parameters: dict = attr.ib(init=False, validator=[instance_of(dict)])
     return_annotation: str = attr.ib(init=False, validator=[instance_of(str)])
-    t: str = attr.ib(default="    ", validator=[instance_of(str)], init=False)
-    obj: object = attr.ib(init=False)
+    t: str = attr.ib(default="    ", validator=instance_of(str), init=False)  # type: ignore
+    obj: Callable = attr.ib(init=False)
 
     def analyse(self, object_) -> None:
         self.obj = object_

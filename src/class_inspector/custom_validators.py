@@ -3,24 +3,10 @@ from __future__ import annotations
 from collections import abc
 
 __all__: list[str] = [
-    "validate_none",
-    "validate_not_none",
     "validate_sequence",
     "validate_iterable",
     "validate_collection",
 ]
-
-
-def validate_none(instance, attribute, value) -> None:
-    if value is not None:
-        raise ValueError(f"{attribute.name} must be None, received {value}")
-
-
-def validate_not_none(instance, attribute, value) -> None:
-    if value is None:
-        raise ValueError(
-            f"{attribute.name} must not be None, received {value}"
-        )
 
 
 def validate_sequence(instance, attribute, value) -> None:
