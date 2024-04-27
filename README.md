@@ -99,4 +99,4 @@ now_possible: Collection = attr.ib(validator=[validate_generic_of_type(Collectio
 Meaning we can pass in any object that implements the following dunder methods `[__contains__, __iter__, __len__]` 
 AND validate that each member of the collection is a float. This is possible for other types too.
 
-* on closer inspection (ironic given this repo's name) of the attrs API reference this is a solved problem with `deep_iterable()` and `deep_mapping()`, you win this round attrs!
+*on closer inspection (ironic given this repo's name) of the attrs API reference this is a solved problem with `deep_iterable()` and `deep_mapping()`, you win this round attrs!
