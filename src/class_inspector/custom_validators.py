@@ -48,13 +48,12 @@ def validate_sequence_of_type(allowed_type: Type) -> Callable:
                 " Must implement "
                 "[__getitem__, __iter__, __contains__, __reversed__, index, count]"
             )
-        else:
-            for item in value:
-                if not isinstance(item, allowed_type):
-                    raise TypeError(
-                        f"{attribute.name} expecting a sequence of {allowed_type.__name__},"
-                        f" received {type(item)}."
-                    )
+        for item in value:
+            if not isinstance(item, allowed_type):
+                raise TypeError(
+                    f"{attribute.name} expecting a sequence of {allowed_type.__name__},"
+                    f" received {type(item)}."
+                )
 
     return validate_seq_type
 
@@ -66,13 +65,12 @@ def validate_iterable_of_type(allowed_type: Type) -> Callable:
                 f"{attribute.name} expecting a subclass of Iterable, received {type(value)}."
                 " Must implement [__iter__]"
             )
-        else:
-            for item in value:
-                if not isinstance(item, allowed_type):
-                    raise TypeError(
-                        f"{attribute.name} expecting a iterable of {allowed_type.__name__},"
-                        f" received {type(item)}."
-                    )
+        for item in value:
+            if not isinstance(item, allowed_type):
+                raise TypeError(
+                    f"{attribute.name} expecting a iterable of {allowed_type.__name__},"
+                    f" received {type(item)}."
+                )
 
     return validate_iter_type
 
@@ -85,13 +83,12 @@ def validate_collection_of_type(allowed_type: Type) -> Callable:
                 " Must implement "
                 "[__contains__, __iter__, __len__]"
             )
-        else:
-            for item in value:
-                if not isinstance(item, allowed_type):
-                    raise TypeError(
-                        f"{attribute.name} expecting a collection of {allowed_type.__name__},"
-                        f" received {type(item)}."
-                    )
+        for item in value:
+            if not isinstance(item, allowed_type):
+                raise TypeError(
+                    f"{attribute.name} expecting a collection of {allowed_type.__name__},"
+                    f" received {type(item)}."
+                )
 
     return validate_col_type
 
@@ -116,12 +113,25 @@ def validate_generic_of_type(
                 f"{attribute.name} expecting a subclass of {generic_type.__name__},"
                 f" received {type(value)}. "
             )
-        else:
-            for item in value:
-                if not isinstance(item, allowed_type):
-                    raise TypeError(
-                        f"{attribute.name} expecting a collection of {allowed_type.__name__},"
-                        f" received {type(item)}."
-                    )
+        for item in value:
+            if not isinstance(item, allowed_type):
+                raise TypeError(
+                    f"{attribute.name} expecting a collection of {allowed_type.__name__},"
+                    f" received {type(item)}."
+                )
 
     return validate_gen_type
+
+
+def validate_bool_func(bool_func):
+    if not isinstance(bool_func, Callable):
+        raise TypeError("provided boolean function must be callable")
+
+    def validate_bool(instance, attribute, value) -> None:
+        if not bool_func(value):
+            raise ValueError(
+                f"{attribute.name} does not pass {bool_func.__name__},"
+                f" received {value}. "
+            )
+
+    return validate_bool

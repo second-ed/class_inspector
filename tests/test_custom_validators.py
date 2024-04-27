@@ -2,8 +2,10 @@ from collections import abc
 from contextlib import nullcontext as does_not_raise
 
 import attr
+import numpy as np
 import pytest
 from class_inspector.custom_validators import (
+    validate_bool_func,
     validate_collection,
     validate_collection_of_type,
     validate_generic,
@@ -260,6 +262,37 @@ def test_validate_sequence_of_type(gen_type, val_func, inputs, expectation):
     @attr.define
     class TestClass:
         attrib: gen_type = attr.ib(validator=[val_func])
+
+    with expectation:
+        TestClass(inputs)
+
+
+@pytest.mark.parametrize(
+    "val_func, inputs, expectation",
+    [
+        (
+            validate_bool_func(np.isnan),
+            np.nan,
+            does_not_raise(),
+        ),
+        (
+            validate_bool_func(np.isnan),
+            1,
+            pytest.raises(ValueError),
+        ),
+        # TODO: this raises a TypeError at the moment that interrupts collection
+        #  need to work out why the raises isn't catching the TypeError
+        # (
+        #     validate_bool_func(np.nan),
+        #     np.nan,
+        #     pytest.raises(TypeError),
+        # ),
+    ],
+)
+def test_validate_bool_func(val_func, inputs, expectation):
+    @attr.define
+    class TestClass:
+        attrib: list = attr.ib(validator=[val_func])
 
     with expectation:
         TestClass(inputs)
