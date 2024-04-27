@@ -60,12 +60,12 @@ not specified, there is one test case per parameter to test each parameter's gua
 There is potential for the type testing to use hypothesis `@given` parameters however that's on the TODO list.
 
 
-# Module Inspector
+# ModuleInspector
 
 A wrapper around FunctionInspector that can be given a module and perform FunctionInspector actions on the group of functions or classes.
 
 
-# Class Inspector
+# ClassInspector
 
 Slightly out of date, this is used to help write getters and setters however, I recommend using the attrs library instead.
 
