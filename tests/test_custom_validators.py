@@ -9,6 +9,7 @@ from class_inspector.custom_validators import (
     validate_collection,
     validate_collection_of_type,
     validate_generic,
+    validate_generic_bool_func,
     validate_generic_of_type,
     validate_iterable,
     validate_iterable_of_type,
@@ -293,6 +294,38 @@ def test_validate_bool_func(val_func, inputs, expectation):
     @attr.define
     class TestClass:
         attrib: list = attr.ib(validator=[val_func])
+
+    with expectation:
+        TestClass(inputs)
+
+
+@pytest.mark.parametrize(
+    "gen_type, val_func, inputs, expectation",
+    [
+        (
+            abc.Collection,
+            validate_generic_bool_func(abc.Collection, np.isnan),
+            [np.nan, np.nan, np.nan],
+            does_not_raise(),
+        ),
+        (
+            abc.Collection,
+            validate_generic_bool_func(abc.Collection, np.isnan),
+            [np.nan, np.nan, 1, 2, 3],
+            pytest.raises(ValueError),
+        ),
+        (
+            abc.Collection,
+            validate_generic_bool_func(abc.Collection, np.isnan),
+            1,
+            pytest.raises(TypeError),
+        ),
+    ],
+)
+def test_validate_generic_bool_func(gen_type, val_func, inputs, expectation):
+    @attr.define
+    class TestClass:
+        attrib: gen_type = attr.ib(validator=[val_func])
 
     with expectation:
         TestClass(inputs)

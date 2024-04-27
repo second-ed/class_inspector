@@ -135,3 +135,25 @@ def validate_bool_func(bool_func):
             )
 
     return validate_bool
+
+
+def validate_generic_bool_func(
+    generic_type: Type, bool_func: Callable
+) -> Callable:
+    if not isinstance(bool_func, Callable):
+        raise TypeError("provided boolean function must be callable")
+
+    def validate_bool(instance, attribute, value) -> None:
+        if not isinstance(value, generic_type):
+            raise TypeError(
+                f"{attribute.name} expecting a subclass of {generic_type.__name__},"
+                f" received {type(value)}. "
+            )
+        for item in value:
+            if not bool_func(item):
+                raise ValueError(
+                    f"{attribute.name} does not pass {bool_func.__name__},"
+                    f" received {value}. "
+                )
+
+    return validate_bool
