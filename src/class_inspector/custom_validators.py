@@ -4,14 +4,16 @@ from collections import abc
 from typing import Callable, Type
 
 __all__: list[str] = [
-    "validate_sequence",
-    "validate_iterable",
+    "validate_bool_func",
     "validate_collection",
-    "validate_sequence_of_type",
-    "validate_iterable_of_type",
     "validate_collection_of_type",
     "validate_generic",
+    "validate_generic_bool_func",
     "validate_generic_of_type",
+    "validate_iterable",
+    "validate_iterable_of_type",
+    "validate_sequence",
+    "validate_sequence_of_type",
 ]
 
 
