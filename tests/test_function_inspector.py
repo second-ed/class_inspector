@@ -133,7 +133,7 @@ def test_get_test_body(get_instance: FunctionInspector) -> None:
     get_instance.analyse(test_function)
     assert (
         get_instance.get_test_body()
-        == "    test_function(param1, param2, param3) == expected_result\n"
+        == "    assert test_function(param1, param2, param3) == expected_result\n"
     )
 
 
@@ -141,7 +141,7 @@ def test_get_test_values(get_instance: FunctionInspector) -> None:
     get_instance.analyse(test_function)
     assert (
         get_instance.get_test_values()
-        == '@pytest.mark.parametrize(\n    "param1, param2, param3, expected_result",\n    [\n        (param1, param2, param3, expected_result),\n    ]\n)\ndef test_values_test_function(param1, param2, param3, expected_result) -> None:\n    test_function(param1, param2, param3) == expected_result\n\n\n'
+        == '@pytest.mark.parametrize(\n    "param1, param2, param3, expected_result",\n    [\n        (param1, param2, param3, expected_result),\n    ]\n)\ndef test_values_test_function(param1, param2, param3, expected_result) -> None:\n    assert test_function(param1, param2, param3) == expected_result\n\n\n'
     )
 
 
@@ -149,7 +149,7 @@ def test_get_test_raises_type_error(get_instance: FunctionInspector) -> None:
     get_instance.analyse(test_function)
     assert (
         get_instance.get_test_raises_type_error()
-        == '@pytest.mark.parametrize(\n    "param1, param2, param3",\n    [\n        (float, int, bool),\n        (float, int, bool),\n        (float, int, bool),\n    ]\n)\ndef test_types_test_function(param1, param2, param3) -> None:\n    with pytest.raises(TypeError):\n        test_function(param1, param2, param3) \n\n\n'
+        == '@pytest.mark.parametrize(\n    "param1, param2, param3",\n    [\n        (float, int, bool),\n        (float, int, bool),\n        (float, int, bool),\n    ]\n)\ndef test_types_test_function(param1, param2, param3) -> None:\n    with pytest.raises(TypeError):\n        assert test_function(param1, param2, param3) \n\n\n'
     )
 
 
@@ -157,7 +157,7 @@ def test_get_tests(get_instance: FunctionInspector) -> None:
     get_instance.analyse(test_function)
     assert (
         get_instance.get_tests()
-        == '@pytest.mark.parametrize(\n    "param1, param2, param3, expected_result",\n    [\n        (param1, param2, param3, expected_result),\n    ]\n)\ndef test_values_test_function(param1, param2, param3, expected_result) -> None:\n    test_function(param1, param2, param3) == expected_result\n\n\n@pytest.mark.parametrize(\n    "param1, param2, param3",\n    [\n        (float, int, bool),\n        (float, int, bool),\n        (float, int, bool),\n    ]\n)\ndef test_types_test_function(param1, param2, param3) -> None:\n    with pytest.raises(TypeError):\n        test_function(param1, param2, param3) \n\n\n'
+        == '@pytest.mark.parametrize(\n    "param1, param2, param3, expected_result",\n    [\n        (param1, param2, param3, expected_result),\n    ]\n)\ndef test_values_test_function(param1, param2, param3, expected_result) -> None:\n    assert test_function(param1, param2, param3) == expected_result\n\n\n@pytest.mark.parametrize(\n    "param1, param2, param3",\n    [\n        (float, int, bool),\n        (float, int, bool),\n        (float, int, bool),\n    ]\n)\ndef test_types_test_function(param1, param2, param3) -> None:\n    with pytest.raises(TypeError):\n        assert test_function(param1, param2, param3) \n\n\n'
     )
 
 

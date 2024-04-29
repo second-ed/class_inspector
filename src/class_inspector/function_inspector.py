@@ -94,7 +94,7 @@ class FunctionInspector:
         return f"{self.name}({sig}) "
 
     def get_test_body(self) -> str:
-        test_body = f"{self.t}"
+        test_body = f"{self.t}assert "
         test_body += self.get_instance_call()
         if self.return_annotation != "None":
             test_body += "== expected_result\n"
@@ -117,7 +117,7 @@ class FunctionInspector:
             test_full += self.get_parametrize_decorator_types()
             test_full += self.get_test_types_sig()
             test_full += f"{self.t}with pytest.raises(TypeError):\n"
-            test_full += f"{self.t * 2}{self.get_instance_call()}\n\n\n"
+            test_full += f"{self.t * 2}assert {self.get_instance_call()}\n\n\n"
         return test_full
 
     def get_tests(self) -> str:
