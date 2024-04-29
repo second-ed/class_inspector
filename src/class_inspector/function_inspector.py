@@ -117,7 +117,7 @@ class FunctionInspector:
             test_full += self.get_parametrize_decorator_types()
             test_full += self.get_test_types_sig()
             test_full += f"{self.t}with pytest.raises(TypeError):\n"
-            test_full += f"{self.t * 2}assert {self.get_instance_call()}\n\n\n"
+            test_full += f"{self.t * 2}{self.get_instance_call()}\n\n\n"
         return test_full
 
     def get_tests(self) -> str:

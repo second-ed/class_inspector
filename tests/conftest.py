@@ -1,8 +1,8 @@
 from __future__ import annotations
 
 import pytest
-
-from src.class_inspector.class_inspector import ClassInspector
+from class_inspector.attr_generator import AttrGenerator, AttrMap
+from class_inspector.class_inspector import ClassInspector
 
 
 class TestClass:
@@ -29,3 +29,22 @@ def get_test_class() -> TestClass:
 @pytest.fixture
 def get_instance(get_test_class: TestClass) -> ClassInspector:
     return ClassInspector(get_test_class)
+
+
+@pytest.fixture
+def get_attr_gen_attributes() -> list[AttrMap]:
+    return [
+        AttrMap("test1", "int", True),
+        AttrMap("test2", "float", False),
+        AttrMap("test3", "bool", True),
+        AttrMap("test4", "str", False),
+        AttrMap("test5", "List[int]", True),
+        AttrMap("test6", "Dict[str, float]", False),
+    ]
+
+
+@pytest.fixture
+def get_attr_gen_instance(
+    get_attr_gen_attributes: list[AttrMap],
+) -> AttrGenerator:
+    return AttrGenerator("TestClass", get_attr_gen_attributes)
