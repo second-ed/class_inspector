@@ -37,36 +37,35 @@ output:
 usage:
 ```python
 func_insp.analyse(test_function)
-func_insp.get_tests()
+func_insp.get_test()
 ```
 output:
 ```python
 @pytest.mark.parametrize(
-    "param1, param2, param3, expected_result",
+    "param1, param2, param3, expected_result, expected_context",
     [
-        (param1, param2, param3, expected_result),
+        (param1, param2, param3, expected_result, expected_context),
     ]
 )
-def test_values_test_function(param1, param2, param3, expected_result) -> None:
-    test_function(param1, param2, param3) == expected_result
-
-
-@pytest.mark.parametrize(
-    "param1, param2, param3",
-    [
-        (float, int, bool),
-        (float, int, bool),
-        (float, int, bool),
-    ]
-)
-def test_types_test_function(param1, param2, param3) -> None:
-    with pytest.raises(TypeError):
-        test_function(param1, param2, param3) 
+def test_test_function(param1, param2, param3, expected_result, expected_context) -> None:
+    with expected_context:
+        assert test_function(param1, param2, param3) == expected_result
 ```
-The test values are for the user to fill in with values that are appropriate for the function.
+Compared to previous versions the tests are now combined to pass in the expected context, this could be whatever error a parameter set could raise or a successful assertion with the null_context passed as `does_not_raise()`
 
-The test types shows what types the parameters expect and it is up to the user to fill in those cases with types that are
-not specified, there is one test case per parameter to test each parameter's guard condition while the others are correct.
+##### An example is below:
+```python
+@pytest.mark.parametrize(
+    "param1, param2, param3, expected_result, expected_context",
+    [
+        (3, 2, True, 1, does_not_raise()),
+        ("3", 2, False, 0, pytest.raises(TypeError))
+    ]
+)
+def test_test_function(param1, param2, param3, expected_result, expected_context) -> None:
+    with expected_context:
+        assert test_function(param1, param2, param3) == expected_result
+```
 
 There is potential for the type testing to use hypothesis `@given` parameters however that's on the TODO list.
 
@@ -100,3 +99,52 @@ Meaning we can pass in any object that implements the following dunder methods `
 AND validate that each member of the collection is a float. This is possible for other types too.
 
 *on closer inspection (ironic given this repo's name) of the attrs API reference this is a solved problem with `deep_iterable()` and `deep_mapping()`. attrs: 2, me: 0
+
+
+# AttrGenerator
+This is an intermediate step between the ultimate goal of a standard class to attrs convertor, this converts a list of attributes into an attr class with type based validators
+
+### Example
+```python
+from class_inspector.attr_generator import AttrGenerator, AttrMap
+
+attributes = [
+        AttrMap("test1", "int", True),
+        AttrMap("test2", "float", False),
+        AttrMap("test3", "bool", True),
+        AttrMap("test4", "str", False),
+        AttrMap("test5", "List[int]", True),
+        AttrMap("test6", "Dict[str, float]", False),
+    ]
+
+at_gen = AttrGenerator("TestClass", attributes)
+at_gen.get_attr_class()
+```
+
+#### output
+```python
+import attr
+from attr.validators import instance_of, deep_iterable, deep_mapping
+
+
+@attr.define
+class TestClass:
+    test1: int = attr.ib(validator=[instance_of(int)])
+    test2: float = attr.ib(validator=[instance_of(float)], init=False)
+    test3: bool = attr.ib(validator=[instance_of(bool)])
+    test4: str = attr.ib(validator=[instance_of(str)], init=False)
+    test5: list = attr.ib(validator=[deep_iterable(member_validator=instance_of(int), iterable_validator=instance_of(list))])
+    test6: dict = attr.ib(validator=[deep_mapping(key_validator=instance_of(str), value_validator=instance_of(float), mapping_validator=instance_of(dict))], init=False)
+```
+
+AttrMap class is a wrapper to avoid a lot of duplicated dictionaries, however this is also valid input:
+```python
+attributes = [
+    {'attr_name': 'test1', 'attr_type': 'int', 'attr_init': True},
+    {'attr_name': 'test2', 'attr_type': 'float', 'attr_init': False},
+    {'attr_name': 'test3', 'attr_type': 'bool', 'attr_init': True},
+    {'attr_name': 'test4', 'attr_type': 'str', 'attr_init': False},
+    {'attr_name': 'test5', 'attr_type': 'List[int]', 'attr_init': True},
+    {'attr_name': 'test6', 'attr_type': 'Dict[str, float]', 'attr_init': False}
+ ]
+```
