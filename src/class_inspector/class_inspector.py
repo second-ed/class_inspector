@@ -67,7 +67,7 @@ class ClassInspector:
         self.methods: List[str] = (
             self.private_methods + self.public_methods + self.derived_methods
         )
-        self.function_inspector = FunctionInspector()
+        self.func_insp = FunctionInspector()
 
     @property
     def use_properties(self) -> bool:
@@ -151,30 +151,6 @@ class ClassInspector:
             if self.is_public(item) and self.is_method(item)
         ]
 
-    def get_private_attrs(self) -> List[str]:
-        return self.private_attrs
-
-    def get_derived_attrs(self) -> List[str]:
-        return self.derived_attrs
-
-    def get_public_attrs(self) -> List[str]:
-        return self.public_attrs
-
-    def get_attrs(self) -> List[str]:
-        return self.attrs
-
-    def get_private_methods(self) -> List[str]:
-        return self.private_methods
-
-    def get_derived_methods(self) -> List[str]:
-        return self.derived_methods
-
-    def get_public_methods(self) -> List[str]:
-        return self.public_methods
-
-    def get_methods(self) -> List[str]:
-        return self.methods
-
     def get_item_type(self, item) -> str:
         return type(getattr(self.obj, item)).__name__
 
@@ -241,7 +217,7 @@ class ClassInspector:
         s = "\n    "
         init_args = f"def __init__({s}self,"
         init_setters = ""
-        for attr in self.get_attrs():
+        for attr in self.attrs:
             if self.is_derived(attr):
                 continue
             attr_type: str = self.get_item_type(attr)
@@ -253,7 +229,7 @@ class ClassInspector:
     def get_attrs_docstrings(self) -> str:
         s = "\n    "
         attr_docstrings = "Attributes:"
-        for attr in self.get_attrs():
+        for attr in self.attrs:
             attr_docstrings += (
                 f"{s}{attr}: {type(getattr(self.obj, attr)).__name__}"
             )
@@ -262,7 +238,7 @@ class ClassInspector:
     def get_methods_docstrings(self) -> str:
         s = "\n    "
         method_docstrings = "Methods:"
-        for method_name in self.get_methods():
+        for method_name in self.methods:
             method = getattr(self.obj, method_name)
             method_docstrings += f"{s}{method_name}{inspect.signature(method)}"
         return method_docstrings
@@ -273,7 +249,7 @@ class ClassInspector:
         print(self.get_methods_docstrings())
 
     def print_primary_methods(self) -> None:
-        for i in self.get_primary_methods(self.get_attrs()):
+        for i in self.get_primary_methods(self.attrs):
             print(i)
 
     def print_init_setters(self) -> None:
@@ -288,8 +264,8 @@ class ClassInspector:
     def set_test_methods(self) -> None:
         self.test_functions = []
         for method in self.methods:
-            self.function_inspector.analyse(getattr(self.obj, method))
-            self.test_functions.append(self.function_inspector.get_tests())
+            self.func_insp.analyse(getattr(self.obj, method))
+            self.test_functions.append(self.func_insp.get_test())
 
     def get_tests(self) -> str:
         tests_str = "import pytest\n\n"

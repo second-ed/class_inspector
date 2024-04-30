@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from typing import List
-
 import pytest
 from class_inspector.class_inspector import ClassInspector
 
@@ -9,25 +7,6 @@ from class_inspector.class_inspector import ClassInspector
 @pytest.mark.skip
 def test_init(get_instance: ClassInspector) -> None:
     assert isinstance(get_instance, ClassInspector)
-
-
-@pytest.mark.parametrize(
-    "use_properties, result",
-    [(True, ["_x", "y", "z_"]), (False, ["_x", "y", "z_"])],
-)
-def test_get_attrs(
-    get_instance: ClassInspector, use_properties: bool, result: List[str]
-) -> None:
-    get_instance.use_properties = use_properties
-    assert get_instance.get_attrs() == result
-
-
-def test_get_derived_attrs(get_instance: ClassInspector) -> None:
-    assert get_instance.get_derived_attrs() == ["z_"]
-
-
-def test_get_derived_methods(get_instance: ClassInspector) -> None:
-    assert get_instance.get_derived_methods() == ["do_something_derived_"]
 
 
 @pytest.mark.parametrize(
@@ -78,43 +57,12 @@ def test_get_item_type(
     assert get_instance.get_item_type(item) == result.__name__
 
 
-def test_get_methods(get_instance: ClassInspector) -> None:
-    assert get_instance.get_methods() == [
-        "_do_something_internally",
-        "do_something",
-        "do_something_derived_",
-    ]
-
-
 # def test_get_methods_docstrings(get_instance: ClassInspector) -> None:
 #     assert get_instance.get_methods_docstrings() ==
 
 
 # def test_get_primary_methods(get_instance: ClassInspector) -> None:
 #     assert get_instance.get_primary_methods() ==
-
-
-def test_get_private_attrs(get_instance: ClassInspector) -> None:
-    assert get_instance.get_private_attrs() == ["_x"]
-
-
-def test_get_private_methods(get_instance: ClassInspector) -> None:
-    assert get_instance.get_private_methods() == ["_do_something_internally"]
-
-
-@pytest.mark.parametrize(
-    "use_properties, result",
-    [(True, ["y"]), (False, ["y"])],
-)
-def test_get_public_attrs(
-    get_instance: ClassInspector, use_properties: bool, result: str
-) -> None:
-    get_instance.use_properties = use_properties
-    assert get_instance.get_public_attrs() == result
-
-
-def test_get_public_methods(get_instance: ClassInspector) -> None:
-    assert get_instance.get_public_methods() == ["do_something"]
 
 
 @pytest.mark.parametrize(
