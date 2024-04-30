@@ -30,13 +30,6 @@ class ClassInspector:
         get_init_setter(item: str) -> str
         get_init_setters() -> str
         get_item_type(item) -> str
-        get_methods() -> List[str]
-        get_methods_docstrings() -> str
-        get_primary_methods(item_list) -> List[str]
-        get_private_attrs() -> List[str]
-        get_private_methods() -> List[str]
-        get_public_attrs() -> List[str]
-        get_public_methods() -> List[str]
         get_setter_getter_methods(item) -> str
         is_derived(item) -> bool
         is_method(item) -> bool
@@ -91,22 +84,22 @@ class ClassInspector:
             item = f"_{item}"
         return item
 
-    def strip_underscores(self, item) -> str:
+    def strip_underscores(self, item: str) -> str:
         return item.strip("_")
 
-    def is_not_dunder(self, item) -> bool:
+    def is_not_dunder(self, item: str) -> bool:
         return not item.startswith("__") and not item.endswith("__")
 
-    def is_public(self, item) -> bool:
+    def is_public(self, item: str) -> bool:
         return not item.startswith("_") and not item.endswith("_")
 
-    def is_private(self, item) -> bool:
+    def is_private(self, item: str) -> bool:
         return item.startswith("_") and self.is_not_dunder(item)
 
-    def is_derived(self, item) -> bool:
+    def is_derived(self, item: str) -> bool:
         return item.endswith("_") and self.is_not_dunder(item)
 
-    def is_method(self, item) -> bool:
+    def is_method(self, item: str) -> bool:
         return callable(getattr(self.obj, item))
 
     def set_private_attrs(self) -> None:
@@ -151,7 +144,7 @@ class ClassInspector:
             if self.is_public(item) and self.is_method(item)
         ]
 
-    def get_item_type(self, item) -> str:
+    def get_item_type(self, item: str) -> str:
         return type(getattr(self.obj, item)).__name__
 
     def get_setter(self, item: str) -> str:
@@ -192,7 +185,7 @@ class ClassInspector:
             return property_method
         return getter_method
 
-    def get_setter_getter_methods(self, item) -> str:
+    def get_setter_getter_methods(self, item: str) -> str:
         if self.is_derived(item):
             setter = ""
         else:
