@@ -151,7 +151,7 @@ def test_get_return_annotations(
     "expected_result, expected_context",
     [
         (
-            '@pytest.mark.parametrize(\n    "param1, param2, param3, expected_result, expected_context",\n    [\n        (param1, param2, param3, expected_result, expected_context),\n    ]\n)\ndef test_test_function(param1, param2, param3, expected_result, expected_context) -> None:\n    with expected_context:\n         assert test_function(param1, param2, param3) == expected_result\n\n\n',
+            '@pytest.mark.parametrize(\n    "param1, param2, param3, expected_result, expected_context",\n    [\n        (param1, param2, param3, expected_result, expected_context),\n    ]\n)\ndef test_test_function(param1, param2, param3, expected_result, expected_context) -> None:\n    with expected_context:\n        assert test_function(param1, param2, param3) == expected_result\n\n\n',
             does_not_raise(),
         ),
     ],
@@ -168,7 +168,7 @@ def test_get_test(
     "expected_result, expected_context",
     [
         (
-            "    with expected_context:\n         assert test_function(param1, param2, param3) == expected_result\n",
+            "    with expected_context:\n        assert test_function(param1, param2, param3) == expected_result\n",
             does_not_raise(),
         ),
     ],

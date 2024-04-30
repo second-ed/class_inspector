@@ -84,7 +84,7 @@ class FunctionInspector:
         return f"{self.name}({sig}) "
 
     def get_test_body(self) -> str:
-        test_body = f"{self.t}with expected_context:\n "
+        test_body = f"{self.t}with expected_context:\n"
         test_body += f"{2*self.t}assert "
         test_body += self.get_instance_call()
         if self.return_annotation != "None":
