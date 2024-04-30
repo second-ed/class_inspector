@@ -32,7 +32,10 @@ class FunctionInspector:
         return "None"
 
     def get_params_str(self) -> str:
-        return ", ".join(list(self.parameters.keys()))
+        params = ", ".join(list(self.parameters.keys()))
+        if params:
+            return params  # + ", "
+        return ""
 
     def get_params_types(self) -> str:
         return ", ".join(
@@ -59,30 +62,17 @@ class FunctionInspector:
             return ""
         return ""
 
-    def get_test_values_sig(self) -> str:
+    def get_test_sig(self) -> str:
         sig = self.get_instance_sig() + self.get_params_str()
-        return f"def test_values_{self.strip_underscores(self.name)}({sig}, expected_result) -> None:\n"
+        return f"def test_{self.strip_underscores(self.name)}({sig}, expected_result, expected_context) -> None:\n"
 
-    def get_test_types_sig(self) -> str:
-        sig = self.get_instance_sig() + self.get_params_str()
-        return f"def test_types_{self.strip_underscores(self.name)}({sig}) -> None:\n"
-
-    def get_parametrize_decorator_values(self) -> str:
+    def get_parametrize_decorator(self) -> str:
         args = self.get_params_str()
         return (
             "@pytest.mark.parametrize(\n"
-            + f'{self.t}"{args}, expected_result",\n'
-            + f"{self.t}[\n{self.t * 2}({args}, expected_result),"
+            + f'{self.t}"{args}, expected_result, expected_context",\n'
+            + f"{self.t}[\n{self.t * 2}({args}, expected_result, expected_context),"
             + f"\n{self.t}]\n)\n"
-        )
-
-    def get_parametrize_decorator_types(self) -> str:
-        args: str = self.get_params_str()
-        types: str = self.get_params_types()
-        types_parametrized = f"{self.t * 2}({types}),\n" * len(self.parameters)
-        return (
-            f'@pytest.mark.parametrize(\n{self.t}"{args}",\n'
-            + f"{self.t}[\n{types_parametrized}{self.t}]\n)\n"
         )
 
     def get_instance_call(self) -> str:
@@ -94,7 +84,8 @@ class FunctionInspector:
         return f"{self.name}({sig}) "
 
     def get_test_body(self) -> str:
-        test_body = f"{self.t}assert "
+        test_body = f"{self.t}with expected_context:\n "
+        test_body += f"{2*self.t}assert "
         test_body += self.get_instance_call()
         if self.return_annotation != "None":
             test_body += "== expected_result\n"
@@ -102,28 +93,17 @@ class FunctionInspector:
             test_body += "is None\n"
         return test_body
 
-    def get_test_values(self) -> str:
+    def get_test(self) -> str:
         test_full = ""
-        if self.parameters:
-            test_full += self.get_parametrize_decorator_values()
-        test_full += self.get_test_values_sig()
+        test_full += self.get_parametrize_decorator()
+        test_full += self.get_test_sig()
         test_full += self.get_test_body()
         test_full += "\n\n"
         return test_full
 
-    def get_test_raises_type_error(self) -> str:
-        test_full = ""
-        if self.parameters:
-            test_full += self.get_parametrize_decorator_types()
-            test_full += self.get_test_types_sig()
-            test_full += f"{self.t}with pytest.raises(TypeError):\n"
-            test_full += f"{self.t * 2}{self.get_instance_call()}\n\n\n"
-        return test_full
-
-    def get_tests(self) -> str:
-        return self.get_test_values() + self.get_test_raises_type_error()
-
     def get_guards(self) -> str:
+        if not self.parameters:
+            return ""
         expected_types = ", ".join(
             [arg.__name__ for arg in self.parameters.values()]
         )
@@ -141,8 +121,9 @@ class FunctionInspector:
             + "]):\n"
         )
         raises = (
-            f'{self.t * 2}raise TypeError(f"'
-            + f"{self.name} expects arg types: [{expected_types}],"
-            + f' received: [{received_types}]")\n\n'
+            f"{self.t*2}raise TypeError(\n"
+            + f'{self.t*3}"{self.name} expects arg types: [{expected_types}], "\n'
+            + f'{self.t*3}f"received: [{received_types}]"\n'
+            + f"{self.t*2})\n\n"
         )
         return guards + raises
