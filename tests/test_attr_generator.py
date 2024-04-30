@@ -186,15 +186,17 @@ def test_values_get_init_bool(
     assert get_attr_gen_instance.get_init_bool(attr_init) == expected_result
 
 
-# @pytest.mark.parametrize(
-#     "attr_init",
-#     [
-#         ("test"),
-#     ]
-# )
-# def test_types_get_init_bool(get_attr_gen_instance: AttrGenerator, attr_init) -> None:
-#     with pytest.raises(TypeError):
-#         get_attr_gen_instance.get_init_bool(attr_init)
+@pytest.mark.parametrize(
+    "attr_init",
+    [
+        ("test"),
+    ],
+)
+def test_types_get_init_bool(
+    get_attr_gen_instance: AttrGenerator, attr_init
+) -> None:
+    with pytest.raises(TypeError):
+        get_attr_gen_instance.get_init_bool(attr_init)
 
 
 @pytest.mark.parametrize(
@@ -213,15 +215,17 @@ def test_values_get_inner_outer_types(
     )
 
 
-# @pytest.mark.parametrize(
-#     "attr_type",
-#     [
-#         (0.0),
-#     ]
-# )
-# def test_types_get_inner_outer_types(get_attr_gen_instance: AttrGenerator, attr_type) -> None:
-#     with pytest.raises(TypeError):
-#         get_attr_gen_instance.get_inner_outer_types(attr_type)
+@pytest.mark.parametrize(
+    "attr_type",
+    [
+        (0.0),
+    ],
+)
+def test_types_get_inner_outer_types(
+    get_attr_gen_instance: AttrGenerator, attr_type
+) -> None:
+    with pytest.raises(TypeError):
+        get_attr_gen_instance.get_inner_outer_types(attr_type)
 
 
 @pytest.mark.parametrize(
@@ -239,15 +243,17 @@ def test_values_get_type_hint(
     assert get_attr_gen_instance.get_type_hint(attr_type) == expected_result
 
 
-# @pytest.mark.parametrize(
-#     "attr_type",
-#     [
-#         ({}),
-#     ]
-# )
-# def test_types_get_type_hint(get_attr_gen_instance: AttrGenerator, attr_type) -> None:
-#     with pytest.raises(TypeError):
-#         get_attr_gen_instance.get_type_hint(attr_type)
+@pytest.mark.parametrize(
+    "attr_type",
+    [
+        ({}),
+    ],
+)
+def test_types_get_type_hint(
+    get_attr_gen_instance: AttrGenerator, attr_type
+) -> None:
+    with pytest.raises(TypeError):
+        get_attr_gen_instance.get_type_hint(attr_type)
 
 
 @pytest.mark.parametrize(
@@ -271,15 +277,17 @@ def test_values_get_validator(
     assert get_attr_gen_instance.get_validator(attr_type) == expected_result
 
 
-# @pytest.mark.parametrize(
-#     "attr_type",
-#     [
-#         (str),
-#     ]
-# )
-# def test_types_get_validator(get_attr_gen_instance: AttrGenerator, attr_type) -> None:
-#     with pytest.raises(TypeError):
-#         get_attr_gen_instance.get_validator(attr_type)
+@pytest.mark.parametrize(
+    "attr_type",
+    [
+        ("some[thing]"),
+    ],
+)
+def test_types_get_validator(
+    get_attr_gen_instance: AttrGenerator, attr_type
+) -> None:
+    with pytest.raises(NotImplementedError):
+        get_attr_gen_instance.get_validator(attr_type)
 
 
 @pytest.mark.parametrize(
