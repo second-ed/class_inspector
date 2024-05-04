@@ -20,6 +20,9 @@ class TestClass:
     def do_something_derived_(self) -> bool:
         return self._x != self.z_
 
+    def do_something_with_args(self, a, b):
+        return a + b
+
 
 @pytest.fixture
 def get_test_class() -> TestClass:

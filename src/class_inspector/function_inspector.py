@@ -71,9 +71,13 @@ class FunctionInspector:
         return (
             "@pytest.mark.parametrize(\n"
             + f'{self.t}"{args}, expected_result, expected_context",\n'
-            + f"{self.t}[\n{self.t * 2}({args}, expected_result, expected_context),"
-            + f"\n{self.t}]\n)\n"
+            + f"{self.t}[\n"
+            + self.get_test_case(args)
+            + f"{self.t}]\n)\n"
         )
+
+    def get_test_case(self, args: str) -> str:
+        return f"{self.t * 2}({args}, expected_result, expected_context),\n"
 
     def get_instance_call(self) -> str:
         sig: str = self.get_params_str()
