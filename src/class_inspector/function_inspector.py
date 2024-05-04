@@ -66,7 +66,9 @@ class FunctionInspector:
         sig = self.get_instance_sig() + self.get_params_str()
         return f"def test_{self.strip_underscores(self.name)}({sig}, expected_result, expected_context) -> None:\n"
 
-    def get_parametrize_decorator(self, match: bool = False) -> str:
+    def get_parametrize_decorator(
+        self, check_types: bool = True, match: bool = False
+    ) -> str:
         args = self.get_params_str()
         return (
             "@pytest.mark.parametrize(\n"
@@ -74,7 +76,7 @@ class FunctionInspector:
             + f"{self.t}[\n"
             + self.get_test_case(args)
             + (
-                self.get_raises_type_error_test_case(args, match)
+                self.get_raises_type_error_test_case(args, check_types, match)
                 * len(self.parameters)
             )
             + f"{self.t}]\n)\n"
@@ -84,8 +86,10 @@ class FunctionInspector:
         return f"{self.t * 2}({args}, expected_result, expected_context),\n"
 
     def get_raises_type_error_test_case(
-        self, args: str, match: bool = False
+        self, args: str, check_types: bool = True, match: bool = False
     ) -> str:
+        if not check_types:
+            return ""
         match_stmt = ""
         if match:
             match_stmt = ', match=r""'
@@ -109,9 +113,9 @@ class FunctionInspector:
             test_body += "is None\n"
         return test_body
 
-    def get_test(self, match: bool = False) -> str:
+    def get_test(self, check_types: bool = True, match: bool = False) -> str:
         test_full = ""
-        test_full += self.get_parametrize_decorator(match)
+        test_full += self.get_parametrize_decorator(check_types, match)
         test_full += self.get_test_sig()
         test_full += self.get_test_body()
         test_full += "\n\n"

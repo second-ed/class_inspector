@@ -37,7 +37,7 @@ output:
 usage:
 ```python
 func_insp.analyse(test_function)
-func_insp.get_test()
+func_insp.get_test(check_types=True)
 ```
 output:
 ```python
@@ -45,13 +45,17 @@ output:
     "param1, param2, param3, expected_result, expected_context",
     [
         (param1, param2, param3, expected_result, expected_context),
+        (param1, param2, param3, None, pytest.raises(TypeError)),
+        (param1, param2, param3, None, pytest.raises(TypeError)),
+        (param1, param2, param3, None, pytest.raises(TypeError)),
     ]
 )
 def test_test_function(param1, param2, param3, expected_result, expected_context) -> None:
     with expected_context:
         assert test_function(param1, param2, param3) == expected_result
 ```
-Compared to previous versions the tests are now combined to pass in the expected context, this could be whatever error a parameter set could raise or a successful assertion with the null_context passed as `does_not_raise()`
+Compared to previous versions the tests are now combined to pass in the expected context, this could be whatever error a parameter set could raise or a successful assertion with the null_context passed as `does_not_raise()`. 
+A type error raise test is created for each of the parameters if the `check_types` argument is `True`. The `match` argument can also be used to check the error message is what is expected too.
 
 ##### An example is below:
 ```python
