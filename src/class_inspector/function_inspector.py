@@ -66,18 +66,30 @@ class FunctionInspector:
         sig = self.get_instance_sig() + self.get_params_str()
         return f"def test_{self.strip_underscores(self.name)}({sig}, expected_result, expected_context) -> None:\n"
 
-    def get_parametrize_decorator(self) -> str:
+    def get_parametrize_decorator(self, match: bool = False) -> str:
         args = self.get_params_str()
         return (
             "@pytest.mark.parametrize(\n"
             + f'{self.t}"{args}, expected_result, expected_context",\n'
             + f"{self.t}[\n"
             + self.get_test_case(args)
+            + (
+                self.get_raises_type_error_test_case(args, match)
+                * len(self.parameters)
+            )
             + f"{self.t}]\n)\n"
         )
 
     def get_test_case(self, args: str) -> str:
         return f"{self.t * 2}({args}, expected_result, expected_context),\n"
+
+    def get_raises_type_error_test_case(
+        self, args: str, match: bool = False
+    ) -> str:
+        match_stmt = ""
+        if match:
+            match_stmt = ', match=r""'
+        return f"{self.t * 2}({args}, None, pytest.raises(TypeError{match_stmt})),\n"
 
     def get_instance_call(self) -> str:
         sig: str = self.get_params_str()
@@ -97,9 +109,9 @@ class FunctionInspector:
             test_body += "is None\n"
         return test_body
 
-    def get_test(self) -> str:
+    def get_test(self, match: bool = False) -> str:
         test_full = ""
-        test_full += self.get_parametrize_decorator()
+        test_full += self.get_parametrize_decorator(match)
         test_full += self.get_test_sig()
         test_full += self.get_test_body()
         test_full += "\n\n"
