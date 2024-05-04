@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 import inspect
 from types import ModuleType
 
@@ -37,7 +35,11 @@ class ModuleInspector:
             k: v for k, v in self.module_vars.items() if inspect.isclass(v)
         }
 
-    def print_parametrized_function_tests(self) -> None:
+    def get_parametrized_function_tests(
+        self, check_types: bool = True, match: bool = False
+    ) -> str:
+        tests = ""
         for _, v in self.custom_functions.items():
             self.function_inspector.analyse(v)
-            print(self.function_inspector.get_tests())
+            tests += self.function_inspector.get_test(check_types, match)
+        return tests

@@ -1,6 +1,3 @@
-from __future__ import annotations
-
-
 class TestClass:
     def __init__(self, x: int, y: float) -> None:
         self._x: int = x
@@ -17,9 +14,9 @@ class TestClass:
         return self._x != self.z_
 
 
-def mock_func1(a, b):
+def mock_func1(a: int, b: int) -> int:
     return a + b
 
 
-def mock_func2(a, b):
+def mock_func2(a: int, b: float) -> float:
     return a * b
