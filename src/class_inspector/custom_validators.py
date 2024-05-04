@@ -41,7 +41,7 @@ def validate_collection(instance, attribute, value) -> None:
 
 
 def validate_sequence_of_type(allowed_type: Type) -> Callable:
-    def validate_seq_type(instance, attribute, value) -> None:
+    def _(instance, attribute, value) -> None:
         if not isinstance(value, abc.Sequence):
             raise TypeError(
                 f"{attribute.name} expecting a subclass of Sequence, received {type(value)}."
@@ -55,11 +55,11 @@ def validate_sequence_of_type(allowed_type: Type) -> Callable:
                     f" received {type(item)}."
                 )
 
-    return validate_seq_type
+    return _
 
 
 def validate_iterable_of_type(allowed_type: Type) -> Callable:
-    def validate_iter_type(instance, attribute, value) -> None:
+    def _(instance, attribute, value) -> None:
         if not isinstance(value, abc.Iterable):
             raise TypeError(
                 f"{attribute.name} expecting a subclass of Iterable, received {type(value)}."
@@ -72,11 +72,11 @@ def validate_iterable_of_type(allowed_type: Type) -> Callable:
                     f" received {type(item)}."
                 )
 
-    return validate_iter_type
+    return _
 
 
 def validate_collection_of_type(allowed_type: Type) -> Callable:
-    def validate_col_type(instance, attribute, value) -> None:
+    def _(instance, attribute, value) -> None:
         if not isinstance(value, abc.Collection):
             raise TypeError(
                 f"{attribute.name} expecting a subclass of Collection, received {type(value)}."
@@ -90,24 +90,24 @@ def validate_collection_of_type(allowed_type: Type) -> Callable:
                     f" received {type(item)}."
                 )
 
-    return validate_col_type
+    return _
 
 
 def validate_generic(generic_type: Type) -> Callable:
-    def validate_gen_type(instance, attribute, value) -> None:
+    def _(instance, attribute, value) -> None:
         if not isinstance(value, generic_type):
             raise TypeError(
                 f"{attribute.name} expecting a subclass of {generic_type.__name__},"
                 f" received {type(value)}. "
             )
 
-    return validate_gen_type
+    return _
 
 
 def validate_generic_of_type(
     generic_type: Type, allowed_type: Type
 ) -> Callable:
-    def validate_gen_type(instance, attribute, value) -> None:
+    def _(instance, attribute, value) -> None:
         if not isinstance(value, generic_type):
             raise TypeError(
                 f"{attribute.name} expecting a subclass of {generic_type.__name__},"
@@ -120,21 +120,21 @@ def validate_generic_of_type(
                     f" received {type(item)}."
                 )
 
-    return validate_gen_type
+    return _
 
 
 def validate_bool_func(bool_func):
     if not isinstance(bool_func, Callable):
         raise TypeError("provided boolean function must be callable")
 
-    def validate_bool(instance, attribute, value) -> None:
+    def _(instance, attribute, value) -> None:
         if not bool_func(value):
             raise ValueError(
                 f"{attribute.name} does not pass {bool_func.__name__},"
                 f" received {value}. "
             )
 
-    return validate_bool
+    return _
 
 
 def validate_generic_bool_func(
@@ -143,7 +143,7 @@ def validate_generic_bool_func(
     if not isinstance(bool_func, Callable):
         raise TypeError("provided boolean function must be callable")
 
-    def validate_bool(instance, attribute, value) -> None:
+    def _(instance, attribute, value) -> None:
         if not isinstance(value, generic_type):
             raise TypeError(
                 f"{attribute.name} expecting a subclass of {generic_type.__name__},"
@@ -156,4 +156,4 @@ def validate_generic_bool_func(
                     f" received {value}. "
                 )
 
-    return validate_bool
+    return _

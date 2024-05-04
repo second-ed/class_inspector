@@ -27,7 +27,7 @@ output:
 ```python
     if not all([isinstance(param1, float), isinstance(param2, int), isinstance(param3, bool)]):
         raise TypeError(
-            f"test_function expects arg types: [float, int, bool], "
+            "test_function expects arg types: [float, int, bool], "
             f"received: [{type(param1).__name__}, {type(param2)__name__}, {type(param3).__name__}]"
         )
 ```
@@ -150,5 +150,5 @@ attributes = [
     {'attr_name': 'test4', 'attr_type': 'str', 'attr_init': False},
     {'attr_name': 'test5', 'attr_type': 'List[int]', 'attr_init': True},
     {'attr_name': 'test6', 'attr_type': 'Dict[str, float]', 'attr_init': False}
- ]
+]
 ```
