@@ -26,7 +26,9 @@ class FunctionInspector:
     def get_return_annotations(self) -> str:
         annot = inspect.signature(self.obj).return_annotation
         if annot is not inspect._empty:
-            return annot.__name__
+            if hasattr(annot, "__name__"):
+                return annot.__name__
+            return str(annot)
         return "None"
 
     def get_params_str(self) -> str:
