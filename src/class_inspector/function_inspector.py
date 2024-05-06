@@ -8,6 +8,7 @@ from attr.validators import instance_of
 @attr.define
 class FunctionInspector:
     name: str = attr.ib(init=False, validator=[instance_of(str)])
+    doc: str = attr.ib(init=False, validator=[instance_of(str)])
     parameters: dict = attr.ib(init=False, validator=[instance_of(dict)])
     return_annotation: str = attr.ib(init=False, validator=[instance_of(str)])
     t: str = attr.ib(default="    ", validator=instance_of(str), init=False)  # type: ignore
@@ -16,12 +17,19 @@ class FunctionInspector:
     def analyse(self, object_) -> None:
         self.obj = object_
         self.name = self.obj.__name__
+        self.doc = self.get_doc()
         self.parameters = {
             v.name: v.annotation
             for k, v in inspect.signature(self.obj).parameters.items()
         }
         self.return_annotation = self.get_return_annotations()
         self.t: str = "    "
+
+    def get_doc(self) -> str:
+        doc = inspect.getdoc(self.obj)
+        if doc:
+            return str(doc)
+        return ""
 
     def get_return_annotations(self) -> str:
         annot = inspect.signature(self.obj).return_annotation
@@ -144,6 +152,6 @@ class FunctionInspector:
             f"{self.t*2}raise TypeError(\n"
             + f'{self.t*3}"{self.name} expects arg types: [{expected_types}], "\n'
             + f'{self.t*3}f"received: [{received_types}]"\n'
-            + f"{self.t*2})\n\n"
+            + f"{self.t*2})\n"
         )
         return guards + raises

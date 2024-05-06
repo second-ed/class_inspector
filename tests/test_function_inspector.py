@@ -53,7 +53,7 @@ def test_get_class_name(
                 "        raise TypeError(\n"
                 '            "test_function expects arg types: [float, int, bool], "\n'
                 '            f"received: [{type(param1).__name__}, {type(param2).__name__}, {type(param3).__name__}]"\n'
-                "        )\n\n"
+                "        )\n"
             ),
             does_not_raise(),
         )
