@@ -1,7 +1,7 @@
 from collections import abc
-from typing import Callable, Type
+from typing import Callable, List, Type
 
-__all__: list[str] = [
+__all__: List[str] = [
     "validate_bool_func",
     "validate_collection",
     "validate_collection_of_type",
