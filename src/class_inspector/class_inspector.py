@@ -201,19 +201,18 @@ class ClassInspector:
         if self.use_properties:
             item = self.check_public_property(item)
             return f"self.{item} = {item_no_underscores}"
-        else:
-            return f"self.set_{item_no_underscores}({item_no_underscores})"
+        return f"self.set_{item_no_underscores}({item_no_underscores})"
 
     def get_init_setters(self) -> str:
-        s = "\n    "
-        init_args = f"def __init__({s}self,"
+        sep = "\n    "
+        init_args = f"def __init__({sep}self,"
         init_setters = ""
         for attr in self.attrs:
             if self.is_derived(attr):
                 continue
             attr_type: str = self.get_item_type(attr)
-            init_args += f"{s}{self.strip_underscores(attr)}: {attr_type},"
-            init_setters += f"{s}{self.get_init_setter(attr)}"
+            init_args += f"{sep}{self.strip_underscores(attr)}: {attr_type},"
+            init_setters += f"{sep}{self.get_init_setter(attr)}"
         init_args += "\n) -> None:"
         return init_args + init_setters + "\n"
 
@@ -247,10 +246,16 @@ class ClassInspector:
         print(self.get_init_setters())
 
     def get_test_instance_fixture(self) -> str:
-        return f"@pytest.fixture\ndef get_instance() -> {self.class_name}:\n    return {self.class_name}()\n\n\n"
+        return (
+            f"@pytest.fixture\ndef get_instance() -> {self.class_name}:\n"
+            "    return {self.class_name}()\n\n\n"
+        )
 
     def get_test_init(self) -> str:
-        return f"def test_init(get_instance: {self.class_name}) -> None:\n    assert isinstance(get_instance, {self.class_name})\n\n\n"
+        return (
+            f"def test_init(get_instance: {self.class_name}) -> None:\n"
+            "    assert isinstance(get_instance, {self.class_name})\n\n\n"
+        )
 
     def set_test_methods(self) -> None:
         self.test_functions = []

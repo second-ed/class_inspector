@@ -72,12 +72,12 @@ class AttrGenerator:
                 "get_inner_outer_types expects arg types: [str], "
                 f"received: [{type(attr_type).__name__}]"
             )
-        s = re.search(r"\[(.*?)\]", attr_type)
-        if s:
-            outer_type = attr_type.replace(s.group(), "").lower()
-            inner_type = s.group(1)
+        bracket_type = re.search(r"\[(.*?)\]", attr_type)
+        if bracket_type:
+            outer_type = attr_type.replace(bracket_type.group(), "").lower()
+            inner_type = bracket_type.group(1)
             return inner_type, outer_type
-        raise AttributeError(f"{s} does not have method group()")
+        raise AttributeError(f"{bracket_type} does not have method group()")
 
     def get_deep_iterable(self, attr_type: str) -> str:
         if not all([isinstance(attr_type, str)]):
@@ -98,10 +98,10 @@ class AttrGenerator:
                 f"received: [{type(attr_type).__name__}]"
             )
         inner_type, outer_type = self.get_inner_outer_types(attr_type)
-        k_, v_ = inner_type.split(", ")
+        inner_k, inner_v = inner_type.split(", ")
         return (
-            f"deep_mapping(key_validator=instance_of({k_}), "
-            f"value_validator=instance_of({v_}), "
+            f"deep_mapping(key_validator=instance_of({inner_k}), "
+            f"value_validator=instance_of({inner_v}), "
             f"mapping_validator=instance_of({outer_type}))"
         )
 
@@ -125,11 +125,10 @@ class AttrGenerator:
                 "get_type_hint expects arg types: [str], "
                 f"received: [{type(attr_type).__name__}]"
             )
-        if not self.contains_square_brackets(attr_type):
-            return attr_type
         if self.is_deep_iterable(attr_type) or self.is_deep_mapping(attr_type):
             _, outer_type = self.get_inner_outer_types(attr_type)
             return outer_type
+        return attr_type
 
     def get_init_bool(self, attr_init: bool) -> str:
         if not all([isinstance(attr_init, bool)]):
@@ -178,10 +177,12 @@ class AttrGenerator:
         class_str.append(self.get_class_sig())
         for at_dict in self.attributes:
             if isinstance(at_dict, dict):
-                at = AttrMap(**at_dict)
+                at_map = AttrMap(**at_dict)
             elif isinstance(at_dict, AttrMap):
-                at = at_dict
+                at_map = at_dict
             class_str.append(
-                self.get_attrib(at.attr_name, at.attr_type, at.attr_init)
+                self.get_attrib(
+                    at_map.attr_name, at_map.attr_type, at_map.attr_init
+                )
             )
         return "\n".join(class_str)

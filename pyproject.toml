@@ -18,6 +18,7 @@ test = [
 lint = [
     "black<24",
     "ruff",
+    "pylint>=3.0.1",
 ]
 dev = [
     "class_inspector[test,lint]",
