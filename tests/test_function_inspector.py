@@ -336,3 +336,103 @@ def test_values_strip_underscores(
     with expected_context:
         get_instance.analyse(func)
         assert get_instance.strip_underscores(item) == expected_result
+
+
+@pytest.mark.parametrize(
+    "func, expected_result, expected_context",
+    [
+        (
+            test_function,
+            "def test_function(param1: float, param2: int, param3: bool) -> float:",
+            does_not_raise(),
+        ),
+    ],
+)
+def test_get_func_sig(
+    get_instance: FunctionInspector, func, expected_result, expected_context
+) -> None:
+    with expected_context:
+        get_instance.analyse(func)
+        assert get_instance.get_func_sig() == expected_result
+
+
+def test_get_docstring_patterns(get_instance: FunctionInspector) -> None:
+    assert (
+        get_instance.get_docstring_patterns()
+        == "(\"\"\".*?\"\"\"\\n|'''.*?'''\\n)"
+    )
+
+
+@pytest.mark.parametrize(
+    "func_str, pattern, expected_result, expected_context",
+    [
+        ("test (passing) case", r"\(\w+?\)", 14, does_not_raise()),
+        # (func_str, pattern, None, pytest.raises(TypeError)),
+        # (func_str, pattern, None, pytest.raises(TypeError)),
+    ],
+)
+def test_find_string_end(
+    get_instance: FunctionInspector,
+    func_str,
+    pattern,
+    expected_result,
+    expected_context,
+) -> None:
+    with expected_context:
+        assert (
+            get_instance.find_string_end(func_str, pattern) == expected_result
+        )
+
+
+@pytest.mark.parametrize(
+    "func_str, idx, to_insert, expected_result, expected_context",
+    [
+        ("test case", 5, "PASSED ", "test PASSED case", does_not_raise()),
+        # (func_str, idx, to_insert, None, pytest.raises(TypeError)),
+        # (func_str, idx, to_insert, None, pytest.raises(TypeError)),
+        # (func_str, idx, to_insert, None, pytest.raises(TypeError)),
+    ],
+)
+def test_insert_string_at_idx(
+    get_instance: FunctionInspector,
+    func_str,
+    idx,
+    to_insert,
+    expected_result,
+    expected_context,
+) -> None:
+    with expected_context:
+        assert (
+            get_instance.insert_string_at_idx(func_str, idx, to_insert)
+            == expected_result
+        )
+
+
+@pytest.mark.parametrize(
+    "func, expected_result, expected_context",
+    [
+        (
+            test_function,
+            (
+                "@pytest.fixture\n"
+                "def test_function(param1: float, param2: int, param3: bool) -> float:\n"
+                "    if not all([isinstance(param1, float), isinstance(param2, int), isinstance(param3, bool)]):\n"
+                "        raise TypeError(\n"
+                '            "test_function expects arg types: [float, int, bool], "\n'
+                '            f"received: [{type(param1).__name__}, {type(param2).__name__}, {type(param3).__name__}]"\n'
+                "        )\n"
+                "    if param3:\n"
+                "        return param1 - param2\n"
+                "    else:\n"
+                "        return param1 + param2\n"
+            ),
+            does_not_raise(),
+        ),
+    ],
+)
+def test_add_guards(
+    get_instance: FunctionInspector, func, expected_result, expected_context
+) -> None:
+    with expected_context:
+        get_instance.analyse(func)
+        assert get_instance.add_guards() == expected_result

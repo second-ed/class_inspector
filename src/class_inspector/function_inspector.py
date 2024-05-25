@@ -1,4 +1,5 @@
 import inspect
+import re
 from typing import Callable
 
 import attr
@@ -252,6 +253,33 @@ class FunctionInspector:
         test_full += "\n\n"
         return test_full
 
+    def get_func_sig(self) -> str:
+        definition = "def "
+        init_sig = str(inspect.signature(self.obj))
+
+        if inspect.ismethod(self.obj):
+            definition = definition.replace("def ", "    def ")
+            init_sig = init_sig.replace("(", "(self, ").replace(", )", ")")
+
+        sig = f"{definition}{self.name}" + init_sig + ":"
+        return sig
+
+    def get_docstring_patterns(self) -> str:
+        double_quotes = r'""".*?"""\n'
+        single_quotes = r"'''.*?'''\n"
+        return f"({double_quotes}|{single_quotes})"
+
+    def find_string_end(self, func_str: str, pattern: str) -> int | None:
+        match = re.search(pattern, func_str, re.DOTALL)
+        if match:
+            return match.end()
+        return None
+
+    def insert_string_at_idx(
+        self, func_str: str, idx: int, to_insert: str
+    ) -> str:
+        return func_str[:idx] + to_insert + func_str[idx:]
+
     def get_guards(self) -> str:
         """
         Generate guards for type checking of function arguments.
@@ -267,8 +295,12 @@ class FunctionInspector:
         received_types = ", ".join(
             [f"{{type({arg}).__name__}}" for arg in self.parameters.keys()]
         )
+
+        # add 1 tab to the start of each line if obj is a method
+        is_method = int(inspect.ismethod(self.obj))
+
         guards: str = (
-            f"{self.tab}if not all(["
+            f"{self.tab*(1 + is_method)}if not all(["
             + ", ".join(
                 [
                     f"isinstance({k}, {v.__name__})"
@@ -278,9 +310,23 @@ class FunctionInspector:
             + "]):\n"
         )
         raises = (
-            f"{self.tab*2}raise TypeError(\n"
-            + f'{self.tab*3}"{self.name} expects arg types: [{expected_types}], "\n'
-            + f'{self.tab*3}f"received: [{received_types}]"\n'
-            + f"{self.tab*2})\n"
+            f"{self.tab*(2 + is_method)}raise TypeError(\n"
+            + f'{self.tab*(3 + is_method)}"{self.name} expects arg types: [{expected_types}], "\n'
+            + f'{self.tab*(3 + is_method)}f"received: [{received_types}]"\n'
+            + f"{self.tab*(2 + is_method)})\n"
         )
         return guards + raises
+
+    def add_guards(self) -> str:
+        func_str = str(inspect.getsource(self.obj))
+        end_idx = self.find_string_end(func_str, self.get_docstring_patterns())
+
+        if end_idx:
+            func_str = self.insert_string_at_idx(
+                func_str, end_idx, self.get_guards()
+            )
+        else:
+            sig = self.get_func_sig() + "\n"
+            func_str = func_str.replace(sig, (sig + self.get_guards()))
+
+        return func_str
