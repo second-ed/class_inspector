@@ -21,15 +21,20 @@ def test_function(param1: float, param2: int, param3: bool) -> float:
 usage:
 ```python
 func_insp.analyse(test_function)
-func_insp.get_guards()
+func_insp.add_guards()
 ```
 output:
 ```python
+def test_function(param1: float, param2: int, param3: bool) -> float:
     if not all([isinstance(param1, float), isinstance(param2, int), isinstance(param3, bool)]):
         raise TypeError(
             "test_function expects arg types: [float, int, bool], "
-            f"received: [{type(param1).__name__}, {type(param2)__name__}, {type(param3).__name__}]"
+            f"received: [{type(param1).__name__}, {type(param2).__name__}, {type(param3).__name__}]"
         )
+    if param3:
+        return param1 - param2
+    else:
+        return param1 + param2
 ```
 
 
