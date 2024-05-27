@@ -31,7 +31,7 @@ def check_type(arg: Any, param_name: str, param_type: type) -> str:
     if not isinstance(arg, simplify_annotation(param_type)):
         return (
             f"\n    arg {param_name} expects type: {param_type.__name__}, "
-            f"recieved: {type(arg).__name__}"
+            f"received: {type(arg).__name__}"
         )
     return ""
 
