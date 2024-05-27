@@ -329,4 +329,4 @@ class FunctionInspector:
             sig = self.get_func_sig() + "\n"
             func_str = func_str.replace(sig, (sig + self.get_guards()))
 
-        return func_str
+        return func_str + "\n\n"

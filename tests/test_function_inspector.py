@@ -424,7 +424,7 @@ def test_insert_string_at_idx(
                 "    if param3:\n"
                 "        return param1 - param2\n"
                 "    else:\n"
-                "        return param1 + param2\n"
+                "        return param1 + param2\n\n\n"
             ),
             does_not_raise(),
         ),

@@ -43,3 +43,10 @@ class ModuleInspector:
             self.function_inspector.analyse(v)
             tests += self.function_inspector.get_test(check_types, match)
         return tests
+
+    def add_guards(self) -> str:
+        functions = ""
+        for _, v in self.custom_functions.items():
+            self.function_inspector.analyse(v)
+            functions += self.function_inspector.add_guards()
+        return functions
