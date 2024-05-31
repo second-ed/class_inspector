@@ -40,7 +40,7 @@ def test_get_class_name(
 ) -> None:
     with expected_context:
         get_instance.analyse(func)
-        assert get_instance._get_class_name() == expected_result
+        assert get_instance.get_class_name() == expected_result
 
 
 @pytest.mark.parametrize(
@@ -64,7 +64,7 @@ def test_get_guards(
 ) -> None:
     with expected_context:
         get_instance.analyse(func)
-        assert get_instance._get_guards() == expected_result
+        assert get_instance.get_guards() == expected_result
 
 
 @pytest.mark.parametrize(
@@ -82,7 +82,7 @@ def test_get_instance_call(
 ) -> None:
     with expected_context:
         get_instance.analyse(func)
-        assert get_instance._get_instance_call() == expected_result
+        assert get_instance.get_instance_call() == expected_result
 
 
 @pytest.mark.parametrize(
@@ -96,7 +96,7 @@ def test_get_instance_sig(
 ) -> None:
     with expected_context:
         get_instance.analyse(func)
-        assert get_instance._get_instance_sig() == expected_result
+        assert get_instance.get_instance_sig() == expected_result
 
 
 @pytest.mark.parametrize(
@@ -160,7 +160,7 @@ def test_get_parametrize_decorator(
     with expected_context:
         get_instance.analyse(func)
         assert (
-            get_instance._get_parametrize_decorator(check_types, match)
+            get_instance.get_parametrize_decorator(check_types, match)
             == expected_result
         )
 
@@ -176,7 +176,7 @@ def test_get_params_str(
 ) -> None:
     with expected_context:
         get_instance.analyse(func)
-        assert get_instance._get_params_str() == expected_result
+        assert get_instance.get_params_str() == expected_result
 
 
 @pytest.mark.parametrize(
@@ -190,7 +190,7 @@ def test_get_params_types(
 ) -> None:
     with expected_context:
         get_instance.analyse(func)
-        assert get_instance._get_params_types() == expected_result
+        assert get_instance.get_params_types() == expected_result
 
 
 @pytest.mark.parametrize(
@@ -204,7 +204,7 @@ def test_get_return_annotations(
 ) -> None:
     with expected_context:
         get_instance.analyse(func)
-        assert get_instance._get_return_annotations() == expected_result
+        assert get_instance.get_return_annotations() == expected_result
 
 
 @pytest.mark.parametrize(
@@ -295,7 +295,7 @@ def test_get_test_body(
 ) -> None:
     with expected_context:
         get_instance.analyse(func)
-        assert get_instance._get_test_body() == expected_result
+        assert get_instance.get_test_body() == expected_result
 
 
 @pytest.mark.parametrize(
@@ -313,7 +313,7 @@ def test_get_test_sig(
 ) -> None:
     with expected_context:
         get_instance.analyse(func)
-        assert get_instance._get_test_sig() == expected_result
+        assert get_instance.get_test_sig() == expected_result
 
 
 @pytest.mark.parametrize(
@@ -335,7 +335,7 @@ def test_values_strip_underscores(
 ) -> None:
     with expected_context:
         get_instance.analyse(func)
-        assert get_instance._strip_underscores(item) == expected_result
+        assert get_instance.strip_underscores(item) == expected_result
 
 
 @pytest.mark.parametrize(
@@ -353,12 +353,12 @@ def test_get_func_sig(
 ) -> None:
     with expected_context:
         get_instance.analyse(func)
-        assert get_instance._get_func_sig() == expected_result
+        assert get_instance.get_func_sig() == expected_result
 
 
 def test_get_docstring_patterns(get_instance: FunctionInspector) -> None:
     assert (
-        get_instance._get_docstring_patterns()
+        get_instance.get_docstring_patterns()
         == "(\"\"\".*?\"\"\"\\n|'''.*?'''\\n)"
     )
 
@@ -380,7 +380,7 @@ def test_find_string_end(
 ) -> None:
     with expected_context:
         assert (
-            get_instance._find_string_end(func_str, pattern) == expected_result
+            get_instance.find_string_end(func_str, pattern) == expected_result
         )
 
 
@@ -403,7 +403,7 @@ def test_insert_string_at_idx(
 ) -> None:
     with expected_context:
         assert (
-            get_instance._insert_string_at_idx(func_str, idx, to_insert)
+            get_instance.insert_string_at_idx(func_str, idx, to_insert)
             == expected_result
         )
 
