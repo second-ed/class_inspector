@@ -34,7 +34,7 @@ class FunctionInspector:
             v.name: v.annotation
             for k, v in inspect.signature(self.obj).parameters.items()
         }
-        self.return_annotation = self.get_return_annotations()
+        self.return_annotation = self._get_return_annotations()
         self.tab: str = "    "
 
     def get_doc(self) -> str:
@@ -49,7 +49,7 @@ class FunctionInspector:
             return str(doc)
         return ""
 
-    def get_return_annotations(self) -> str:
+    def _get_return_annotations(self) -> str:
         """
         Get the return annotation of the analysed object.
 
@@ -63,7 +63,7 @@ class FunctionInspector:
             return str(annot)
         return "None"
 
-    def get_params_str(self) -> str:
+    def _get_params_str(self) -> str:
         """
         Get a string representation of the parameters of the analysed object.
 
@@ -75,7 +75,7 @@ class FunctionInspector:
             return params  # + ", "
         return ""
 
-    def get_params_types(self) -> str:
+    def _get_params_types(self) -> str:
         """
         Get a string representation of the types of the parameters of the analysed
         object.
@@ -91,7 +91,7 @@ class FunctionInspector:
             ]
         )
 
-    def get_class_name(self) -> str:
+    def _get_class_name(self) -> str:
         """
         Get the class name of the analysed object (if it's a method).
 
@@ -102,7 +102,7 @@ class FunctionInspector:
             return self.obj.__self__.__class__.__name__
         return self.name
 
-    def strip_underscores(self, item: str) -> str:
+    def _strip_underscores(self, item: str) -> str:
         """
         Remove underscores from the given string.
 
@@ -119,7 +119,7 @@ class FunctionInspector:
             raise TypeError(f"item must be of type str, got {type(item)}")
         return item.strip("_")
 
-    def get_instance_sig(self) -> str:
+    def _get_instance_sig(self) -> str:
         """
         Get the signature string for calling an instance method (if applicable).
 
@@ -127,25 +127,25 @@ class FunctionInspector:
             str: The signature string for calling an instance method.
         """
         if inspect.ismethod(self.obj):
-            return f"get_instance: {self.get_class_name()}, "
+            return f"get_instance: {self._get_class_name()}, "
         if inspect.isfunction(self.obj):
             return ""
         return ""
 
-    def get_test_sig(self) -> str:
+    def _get_test_sig(self) -> str:
         """
         Get the signature string for generating a test function.
 
         Returns:
             str: The signature string for generating a test function.
         """
-        sig = self.get_instance_sig() + self.get_params_str()
+        sig = self._get_instance_sig() + self._get_params_str()
         return (
-            f"def test_{self.strip_underscores(self.name)}"
+            f"def test_{self._strip_underscores(self.name)}"
             f"({sig}, expected_result, expected_context) -> None:\n"
         )
 
-    def get_parametrize_decorator(
+    def _get_parametrize_decorator(
         self, check_types: bool = True, match: bool = False
     ) -> str:
         """
@@ -158,20 +158,20 @@ class FunctionInspector:
         Returns:
             str: The parametrize decorator for the test function.
         """
-        args = self.get_params_str()
+        args = self._get_params_str()
         return (
             "@pytest.mark.parametrize(\n"
             + f'{self.tab}"{args}, expected_result, expected_context",\n'
             + f"{self.tab}[\n"
-            + self.get_test_case(args)
+            + self._get_test_case(args)
             + (
-                self.get_raises_type_error_test_case(args, check_types, match)
+                self._get_raises_type_error_test_case(args, check_types, match)
                 * len(self.parameters)
             )
             + f"{self.tab}]\n)\n"
         )
 
-    def get_test_case(self, args: str) -> str:
+    def _get_test_case(self, args: str) -> str:
         """
         Generate a test case for the test function.
 
@@ -183,7 +183,7 @@ class FunctionInspector:
         """
         return f"{self.tab * 2}({args}, expected_result, expected_context),\n"
 
-    def get_raises_type_error_test_case(
+    def _get_raises_type_error_test_case(
         self, args: str, check_types: bool = True, match: bool = False
     ) -> str:
         """
@@ -204,21 +204,21 @@ class FunctionInspector:
             match_stmt = ', match=r""'
         return f"{self.tab * 2}({args}, None, pytest.raises(TypeError{match_stmt})),\n"
 
-    def get_instance_call(self) -> str:
+    def _get_instance_call(self) -> str:
         """
         Generate a string representation for calling the analysed object.
 
         Returns:
             str: A string representation for calling the analysed object.
         """
-        sig: str = self.get_params_str()
+        sig: str = self._get_params_str()
         if inspect.ismethod(self.obj):
             return f"get_instance.{self.name}({sig}) "
         if inspect.isfunction(self.obj):
             return f"{self.name}({sig}) "
         return f"{self.name}({sig}) "
 
-    def get_test_body(self) -> str:
+    def _get_test_body(self) -> str:
         """
         Generate the body of the test function.
 
@@ -227,7 +227,7 @@ class FunctionInspector:
         """
         test_body = f"{self.tab}with expected_context:\n"
         test_body += f"{2*self.tab}assert "
-        test_body += self.get_instance_call()
+        test_body += self._get_instance_call()
         if self.return_annotation != "None":
             test_body += "== expected_result\n"
         else:
@@ -247,13 +247,13 @@ class FunctionInspector:
             str: The complete test function.
         """
         test_full = ""
-        test_full += self.get_parametrize_decorator(check_types, match)
-        test_full += self.get_test_sig()
-        test_full += self.get_test_body()
+        test_full += self._get_parametrize_decorator(check_types, match)
+        test_full += self._get_test_sig()
+        test_full += self._get_test_body()
         test_full += "\n\n"
         return test_full
 
-    def get_func_sig(self) -> str:
+    def _get_func_sig(self) -> str:
         definition = "def "
         init_sig = str(inspect.signature(self.obj))
 
@@ -264,23 +264,23 @@ class FunctionInspector:
         sig = f"{definition}{self.name}" + init_sig + ":"
         return sig
 
-    def get_docstring_patterns(self) -> str:
+    def _get_docstring_patterns(self) -> str:
         double_quotes = r'""".*?"""\n'
         single_quotes = r"'''.*?'''\n"
         return f"({double_quotes}|{single_quotes})"
 
-    def find_string_end(self, func_str: str, pattern: str) -> int | None:
+    def _find_string_end(self, func_str: str, pattern: str) -> int | None:
         match = re.search(pattern, func_str, re.DOTALL)
         if match:
             return match.end()
         return None
 
-    def insert_string_at_idx(
+    def _insert_string_at_idx(
         self, func_str: str, idx: int, to_insert: str
     ) -> str:
         return func_str[:idx] + to_insert + func_str[idx:]
 
-    def get_guards(self) -> str:
+    def _get_guards(self) -> str:
         """
         Generate guards for type checking of function arguments.
 
@@ -319,14 +319,16 @@ class FunctionInspector:
 
     def add_guards(self) -> str:
         func_str = str(inspect.getsource(self.obj))
-        end_idx = self.find_string_end(func_str, self.get_docstring_patterns())
+        end_idx = self._find_string_end(
+            func_str, self._get_docstring_patterns()
+        )
 
         if end_idx:
-            func_str = self.insert_string_at_idx(
-                func_str, end_idx, self.get_guards()
+            func_str = self._insert_string_at_idx(
+                func_str, end_idx, self._get_guards()
             )
         else:
-            sig = self.get_func_sig() + "\n"
-            func_str = func_str.replace(sig, (sig + self.get_guards()))
+            sig = self._get_func_sig() + "\n"
+            func_str = func_str.replace(sig, (sig + self._get_guards()))
 
         return func_str + "\n\n"
