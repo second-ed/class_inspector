@@ -5,6 +5,11 @@ from typing import Callable
 import attr
 from attr.validators import instance_of
 
+from ._logger import get_logger, setup_logger
+
+setup_logger(__file__, 2)
+logger = get_logger(__name__)
+
 
 @attr.define
 class FunctionInspector:
@@ -366,8 +371,12 @@ class FunctionInspector:
         Returns:
             str: the analysed function with added guard conditions
         """
-        func_str = str(inspect.getsource(self.obj))
+        # replace double quotes with single quotes as strings default to single quotes
+        func_str = str(inspect.getsource(self.obj)).replace('"', "'")
         end_idx = self.find_string_end(func_str, self.get_docstring_patterns())
+
+        logger.debug(f"{func_str = }")
+        logger.debug(f"{end_idx = }")
 
         if end_idx:
             func_str = self.insert_string_at_idx(
@@ -375,6 +384,13 @@ class FunctionInspector:
             )
         else:
             sig = self.get_func_sig() + "\n"
-            func_str = func_str.replace(sig, (sig + self.get_guards()))
+
+            if sig not in func_str:
+                raise ValueError(f"sig not in function str: {sig} {func_str}")
+
+            func_str = func_str.replace(sig, f"{sig}{self.get_guards()}")
+
+        logger.debug(f"{sig = }")
+        logger.debug(f"{func_str = }")
 
         return func_str + "\n\n"
