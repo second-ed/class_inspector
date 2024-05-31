@@ -254,6 +254,12 @@ class FunctionInspector:
         return test_full
 
     def _get_func_sig(self) -> str:
+        """returns the function signature
+        supports methods by inserting self as the first arg
+
+        Returns:
+            str: function signature
+        """
         definition = "def "
         init_sig = str(inspect.signature(self.obj))
 
@@ -265,11 +271,33 @@ class FunctionInspector:
         return sig
 
     def _get_docstring_patterns(self) -> str:
+        """
+        Generate a regex pattern to match Python docstrings enclosed in triple quotes.
+
+        This method creates a pattern that matches docstrings enclosed in either
+        triple double quotes (\"\"\"...\"\"\") or triple single quotes ('''...''').
+
+        Returns:
+            str: A regex pattern that matches docstrings enclosed in triple quotes.
+        """
         double_quotes = r'""".*?"""\n'
         single_quotes = r"'''.*?'''\n"
         return f"({double_quotes}|{single_quotes})"
 
     def _find_string_end(self, func_str: str, pattern: str) -> int | None:
+        """
+        Find the end index of the first match of a pattern in a string.
+
+        This method searches for the given regex pattern in the provided string
+        and returns the end index of the first match found.
+
+        Args:
+            func_str (str): The string in which to search for the pattern.
+            pattern (str): The regex pattern to search for in the string.
+
+        Returns:
+            int | None: The end index of the first match if found, otherwise None.
+        """
         match = re.search(pattern, func_str, re.DOTALL)
         if match:
             return match.end()
@@ -278,6 +306,20 @@ class FunctionInspector:
     def _insert_string_at_idx(
         self, func_str: str, idx: int, to_insert: str
     ) -> str:
+        """
+        Insert a string at a specified index in another string.
+
+        This method inserts the specified string `to_insert` into the given
+        string `func_str` at the specified index `idx`.
+
+        Args:
+            func_str (str): The original string where the insertion will occur.
+            idx (int): The index at which to insert the new string.
+            to_insert (str): The string to be inserted into the original string.
+
+        Returns:
+            str: The modified string with `to_insert` inserted at the specified index.
+        """
         return func_str[:idx] + to_insert + func_str[idx:]
 
     def _get_guards(self) -> str:
@@ -318,6 +360,12 @@ class FunctionInspector:
         return guards + raises
 
     def add_guards(self) -> str:
+        """finds the last index of the doctsring if present and inserts
+        the guard conditions in there
+
+        Returns:
+            str: the analysed function with added guard conditions
+        """
         func_str = str(inspect.getsource(self.obj))
         end_idx = self._find_string_end(
             func_str, self._get_docstring_patterns()
