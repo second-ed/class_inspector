@@ -416,10 +416,49 @@ def test_insert_string_at_idx(
 
 
 @pytest.mark.parametrize(
-    "func, expected_result, expected_context",
+    "func, add_guards, add_debugs, expected_result, expected_context",
     [
         (
             test_function,
+            True,
+            True,
+            (
+                "@pytest.fixture\n"
+                "def test_function(param1: float, param2: int, param3: bool, param4: str = 'test') -> float:\n"
+                "    for k, v in locals().items():\n"
+                '        logger.debug(f"{k} = {v}")\n'
+                "    if not all([isinstance(param1, float), isinstance(param2, int), isinstance(param3, bool), isinstance(param4, str)]):\n"
+                "        raise TypeError(\n"
+                '            "test_function expects arg types: [float, int, bool, str], "\n'
+                '            f"received: [{type(param1).__name__}, {type(param2).__name__}, {type(param3).__name__}, {type(param4).__name__}]"\n'
+                "        )\n"
+                "    if param3:\n"
+                "        return param1 - param2\n"
+                "    else:\n"
+                "        return param1 + param2\n\n\n"
+            ),
+            does_not_raise(),
+        ),
+        (
+            test_function,
+            False,
+            True,
+            (
+                "@pytest.fixture\n"
+                "def test_function(param1: float, param2: int, param3: bool, param4: str = 'test') -> float:\n"
+                "    for k, v in locals().items():\n"
+                '        logger.debug(f"{k} = {v}")\n'
+                "    if param3:\n"
+                "        return param1 - param2\n"
+                "    else:\n"
+                "        return param1 + param2\n\n\n"
+            ),
+            does_not_raise(),
+        ),
+        (
+            test_function,
+            True,
+            False,
             (
                 "@pytest.fixture\n"
                 "def test_function(param1: float, param2: int, param3: bool, param4: str = 'test') -> float:\n"
@@ -437,9 +476,17 @@ def test_insert_string_at_idx(
         ),
     ],
 )
-def test_add_guards(
-    get_instance: FunctionInspector, func, expected_result, expected_context
+def test_add_boilerplate(
+    get_instance: FunctionInspector,
+    func,
+    add_guards,
+    add_debugs,
+    expected_result,
+    expected_context,
 ) -> None:
     with expected_context:
         get_instance.analyse(func)
-        assert get_instance.add_guards() == expected_result
+        assert (
+            get_instance.add_boilerplate(add_guards, add_debugs)
+            == expected_result
+        )

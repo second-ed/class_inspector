@@ -392,7 +392,9 @@ class FunctionInspector:
 
         return re.sub(r"\((.*?)\)", replacer, func_str, flags=re.DOTALL)
 
-    def add_guards(self) -> str:
+    def add_boilerplate(
+        self, add_guards: bool = True, add_debugs: bool = True
+    ) -> str:
         """finds the last index of the doctsring if present and inserts
         the guard conditions in there
 
@@ -404,23 +406,37 @@ class FunctionInspector:
             str(inspect.getsource(self.obj)).replace('"', "'")
         )
         end_idx = self.find_string_end(func_str, self.get_docstring_patterns())
-
         logger.debug(f"{func_str = }")
         logger.debug(f"{end_idx = }")
 
         if end_idx:
-            func_str = self.insert_string_at_idx(
-                func_str, end_idx, self.get_guards()
-            )
+            if add_guards:
+                func_str = self.insert_string_at_idx(
+                    func_str, end_idx, self.get_guards()
+                )
+            if add_debugs:
+                func_str = self.insert_string_at_idx(
+                    func_str, end_idx, self.get_guards()
+                )
         else:
             sig = self.get_func_sig() + "\n"
 
             if sig not in func_str:
                 raise ValueError(f"sig not in function str: {sig} {func_str}")
-
-            func_str = func_str.replace(sig, f"{sig}{self.get_guards()}")
+            if add_guards:
+                func_str = func_str.replace(sig, f"{sig}{self.get_guards()}")
+            if add_debugs:
+                func_str = func_str.replace(sig, f"{sig}{self.get_debugs()}")
 
         logger.debug(f"{sig = }")
         logger.debug(f"{func_str = }")
-
         return func_str + "\n\n"
+
+    def get_debugs(self) -> str:
+        if not self.parameters:
+            return ""
+        debugs = (
+            f"{self.tab*(1 + self.is_method)}for k, v in locals().items():\n"
+            f'{self.tab*(2 + self.is_method)}logger.debug(f"{{k}} = {{v}}")\n'
+        )
+        return debugs
