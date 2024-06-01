@@ -5,7 +5,9 @@ from class_inspector.function_inspector import FunctionInspector
 
 
 @pytest.fixture
-def test_function(param1: float, param2: int, param3: bool) -> float:
+def test_function(
+    param1: float, param2: int, param3: bool, param4: str = "test"
+) -> float:
     if param3:
         return param1 - param2
     else:
@@ -25,6 +27,7 @@ def test_analyse(get_instance: FunctionInspector) -> None:
         "param1": float,
         "param2": int,
         "param3": bool,
+        "param4": str,
     }
     assert get_instance.return_annotation == "float"
 
@@ -49,10 +52,10 @@ def test_get_class_name(
         (
             test_function,
             (
-                "    if not all([isinstance(param1, float), isinstance(param2, int), isinstance(param3, bool)]):\n"
+                "    if not all([isinstance(param1, float), isinstance(param2, int), isinstance(param3, bool), isinstance(param4, str)]):\n"
                 "        raise TypeError(\n"
-                '            "test_function expects arg types: [float, int, bool], "\n'
-                '            f"received: [{type(param1).__name__}, {type(param2).__name__}, {type(param3).__name__}]"\n'
+                '            "test_function expects arg types: [float, int, bool, str], "\n'
+                '            f"received: [{type(param1).__name__}, {type(param2).__name__}, {type(param3).__name__}, {type(param4).__name__}]"\n'
                 "        )\n"
             ),
             does_not_raise(),
@@ -72,7 +75,7 @@ def test_get_guards(
     [
         (
             test_function,
-            "test_function(param1, param2, param3) ",
+            "test_function(param1, param2, param3, param4) ",
             does_not_raise(),
         ),
     ],
@@ -108,12 +111,13 @@ def test_get_instance_sig(
             False,
             (
                 "@pytest.mark.parametrize(\n"
-                '    "param1, param2, param3, expected_result, expected_context",\n'
+                '    "param1, param2, param3, param4, expected_result, expected_context",\n'
                 "    [\n"
-                "        (param1, param2, param3, expected_result, expected_context),\n"
-                "        (param1, param2, param3, None, pytest.raises(TypeError)),\n"
-                "        (param1, param2, param3, None, pytest.raises(TypeError)),\n"
-                "        (param1, param2, param3, None, pytest.raises(TypeError)),\n"
+                "        (param1, param2, param3, param4, expected_result, expected_context),\n"
+                "        (param1, param2, param3, param4, None, pytest.raises(TypeError)),\n"
+                "        (param1, param2, param3, param4, None, pytest.raises(TypeError)),\n"
+                "        (param1, param2, param3, param4, None, pytest.raises(TypeError)),\n"
+                "        (param1, param2, param3, param4, None, pytest.raises(TypeError)),\n"
                 "    ]\n)\n"
             ),
             does_not_raise(),
@@ -124,12 +128,13 @@ def test_get_instance_sig(
             True,
             (
                 "@pytest.mark.parametrize(\n"
-                '    "param1, param2, param3, expected_result, expected_context",\n'
+                '    "param1, param2, param3, param4, expected_result, expected_context",\n'
                 "    [\n"
-                "        (param1, param2, param3, expected_result, expected_context),\n"
-                '        (param1, param2, param3, None, pytest.raises(TypeError, match=r"")),\n'
-                '        (param1, param2, param3, None, pytest.raises(TypeError, match=r"")),\n'
-                '        (param1, param2, param3, None, pytest.raises(TypeError, match=r"")),\n'
+                "        (param1, param2, param3, param4, expected_result, expected_context),\n"
+                '        (param1, param2, param3, param4, None, pytest.raises(TypeError, match=r"")),\n'
+                '        (param1, param2, param3, param4, None, pytest.raises(TypeError, match=r"")),\n'
+                '        (param1, param2, param3, param4, None, pytest.raises(TypeError, match=r"")),\n'
+                '        (param1, param2, param3, param4, None, pytest.raises(TypeError, match=r"")),\n'
                 "    ]\n)\n"
             ),
             does_not_raise(),
@@ -140,9 +145,9 @@ def test_get_instance_sig(
             True,
             (
                 "@pytest.mark.parametrize(\n"
-                '    "param1, param2, param3, expected_result, expected_context",\n'
+                '    "param1, param2, param3, param4, expected_result, expected_context",\n'
                 "    [\n"
-                "        (param1, param2, param3, expected_result, expected_context),\n"
+                "        (param1, param2, param3, param4, expected_result, expected_context),\n"
                 "    ]\n)\n"
             ),
             does_not_raise(),
@@ -168,7 +173,7 @@ def test_get_parametrize_decorator(
 @pytest.mark.parametrize(
     "func, expected_result, expected_context",
     [
-        (test_function, "param1, param2, param3", does_not_raise()),
+        (test_function, "param1, param2, param3, param4", does_not_raise()),
     ],
 )
 def test_get_params_str(
@@ -182,7 +187,7 @@ def test_get_params_str(
 @pytest.mark.parametrize(
     "func, expected_result, expected_context",
     [
-        (test_function, "float, int, bool", does_not_raise()),
+        (test_function, "float, int, bool, str", does_not_raise()),
     ],
 )
 def test_get_params_types(
@@ -216,16 +221,17 @@ def test_get_return_annotations(
             False,
             (
                 "@pytest.mark.parametrize(\n"
-                '    "param1, param2, param3, expected_result, expected_context",\n'
+                '    "param1, param2, param3, param4, expected_result, expected_context",\n'
                 "    [\n"
-                "        (param1, param2, param3, expected_result, expected_context),\n"
-                "        (param1, param2, param3, None, pytest.raises(TypeError)),\n"
-                "        (param1, param2, param3, None, pytest.raises(TypeError)),\n"
-                "        (param1, param2, param3, None, pytest.raises(TypeError)),\n"
+                "        (param1, param2, param3, param4, expected_result, expected_context),\n"
+                "        (param1, param2, param3, param4, None, pytest.raises(TypeError)),\n"
+                "        (param1, param2, param3, param4, None, pytest.raises(TypeError)),\n"
+                "        (param1, param2, param3, param4, None, pytest.raises(TypeError)),\n"
+                "        (param1, param2, param3, param4, None, pytest.raises(TypeError)),\n"
                 "    ]\n)\n"
-                "def test_test_function(param1, param2, param3, expected_result, expected_context) -> None:\n"
+                "def test_test_function(param1, param2, param3, param4, expected_result, expected_context) -> None:\n"
                 "    with expected_context:\n"
-                "        assert test_function(param1, param2, param3) == expected_result\n\n\n"
+                "        assert test_function(param1, param2, param3, param4) == expected_result\n\n\n"
             ),
             does_not_raise(),
         ),
@@ -235,16 +241,17 @@ def test_get_return_annotations(
             True,
             (
                 "@pytest.mark.parametrize(\n"
-                '    "param1, param2, param3, expected_result, expected_context",\n'
+                '    "param1, param2, param3, param4, expected_result, expected_context",\n'
                 "    [\n"
-                "        (param1, param2, param3, expected_result, expected_context),\n"
-                '        (param1, param2, param3, None, pytest.raises(TypeError, match=r"")),\n'
-                '        (param1, param2, param3, None, pytest.raises(TypeError, match=r"")),\n'
-                '        (param1, param2, param3, None, pytest.raises(TypeError, match=r"")),\n'
+                "        (param1, param2, param3, param4, expected_result, expected_context),\n"
+                '        (param1, param2, param3, param4, None, pytest.raises(TypeError, match=r"")),\n'
+                '        (param1, param2, param3, param4, None, pytest.raises(TypeError, match=r"")),\n'
+                '        (param1, param2, param3, param4, None, pytest.raises(TypeError, match=r"")),\n'
+                '        (param1, param2, param3, param4, None, pytest.raises(TypeError, match=r"")),\n'
                 "    ]\n)\n"
-                "def test_test_function(param1, param2, param3, expected_result, expected_context) -> None:\n"
+                "def test_test_function(param1, param2, param3, param4, expected_result, expected_context) -> None:\n"
                 "    with expected_context:\n"
-                "        assert test_function(param1, param2, param3) == expected_result\n\n\n"
+                "        assert test_function(param1, param2, param3, param4) == expected_result\n\n\n"
             ),
             does_not_raise(),
         ),
@@ -254,13 +261,13 @@ def test_get_return_annotations(
             True,
             (
                 "@pytest.mark.parametrize(\n"
-                '    "param1, param2, param3, expected_result, expected_context",\n'
+                '    "param1, param2, param3, param4, expected_result, expected_context",\n'
                 "    [\n"
-                "        (param1, param2, param3, expected_result, expected_context),\n"
+                "        (param1, param2, param3, param4, expected_result, expected_context),\n"
                 "    ]\n)\n"
-                "def test_test_function(param1, param2, param3, expected_result, expected_context) -> None:\n"
+                "def test_test_function(param1, param2, param3, param4, expected_result, expected_context) -> None:\n"
                 "    with expected_context:\n"
-                "        assert test_function(param1, param2, param3) == expected_result\n\n\n"
+                "        assert test_function(param1, param2, param3, param4) == expected_result\n\n\n"
             ),
             does_not_raise(),
         ),
@@ -285,7 +292,7 @@ def test_get_test(
         (
             test_function,
             "    with expected_context:\n"
-            "        assert test_function(param1, param2, param3) == expected_result\n",
+            "        assert test_function(param1, param2, param3, param4) == expected_result\n",
             does_not_raise(),
         ),
     ],
@@ -303,7 +310,7 @@ def test_get_test_body(
     [
         (
             test_function,
-            "def test_test_function(param1, param2, param3, expected_result, expected_context) -> None:\n",
+            "def test_test_function(param1, param2, param3, param4, expected_result, expected_context) -> None:\n",
             does_not_raise(),
         ),
     ],
@@ -343,7 +350,7 @@ def test_values_strip_underscores(
     [
         (
             test_function,
-            "def test_function(param1: float, param2: int, param3: bool) -> float:",
+            "def test_function(param1: float, param2: int, param3: bool, param4: str = 'test') -> float:",
             does_not_raise(),
         ),
     ],
@@ -415,11 +422,11 @@ def test_insert_string_at_idx(
             test_function,
             (
                 "@pytest.fixture\n"
-                "def test_function(param1: float, param2: int, param3: bool) -> float:\n"
-                "    if not all([isinstance(param1, float), isinstance(param2, int), isinstance(param3, bool)]):\n"
+                "def test_function(param1: float, param2: int, param3: bool, param4: str = 'test') -> float:\n"
+                "    if not all([isinstance(param1, float), isinstance(param2, int), isinstance(param3, bool), isinstance(param4, str)]):\n"
                 "        raise TypeError(\n"
-                '            "test_function expects arg types: [float, int, bool], "\n'
-                '            f"received: [{type(param1).__name__}, {type(param2).__name__}, {type(param3).__name__}]"\n'
+                '            "test_function expects arg types: [float, int, bool, str], "\n'
+                '            f"received: [{type(param1).__name__}, {type(param2).__name__}, {type(param3).__name__}, {type(param4).__name__}]"\n'
                 "        )\n"
                 "    if param3:\n"
                 "        return param1 - param2\n"

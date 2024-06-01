@@ -364,6 +364,14 @@ class FunctionInspector:
         )
         return guards + raises
 
+    def clean_func(self, func_str: str) -> str:
+        def replacer(match):
+            content = match.group(1)
+            cleaned_content = " ".join(content.split())
+            return f"({cleaned_content})"
+
+        return re.sub(r"\((.*?)\)", replacer, func_str, flags=re.DOTALL)
+
     def add_guards(self) -> str:
         """finds the last index of the doctsring if present and inserts
         the guard conditions in there
@@ -372,7 +380,9 @@ class FunctionInspector:
             str: the analysed function with added guard conditions
         """
         # replace double quotes with single quotes as strings default to single quotes
-        func_str = str(inspect.getsource(self.obj)).replace('"', "'")
+        func_str = self.clean_func(
+            str(inspect.getsource(self.obj)).replace('"', "'")
+        )
         end_idx = self.find_string_end(func_str, self.get_docstring_patterns())
 
         logger.debug(f"{func_str = }")
