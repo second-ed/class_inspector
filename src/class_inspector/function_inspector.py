@@ -37,17 +37,82 @@ class FunctionInspector:
             logger.debug(f"{k} = {v}")
         self.obj = object_
         self.name = self.obj.__name__
-        self.doc = self.get_doc()
+        self.doc = self._get_doc()
         self.parameters = {
             v.name: v.annotation
             for k, v in inspect.signature(self.obj).parameters.items()
         }
-        self.return_annotation = self.get_return_annotations()
+        self.return_annotation = self._get_return_annotations()
         self.tab: str = "    "
         # add 1 tab to the start of each line if obj is a method
         self.is_method = int(inspect.ismethod(self.obj))
 
-    def get_doc(self) -> str:
+    def add_boilerplate(
+        self, add_guards: bool = True, add_debugs: bool = True
+    ) -> str:
+        """finds the last index of the doctsring if present and inserts
+        the guard conditions in there
+
+        Returns:
+            str: the analysed function with added guard conditions
+        """
+        for k, v in locals().items():
+            logger.debug(f"{k} = {v}")
+        # replace double quotes with single quotes as strings default to single quotes
+        func_str = self._clean_func(
+            str(inspect.getsource(self.obj)).replace('"', "'")
+        )
+        end_idx = self._find_string_end(
+            func_str, self._get_docstring_patterns()
+        )
+        logger.debug(f"{func_str = }")
+        logger.debug(f"{end_idx = }")
+
+        if end_idx:
+            if add_guards:
+                func_str = self._insert_string_at_idx(
+                    func_str, end_idx, self._get_guards()
+                )
+            if add_debugs:
+                func_str = self._insert_string_at_idx(
+                    func_str, end_idx, self._get_guards()
+                )
+        else:
+            sig = self._get_func_sig() + "\n"
+
+            if sig not in func_str:
+                raise ValueError(f"sig not in function str: {sig} {func_str}")
+            if add_guards:
+                func_str = func_str.replace(sig, f"{sig}{self._get_guards()}")
+            if add_debugs:
+                func_str = func_str.replace(sig, f"{sig}{self._get_debugs()}")
+
+        logger.debug(f"{sig = }")
+        logger.debug(f"{func_str = }")
+        return func_str + "\n\n"
+
+    def get_test(self, check_types: bool = True, match: bool = False) -> str:
+        """
+        Generate the complete test function.
+
+        Args:
+            check_types (bool): Whether to include type checking in the test
+                function.
+            match (bool): Whether to include match pattern in the test function.
+
+        Returns:
+            str: The complete test function.
+        """
+        for k, v in locals().items():
+            logger.debug(f"{k} = {v}")
+        test_full = ""
+        test_full += self._get_parametrize_decorator(check_types, match)
+        test_full += self._get_test_sig()
+        test_full += self._get_test_body()
+        test_full += "\n\n"
+        return test_full
+
+    def _get_doc(self) -> str:
         """
         Get the documentation string of the analysed object.
 
@@ -59,7 +124,7 @@ class FunctionInspector:
             return str(doc)
         return ""
 
-    def get_return_annotations(self) -> str:
+    def _get_return_annotations(self) -> str:
         """
         Get the return annotation of the analysed object.
 
@@ -73,91 +138,7 @@ class FunctionInspector:
             return str(annot)
         return "None"
 
-    def get_params_str(self) -> str:
-        """
-        Get a string representation of the parameters of the analysed object.
-
-        Returns:
-            str: A string representation of the parameters of the analysed object.
-        """
-        params = ", ".join(list(self.parameters.keys()))
-        if params:
-            return params  # + ", "
-        return ""
-
-    def get_params_types(self) -> str:
-        """
-        Get a string representation of the types of the parameters of the analysed
-        object.
-
-        Returns:
-            str: A string representation of the types of the parameters of the
-                analysed object.
-        """
-        return ", ".join(
-            [
-                t_.__name__ if hasattr(t_, "__name__") else "no_type"
-                for t_ in self.parameters.values()
-            ]
-        )
-
-    def get_class_name(self) -> str:
-        """
-        Get the class name of the analysed object (if it's a method).
-
-        Returns:
-            str: The class name of the analysed object.
-        """
-        if inspect.ismethod(self.obj):
-            return self.obj.__self__.__class__.__name__
-        return self.name
-
-    def strip_underscores(self, item: str) -> str:
-        """
-        Remove underscores from the given string.
-
-        Args:
-            item (str): The string from which underscores should be removed.
-
-        Returns:
-            str: The string without underscores.
-
-        Raises:
-            TypeError: If the input is not a string.
-        """
-        for k, v in locals().items():
-            logger.debug(f"{k} = {v}")
-        if not isinstance(item, str):
-            raise TypeError(f"item must be of type str, got {type(item)}")
-        return item.strip("_")
-
-    def get_instance_sig(self) -> str:
-        """
-        Get the signature string for calling an instance method (if applicable).
-
-        Returns:
-            str: The signature string for calling an instance method.
-        """
-        if inspect.ismethod(self.obj):
-            return f"get_instance: {self.get_class_name()}, "
-        if inspect.isfunction(self.obj):
-            return ""
-        return ""
-
-    def get_test_sig(self) -> str:
-        """
-        Get the signature string for generating a test function.
-
-        Returns:
-            str: The signature string for generating a test function.
-        """
-        sig = self.get_instance_sig() + self.get_params_str()
-        return (
-            f"def test_{self.strip_underscores(self.name)}"
-            f"({sig}, expected_result, expected_context) -> None:\n"
-        )
-
-    def get_parametrize_decorator(
+    def _get_parametrize_decorator(
         self, check_types: bool = True, match: bool = False
     ) -> str:
         """
@@ -172,20 +153,61 @@ class FunctionInspector:
         """
         for k, v in locals().items():
             logger.debug(f"{k} = {v}")
-        args = self.get_params_str()
+        args = self._get_params_str()
         return (
             "@pytest.mark.parametrize(\n"
             + f'{self.tab}"{args}, expected_result, expected_context",\n'
             + f"{self.tab}[\n"
-            + self.get_test_case(args)
+            + self._get_test_case(args)
             + (
-                self.get_raises_type_error_test_case(args, check_types, match)
+                self._get_raises_type_error_test_case(args, check_types, match)
                 * len(self.parameters)
             )
             + f"{self.tab}]\n)\n"
         )
 
-    def get_test_case(self, args: str) -> str:
+    def _get_test_sig(self) -> str:
+        """
+        Get the signature string for generating a test function.
+
+        Returns:
+            str: The signature string for generating a test function.
+        """
+        sig = self._get_instance_sig() + self._get_params_str()
+        return (
+            f"def test_{self._strip_underscores(self.name)}"
+            f"({sig}, expected_result, expected_context) -> None:\n"
+        )
+
+    def _get_test_body(self) -> str:
+        """
+        Generate the body of the test function.
+
+        Returns:
+            str: The body of the test function.
+        """
+        test_body = f"{self.tab}with expected_context:\n"
+        test_body += f"{2*self.tab}assert "
+        test_body += self._get_instance_call()
+        if self.return_annotation != "None":
+            test_body += "== expected_result\n"
+        else:
+            test_body += "is None\n"
+        return test_body
+
+    def _get_params_str(self) -> str:
+        """
+        Get a string representation of the parameters of the analysed object.
+
+        Returns:
+            str: A string representation of the parameters of the analysed object.
+        """
+        params = ", ".join(list(self.parameters.keys()))
+        if params:
+            return params  # + ", "
+        return ""
+
+    def _get_test_case(self, args: str) -> str:
         """
         Generate a test case for the test function.
 
@@ -199,7 +221,7 @@ class FunctionInspector:
             logger.debug(f"{k} = {v}")
         return f"{self.tab * 2}({args}, expected_result, expected_context),\n"
 
-    def get_raises_type_error_test_case(
+    def _get_raises_type_error_test_case(
         self, args: str, check_types: bool = True, match: bool = False
     ) -> str:
         """
@@ -222,58 +244,80 @@ class FunctionInspector:
             match_stmt = ', match=r""'
         return f"{self.tab * 2}({args}, None, pytest.raises(TypeError{match_stmt})),\n"
 
-    def get_instance_call(self) -> str:
+    def _strip_underscores(self, item: str) -> str:
+        """
+        Remove underscores from the given string.
+
+        Args:
+            item (str): The string from which underscores should be removed.
+
+        Returns:
+            str: The string without underscores.
+
+        Raises:
+            TypeError: If the input is not a string.
+        """
+        for k, v in locals().items():
+            logger.debug(f"{k} = {v}")
+        if not isinstance(item, str):
+            raise TypeError(f"item must be of type str, got {type(item)}")
+        return item.strip("_")
+
+    def _get_instance_sig(self) -> str:
+        """
+        Get the signature string for calling an instance method (if applicable).
+
+        Returns:
+            str: The signature string for calling an instance method.
+        """
+        if inspect.ismethod(self.obj):
+            return f"get_instance: {self._get_class_name()}, "
+        if inspect.isfunction(self.obj):
+            return ""
+        return ""
+
+    def _get_instance_call(self) -> str:
         """
         Generate a string representation for calling the analysed object.
 
         Returns:
             str: A string representation for calling the analysed object.
         """
-        sig: str = self.get_params_str()
+        sig: str = self._get_params_str()
         if inspect.ismethod(self.obj):
             return f"get_instance.{self.name}({sig}) "
         if inspect.isfunction(self.obj):
             return f"{self.name}({sig}) "
         return f"{self.name}({sig}) "
 
-    def get_test_body(self) -> str:
+    def _get_params_types(self) -> str:
         """
-        Generate the body of the test function.
+        Get a string representation of the types of the parameters of the analysed
+        object.
 
         Returns:
-            str: The body of the test function.
+            str: A string representation of the types of the parameters of the
+                analysed object.
         """
-        test_body = f"{self.tab}with expected_context:\n"
-        test_body += f"{2*self.tab}assert "
-        test_body += self.get_instance_call()
-        if self.return_annotation != "None":
-            test_body += "== expected_result\n"
-        else:
-            test_body += "is None\n"
-        return test_body
+        return ", ".join(
+            [
+                t_.__name__ if hasattr(t_, "__name__") else "no_type"
+                for t_ in self.parameters.values()
+            ]
+        )
 
-    def get_test(self, check_types: bool = True, match: bool = False) -> str:
+    def _get_class_name(self) -> str:
         """
-        Generate the complete test function.
-
-        Args:
-            check_types (bool): Whether to include type checking in the test
-                function.
-            match (bool): Whether to include match pattern in the test function.
+        Get the class name of the analysed object (if it's a method).
 
         Returns:
-            str: The complete test function.
+            str: The class name of the analysed object.
         """
-        for k, v in locals().items():
-            logger.debug(f"{k} = {v}")
-        test_full = ""
-        test_full += self.get_parametrize_decorator(check_types, match)
-        test_full += self.get_test_sig()
-        test_full += self.get_test_body()
-        test_full += "\n\n"
-        return test_full
+        if inspect.ismethod(self.obj):
+            return self.obj.__self__.__class__.__name__
+        return self.name
 
-    def get_func_sig(self) -> str:
+    def _get_func_sig(self) -> str:
         """returns the function signature
         supports methods by inserting self as the first arg
 
@@ -290,7 +334,7 @@ class FunctionInspector:
         sig = f"{definition}{self.name}" + init_sig + ":"
         return sig
 
-    def get_docstring_patterns(self) -> str:
+    def _get_docstring_patterns(self) -> str:
         """
         Generate a regex pattern to match Python docstrings enclosed in triple quotes.
 
@@ -304,7 +348,7 @@ class FunctionInspector:
         single_quotes = r"'''.*?'''\n"
         return f"({double_quotes}|{single_quotes})"
 
-    def find_string_end(self, func_str: str, pattern: str) -> int | None:
+    def _find_string_end(self, func_str: str, pattern: str) -> int | None:
         """
         Find the end index of the first match of a pattern in a string.
 
@@ -325,7 +369,7 @@ class FunctionInspector:
             return match.end()
         return None
 
-    def insert_string_at_idx(
+    def _insert_string_at_idx(
         self, func_str: str, idx: int, to_insert: str
     ) -> str:
         """
@@ -346,7 +390,7 @@ class FunctionInspector:
             logger.debug(f"{k} = {v}")
         return func_str[:idx] + to_insert + func_str[idx:]
 
-    def get_guards(self) -> str:
+    def _get_guards(self) -> str:
         """
         Generate guards for type checking of function arguments.
 
@@ -380,7 +424,7 @@ class FunctionInspector:
         )
         return guards + raises
 
-    def clean_func(self, func_str: str) -> str:
+    def _clean_func(self, func_str: str) -> str:
         for k, v in locals().items():
             logger.debug(f"{k} = {v}")
 
@@ -392,49 +436,7 @@ class FunctionInspector:
 
         return re.sub(r"\((.*?)\)", replacer, func_str, flags=re.DOTALL)
 
-    def add_boilerplate(
-        self, add_guards: bool = True, add_debugs: bool = True
-    ) -> str:
-        """finds the last index of the doctsring if present and inserts
-        the guard conditions in there
-
-        Returns:
-            str: the analysed function with added guard conditions
-        """
-        for k, v in locals().items():
-            logger.debug(f"{k} = {v}")
-        # replace double quotes with single quotes as strings default to single quotes
-        func_str = self.clean_func(
-            str(inspect.getsource(self.obj)).replace('"', "'")
-        )
-        end_idx = self.find_string_end(func_str, self.get_docstring_patterns())
-        logger.debug(f"{func_str = }")
-        logger.debug(f"{end_idx = }")
-
-        if end_idx:
-            if add_guards:
-                func_str = self.insert_string_at_idx(
-                    func_str, end_idx, self.get_guards()
-                )
-            if add_debugs:
-                func_str = self.insert_string_at_idx(
-                    func_str, end_idx, self.get_guards()
-                )
-        else:
-            sig = self.get_func_sig() + "\n"
-
-            if sig not in func_str:
-                raise ValueError(f"sig not in function str: {sig} {func_str}")
-            if add_guards:
-                func_str = func_str.replace(sig, f"{sig}{self.get_guards()}")
-            if add_debugs:
-                func_str = func_str.replace(sig, f"{sig}{self.get_debugs()}")
-
-        logger.debug(f"{sig = }")
-        logger.debug(f"{func_str = }")
-        return func_str + "\n\n"
-
-    def get_debugs(self) -> str:
+    def _get_debugs(self) -> str:
         if not self.parameters:
             return ""
         debugs = (
