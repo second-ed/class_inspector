@@ -17,12 +17,13 @@ class FunctionInspector:
     writing test stubs
     """
 
+    obj: Callable = attr.ib(init=False, validator=[instance_of(Callable)])  # type: ignore
     name: str = attr.ib(init=False, validator=[instance_of(str)])
     doc: str = attr.ib(init=False, validator=[instance_of(str)])
     parameters: dict = attr.ib(init=False, validator=[instance_of(dict)])
     return_annotation: str = attr.ib(init=False, validator=[instance_of(str)])
+    is_method: int = attr.ib(init=False, validator=[instance_of(int)])
     tab: str = attr.ib(default="    ", validator=instance_of(str), init=False)  # type: ignore
-    obj: Callable = attr.ib(init=False)
 
     def analyse(self, object_) -> None:
         """
@@ -32,6 +33,8 @@ class FunctionInspector:
         Args:
             object_ (Callable): The callable object to be analysed.
         """
+        for k, v in locals().items():
+            logger.debug(f"{k} = {v}")
         self.obj = object_
         self.name = self.obj.__name__
         self.doc = self.get_doc()
@@ -41,6 +44,8 @@ class FunctionInspector:
         }
         self.return_annotation = self.get_return_annotations()
         self.tab: str = "    "
+        # add 1 tab to the start of each line if obj is a method
+        self.is_method = int(inspect.ismethod(self.obj))
 
     def get_doc(self) -> str:
         """
@@ -120,6 +125,8 @@ class FunctionInspector:
         Raises:
             TypeError: If the input is not a string.
         """
+        for k, v in locals().items():
+            logger.debug(f"{k} = {v}")
         if not isinstance(item, str):
             raise TypeError(f"item must be of type str, got {type(item)}")
         return item.strip("_")
@@ -163,6 +170,8 @@ class FunctionInspector:
         Returns:
             str: The parametrize decorator for the test function.
         """
+        for k, v in locals().items():
+            logger.debug(f"{k} = {v}")
         args = self.get_params_str()
         return (
             "@pytest.mark.parametrize(\n"
@@ -186,6 +195,8 @@ class FunctionInspector:
         Returns:
             str: The test case for the test function.
         """
+        for k, v in locals().items():
+            logger.debug(f"{k} = {v}")
         return f"{self.tab * 2}({args}, expected_result, expected_context),\n"
 
     def get_raises_type_error_test_case(
@@ -202,6 +213,8 @@ class FunctionInspector:
         Returns:
             str: The test case for raising a type error in the test function.
         """
+        for k, v in locals().items():
+            logger.debug(f"{k} = {v}")
         if not check_types:
             return ""
         match_stmt = ""
@@ -251,6 +264,8 @@ class FunctionInspector:
         Returns:
             str: The complete test function.
         """
+        for k, v in locals().items():
+            logger.debug(f"{k} = {v}")
         test_full = ""
         test_full += self.get_parametrize_decorator(check_types, match)
         test_full += self.get_test_sig()
@@ -303,6 +318,8 @@ class FunctionInspector:
         Returns:
             int | None: The end index of the first match if found, otherwise None.
         """
+        for k, v in locals().items():
+            logger.debug(f"{k} = {v}")
         match = re.search(pattern, func_str, re.DOTALL)
         if match:
             return match.end()
@@ -325,6 +342,8 @@ class FunctionInspector:
         Returns:
             str: The modified string with `to_insert` inserted at the specified index.
         """
+        for k, v in locals().items():
+            logger.debug(f"{k} = {v}")
         return func_str[:idx] + to_insert + func_str[idx:]
 
     def get_guards(self) -> str:
@@ -343,11 +362,8 @@ class FunctionInspector:
             [f"{{type({arg}).__name__}}" for arg in self.parameters.keys()]
         )
 
-        # add 1 tab to the start of each line if obj is a method
-        is_method = int(inspect.ismethod(self.obj))
-
         guards: str = (
-            f"{self.tab*(1 + is_method)}if not all(["
+            f"{self.tab*(1 + self.is_method)}if not all(["
             + ", ".join(
                 [
                     f"isinstance({k}, {v.__name__})"
@@ -357,17 +373,21 @@ class FunctionInspector:
             + "]):\n"
         )
         raises = (
-            f"{self.tab*(2 + is_method)}raise TypeError(\n"
-            + f'{self.tab*(3 + is_method)}"{self.name} expects arg types: [{expected_types}], "\n'
-            + f'{self.tab*(3 + is_method)}f"received: [{received_types}]"\n'
-            + f"{self.tab*(2 + is_method)})\n"
+            f"{self.tab*(2 + self.is_method)}raise TypeError(\n"
+            + f'{self.tab*(3 + self.is_method)}"{self.name} expects arg types: [{expected_types}], "\n'
+            + f'{self.tab*(3 + self.is_method)}f"received: [{received_types}]"\n'
+            + f"{self.tab*(2 + self.is_method)})\n"
         )
         return guards + raises
 
     def clean_func(self, func_str: str) -> str:
+        for k, v in locals().items():
+            logger.debug(f"{k} = {v}")
+
         def replacer(match):
             content = match.group(1)
             cleaned_content = " ".join(content.split())
+            logger.debug(f"{cleaned_content = }")
             return f"({cleaned_content})"
 
         return re.sub(r"\((.*?)\)", replacer, func_str, flags=re.DOTALL)
