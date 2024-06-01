@@ -401,6 +401,8 @@ class FunctionInspector:
         Returns:
             str: the analysed function with added guard conditions
         """
+        for k, v in locals().items():
+            logger.debug(f"{k} = {v}")
         # replace double quotes with single quotes as strings default to single quotes
         func_str = self.clean_func(
             str(inspect.getsource(self.obj)).replace('"', "'")
