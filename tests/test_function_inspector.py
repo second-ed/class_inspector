@@ -425,8 +425,8 @@ def test_insert_string_at_idx(
             (
                 "@pytest.fixture\n"
                 "def test_function(param1: float, param2: int, param3: bool, param4: str = 'test') -> float:\n"
-                "    for k, v in locals().items():\n"
-                '        logger.debug(f"{k} = {v}")\n'
+                "    for key, val in locals().items():\n"
+                '        logger.debug(f"{key} = {val}")\n'
                 "    if not all([isinstance(param1, float), isinstance(param2, int), isinstance(param3, bool), isinstance(param4, str)]):\n"
                 "        raise TypeError(\n"
                 '            "test_function expects arg types: [float, int, bool, str], "\n'
@@ -446,8 +446,8 @@ def test_insert_string_at_idx(
             (
                 "@pytest.fixture\n"
                 "def test_function(param1: float, param2: int, param3: bool, param4: str = 'test') -> float:\n"
-                "    for k, v in locals().items():\n"
-                '        logger.debug(f"{k} = {v}")\n'
+                "    for key, val in locals().items():\n"
+                '        logger.debug(f"{key} = {val}")\n'
                 "    if param3:\n"
                 "        return param1 - param2\n"
                 "    else:\n"

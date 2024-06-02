@@ -33,14 +33,14 @@ class FunctionInspector:
         Args:
             object_ (Callable): The callable object to be analysed.
         """
-        for k, v in locals().items():
-            logger.debug(f"{k} = {v}")
+        for key, val in locals().items():
+            logger.debug(f"{key} = {val}")
         self.obj = object_
         self.name = self.obj.__name__
         self.doc = self._get_doc()
         self.parameters = {
-            v.name: v.annotation
-            for k, v in inspect.signature(self.obj).parameters.items()
+            param.name: param.annotation
+            for _, param in inspect.signature(self.obj).parameters.items()
         }
         self.return_annotation = self._get_return_annotations()
         self.tab: str = "    "
@@ -56,8 +56,8 @@ class FunctionInspector:
         Returns:
             str: the analysed function with added guard conditions
         """
-        for k, v in locals().items():
-            logger.debug(f"{k} = {v}")
+        for key, val in locals().items():
+            logger.debug(f"{key} = {val}")
         # replace double quotes with single quotes as strings default to single quotes
         func_str = self._clean_func(
             str(inspect.getsource(self.obj)).replace('"', "'")
@@ -103,8 +103,8 @@ class FunctionInspector:
         Returns:
             str: The complete test function.
         """
-        for k, v in locals().items():
-            logger.debug(f"{k} = {v}")
+        for key, val in locals().items():
+            logger.debug(f"{key} = {val}")
         test_full = ""
         test_full += self._get_parametrize_decorator(check_types, match)
         test_full += self._get_test_sig()
@@ -151,8 +151,8 @@ class FunctionInspector:
         Returns:
             str: The parametrize decorator for the test function.
         """
-        for k, v in locals().items():
-            logger.debug(f"{k} = {v}")
+        for key, val in locals().items():
+            logger.debug(f"{key} = {val}")
         args = self._get_params_str()
         return (
             "@pytest.mark.parametrize(\n"
@@ -217,8 +217,8 @@ class FunctionInspector:
         Returns:
             str: The test case for the test function.
         """
-        for k, v in locals().items():
-            logger.debug(f"{k} = {v}")
+        for key, val in locals().items():
+            logger.debug(f"{key} = {val}")
         return f"{self.tab * 2}({args}, expected_result, expected_context),\n"
 
     def _get_raises_type_error_test_case(
@@ -235,8 +235,8 @@ class FunctionInspector:
         Returns:
             str: The test case for raising a type error in the test function.
         """
-        for k, v in locals().items():
-            logger.debug(f"{k} = {v}")
+        for key, val in locals().items():
+            logger.debug(f"{key} = {val}")
         if not check_types:
             return ""
         match_stmt = ""
@@ -257,8 +257,8 @@ class FunctionInspector:
         Raises:
             TypeError: If the input is not a string.
         """
-        for k, v in locals().items():
-            logger.debug(f"{k} = {v}")
+        for key, val in locals().items():
+            logger.debug(f"{key} = {val}")
         if not isinstance(item, str):
             raise TypeError(f"item must be of type str, got {type(item)}")
         return item.strip("_")
@@ -362,8 +362,8 @@ class FunctionInspector:
         Returns:
             int | None: The end index of the first match if found, otherwise None.
         """
-        for k, v in locals().items():
-            logger.debug(f"{k} = {v}")
+        for key, val in locals().items():
+            logger.debug(f"{key} = {val}")
         match = re.search(pattern, func_str, re.DOTALL)
         if match:
             return match.end()
@@ -386,8 +386,8 @@ class FunctionInspector:
         Returns:
             str: The modified string with `to_insert` inserted at the specified index.
         """
-        for k, v in locals().items():
-            logger.debug(f"{k} = {v}")
+        for key, val in locals().items():
+            logger.debug(f"{key} = {val}")
         return func_str[:idx] + to_insert + func_str[idx:]
 
     def _get_guards(self) -> str:
@@ -410,23 +410,24 @@ class FunctionInspector:
             f"{self.tab*(1 + self.is_method)}if not all(["
             + ", ".join(
                 [
-                    f"isinstance({k}, {v.__name__})"
-                    for k, v in self.parameters.items()
+                    f"isinstance({arg_name}, {arg_type.__name__})"
+                    for arg_name, arg_type in self.parameters.items()
                 ]
             )
             + "]):\n"
         )
         raises = (
             f"{self.tab*(2 + self.is_method)}raise TypeError(\n"
-            + f'{self.tab*(3 + self.is_method)}"{self.name} expects arg types: [{expected_types}], "\n'
+            + f'{self.tab*(3 + self.is_method)}"{self.name} '
+            + f'expects arg types: [{expected_types}], "\n'
             + f'{self.tab*(3 + self.is_method)}f"received: [{received_types}]"\n'
             + f"{self.tab*(2 + self.is_method)})\n"
         )
         return guards + raises
 
     def _clean_func(self, func_str: str) -> str:
-        for k, v in locals().items():
-            logger.debug(f"{k} = {v}")
+        for key, val in locals().items():
+            logger.debug(f"{key} = {val}")
 
         def replacer(match):
             content = match.group(1)
@@ -440,7 +441,7 @@ class FunctionInspector:
         if not self.parameters:
             return ""
         debugs = (
-            f"{self.tab*(1 + self.is_method)}for k, v in locals().items():\n"
-            f'{self.tab*(2 + self.is_method)}logger.debug(f"{{k}} = {{v}}")\n'
+            f"{self.tab*(1 + self.is_method)}for key, val in locals().items():\n"
+            f'{self.tab*(2 + self.is_method)}logger.debug(f"{{key}} = {{val}}")\n'
         )
         return debugs
