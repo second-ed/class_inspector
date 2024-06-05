@@ -1,14 +1,15 @@
 import inspect
+import logging
 import re
 from typing import Callable
 
 import attr
 from attr.validators import instance_of
 
-from ._logger import get_logger, setup_logger
+from ._logger import setup_logger
 
 setup_logger(__file__, 2)
-logger = get_logger(__name__)
+logger = logging.getLogger()
 
 
 @attr.define

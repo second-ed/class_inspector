@@ -14,10 +14,6 @@ def setup_logger(file, idx) -> bool:
     return True
 
 
-def get_logger(name: str) -> logging.Logger:
-    return logging.getLogger(name)
-
-
 def get_dir_path(src: str, idx: int, dst: str) -> str:
     curr_dir = Path(src).parents[idx]
     return str(curr_dir.joinpath(dst)).replace("\\", "/")
