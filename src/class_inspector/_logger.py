@@ -3,6 +3,8 @@ import logging.config
 import os
 from pathlib import Path
 
+from openpyxl import Workbook
+
 
 def setup_logger(file, idx) -> bool:
     logs_folder = get_dir_path(file, idx, "logs")
@@ -12,6 +14,10 @@ def setup_logger(file, idx) -> bool:
         defaults={"root": logs_folder},
     )
     return True
+
+
+def log_type(item: type) -> bool:
+    return not isinstance(item, (Workbook,))
 
 
 def get_dir_path(src: str, idx: int, dst: str) -> str:

@@ -6,7 +6,7 @@ from typing import Callable
 import attr
 from attr.validators import instance_of
 
-from ._logger import setup_logger
+from ._logger import log_type, setup_logger
 
 setup_logger(__file__, 2)
 logger = logging.getLogger()
@@ -35,7 +35,8 @@ class FunctionInspector:
             object_ (Callable): The callable object to be analysed.
         """
         for key, val in locals().items():
-            logger.debug(f"{key} = {val}")
+            if log_type(val):
+                logger.debug(f"{key} = {val}")
         self.obj = object_
         self.name = self.obj.__name__
         self.doc = self._get_doc()
@@ -58,7 +59,8 @@ class FunctionInspector:
             str: the analysed function with added guard conditions
         """
         for key, val in locals().items():
-            logger.debug(f"{key} = {val}")
+            if log_type(val):
+                logger.debug(f"{key} = {val}")
         # replace double quotes with single quotes as strings default to single quotes
         func_str = self._clean_func(
             str(inspect.getsource(self.obj)).replace('"', "'")
@@ -105,7 +107,8 @@ class FunctionInspector:
             str: The complete test function.
         """
         for key, val in locals().items():
-            logger.debug(f"{key} = {val}")
+            if log_type(val):
+                logger.debug(f"{key} = {val}")
         test_full = ""
         test_full += self._get_parametrize_decorator(check_types, match)
         test_full += self._get_test_sig()
@@ -153,7 +156,8 @@ class FunctionInspector:
             str: The parametrize decorator for the test function.
         """
         for key, val in locals().items():
-            logger.debug(f"{key} = {val}")
+            if log_type(val):
+                logger.debug(f"{key} = {val}")
         args = self._get_params_str()
         return (
             "@pytest.mark.parametrize(\n"
@@ -219,7 +223,8 @@ class FunctionInspector:
             str: The test case for the test function.
         """
         for key, val in locals().items():
-            logger.debug(f"{key} = {val}")
+            if log_type(val):
+                logger.debug(f"{key} = {val}")
         return f"{self.tab * 2}({args}, expected_result, expected_context),\n"
 
     def _get_raises_type_error_test_case(
@@ -237,7 +242,8 @@ class FunctionInspector:
             str: The test case for raising a type error in the test function.
         """
         for key, val in locals().items():
-            logger.debug(f"{key} = {val}")
+            if log_type(val):
+                logger.debug(f"{key} = {val}")
         if not check_types:
             return ""
         match_stmt = ""
@@ -259,7 +265,8 @@ class FunctionInspector:
             TypeError: If the input is not a string.
         """
         for key, val in locals().items():
-            logger.debug(f"{key} = {val}")
+            if log_type(val):
+                logger.debug(f"{key} = {val}")
         if not isinstance(item, str):
             raise TypeError(f"item must be of type str, got {type(item)}")
         return item.strip("_")
@@ -364,7 +371,8 @@ class FunctionInspector:
             int | None: The end index of the first match if found, otherwise None.
         """
         for key, val in locals().items():
-            logger.debug(f"{key} = {val}")
+            if log_type(val):
+                logger.debug(f"{key} = {val}")
         match = re.search(pattern, func_str, re.DOTALL)
         if match:
             return match.end()
@@ -388,7 +396,8 @@ class FunctionInspector:
             str: The modified string with `to_insert` inserted at the specified index.
         """
         for key, val in locals().items():
-            logger.debug(f"{key} = {val}")
+            if log_type(val):
+                logger.debug(f"{key} = {val}")
         return func_str[:idx] + to_insert + func_str[idx:]
 
     def _get_guards(self) -> str:
@@ -428,7 +437,8 @@ class FunctionInspector:
 
     def _clean_func(self, func_str: str) -> str:
         for key, val in locals().items():
-            logger.debug(f"{key} = {val}")
+            if log_type(val):
+                logger.debug(f"{key} = {val}")
 
         def replacer(match):
             content = match.group(1)
