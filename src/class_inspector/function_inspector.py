@@ -272,7 +272,8 @@ class FunctionInspector:
             str: The signature string for calling an instance method.
         """
         if inspect.ismethod(self.obj):
-            return f"get_instance: {self._get_class_name()}, "
+            instance = self._camel_to_snake(self._get_class_name())
+            return f"get_{instance}: {self._get_class_name()}, "
         if inspect.isfunction(self.obj):
             return ""
         return ""
@@ -286,7 +287,8 @@ class FunctionInspector:
         """
         sig: str = self._get_params_str()
         if inspect.ismethod(self.obj):
-            return f"get_instance.{self.name}({sig}) "
+            instance = self._camel_to_snake(self._get_class_name())
+            return f"get_{instance}.{self.name}({sig}) "
         if inspect.isfunction(self.obj):
             return f"{self.name}({sig}) "
         return f"{self.name}({sig}) "
@@ -306,6 +308,11 @@ class FunctionInspector:
                 for t_ in self.parameters.values()
             ]
         )
+
+    def _camel_to_snake(self, name: str) -> str:
+        s1 = re.sub("(.)([A-Z][a-z]+)", r"\1_\2", name)
+        s2 = re.sub("([a-z0-9])([A-Z])", r"\1_\2", s1)
+        return s2.lower()
 
     def _get_class_name(self) -> str:
         """

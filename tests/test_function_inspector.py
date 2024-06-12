@@ -35,7 +35,7 @@ def get_instance() -> FunctionInspector:
 
 
 @pytest.mark.parametrize(
-    "fixture_name, func_name, params, return_annot",
+    "fixture_name, func_name, params, return_annot, is_method",
     [
         (
             "get_mock_function",
@@ -47,7 +47,18 @@ def get_instance() -> FunctionInspector:
                 "param4": str,
             },
             "float",
-        )
+            0,
+        ),
+        (
+            "get_mock_method",
+            "mock_method",
+            {
+                "a": int,
+                "b": str,
+            },
+            "str",
+            1,
+        ),
     ],
 )
 def test_analyse(
@@ -57,6 +68,7 @@ def test_analyse(
     func_name,
     params,
     return_annot,
+    is_method,
 ) -> None:
     func = request.getfixturevalue(fixture_name)
     get_instance.analyse(func)
@@ -64,12 +76,14 @@ def test_analyse(
     assert get_instance.name == func_name
     assert get_instance.parameters == params
     assert get_instance.return_annotation == return_annot
+    assert get_instance.is_method == is_method
 
 
 @pytest.mark.parametrize(
     "fixture_name, expected_result, expected_context",
     [
         ("get_mock_function", "mock_function", does_not_raise()),
+        ("get_mock_method", "MockClass", does_not_raise()),
     ],
 )
 def test_get_class_name(
@@ -98,7 +112,18 @@ def test_get_class_name(
                 "        )\n"
             ),
             does_not_raise(),
-        )
+        ),
+        (
+            "get_mock_method",
+            (
+                "        if not all([isinstance(a, int), isinstance(b, str)]):\n"
+                "            raise TypeError(\n"
+                '                "mock_method expects arg types: [int, str], "\n'
+                '                f"received: [{type(a).__name__}, {type(b).__name__}]"\n'
+                "            )\n"
+            ),
+            does_not_raise(),
+        ),
     ],
 )
 def test_get_guards(
@@ -122,6 +147,11 @@ def test_get_guards(
             "mock_function(param1, param2, param3, param4) ",
             does_not_raise(),
         ),
+        (
+            "get_mock_method",
+            "get_mock_class.mock_method(a, b) ",
+            does_not_raise(),
+        ),
     ],
 )
 def test_get_instance_call(
@@ -141,6 +171,7 @@ def test_get_instance_call(
     "fixture_name, expected_result, expected_context",
     [
         ("get_mock_function", "", does_not_raise()),
+        ("get_mock_method", "get_mock_class: MockClass, ", does_not_raise()),
     ],
 )
 def test_get_instance_sig(
@@ -206,6 +237,32 @@ def test_get_instance_sig(
             ),
             does_not_raise(),
         ),
+        (
+            "get_mock_method",
+            True,
+            False,
+            (
+                "@pytest.mark.parametrize(\n"
+                '    "a, b, expected_result, expected_context",\n    [\n'
+                "        (a, b, expected_result, expected_context),\n"
+                "        (a, b, None, pytest.raises(TypeError)),\n"
+                "        (a, b, None, pytest.raises(TypeError)),\n"
+                "    ]\n)\n"
+            ),
+            does_not_raise(),
+        ),
+        (
+            "get_mock_method",
+            False,
+            False,
+            (
+                "@pytest.mark.parametrize(\n"
+                '    "a, b, expected_result, expected_context",\n    [\n'
+                "        (a, b, expected_result, expected_context),\n"
+                "    ]\n)\n"
+            ),
+            does_not_raise(),
+        ),
     ],
 )
 def test_get_parametrize_decorator(
@@ -234,6 +291,11 @@ def test_get_parametrize_decorator(
             "param1, param2, param3, param4",
             does_not_raise(),
         ),
+        (
+            "get_mock_method",
+            "a, b",
+            does_not_raise(),
+        ),
     ],
 )
 def test_get_params_str(
@@ -253,6 +315,7 @@ def test_get_params_str(
     "fixture_name, expected_result, expected_context",
     [
         ("get_mock_function", "float, int, bool, str", does_not_raise()),
+        ("get_mock_method", "int, str", does_not_raise()),
     ],
 )
 def test_get_params_types(
@@ -272,6 +335,7 @@ def test_get_params_types(
     "fixture_name, expected_result, expected_context",
     [
         ("get_mock_function", "float", does_not_raise()),
+        ("get_mock_method", "str", does_not_raise()),
     ],
 )
 def test_get_return_annotations(
@@ -346,6 +410,23 @@ def test_get_return_annotations(
             ),
             does_not_raise(),
         ),
+        (
+            "get_mock_method",
+            True,
+            False,
+            (
+                "@pytest.mark.parametrize(\n"
+                '    "a, b, expected_result, expected_context",\n    [\n'
+                "        (a, b, expected_result, expected_context),\n"
+                "        (a, b, None, pytest.raises(TypeError)),\n"
+                "        (a, b, None, pytest.raises(TypeError)),\n"
+                "    ]\n)\n"
+                "def test_mock_method(get_mock_class: MockClass, a, b, expected_result, expected_context) -> None:\n"
+                "    with expected_context:\n"
+                "        assert get_mock_class.mock_method(a, b) == expected_result\n\n\n"
+            ),
+            does_not_raise(),
+        ),
     ],
 )
 def test_get_test(
@@ -372,6 +453,12 @@ def test_get_test(
             "        assert mock_function(param1, param2, param3, param4) == expected_result\n",
             does_not_raise(),
         ),
+        (
+            "get_mock_method",
+            "    with expected_context:\n"
+            "        assert get_mock_class.mock_method(a, b) == expected_result\n",
+            does_not_raise(),
+        ),
     ],
 )
 def test_get_test_body(
@@ -393,6 +480,11 @@ def test_get_test_body(
         (
             "get_mock_function",
             "def test_mock_function(param1, param2, param3, param4, expected_result, expected_context) -> None:\n",
+            does_not_raise(),
+        ),
+        (
+            "get_mock_method",
+            "def test_mock_method(get_mock_class: MockClass, a, b, expected_result, expected_context) -> None:\n",
             does_not_raise(),
         ),
     ],
@@ -440,6 +532,11 @@ def test_values_strip_underscores(
         (
             "get_mock_function",
             "def mock_function(param1: float, param2: int, param3: bool, param4: str = 'test') -> float:",
+            does_not_raise(),
+        ),
+        (
+            "get_mock_method",
+            "    def mock_method(self, a: int, b: str) -> str:",
             does_not_raise(),
         ),
     ],
@@ -562,6 +659,47 @@ def test_insert_string_at_idx(
                 "        return param1 - param2\n"
                 "    else:\n"
                 "        return param1 + param2\n\n\n"
+            ),
+            does_not_raise(),
+        ),
+        (
+            "get_mock_method",
+            False,
+            False,
+            (
+                "    def mock_method(self, a: int, b: str) -> str:\n        return str(a) + b\n\n\n"
+            ),
+            does_not_raise(),
+        ),
+        (
+            "get_mock_method",
+            True,
+            False,
+            (
+                "    def mock_method(self, a: int, b: str) -> str:\n"
+                "        if not all([isinstance(a, int), isinstance(b, str)]):\n"
+                "            raise TypeError(\n"
+                '                "mock_method expects arg types: [int, str], "\n'
+                '                f"received: [{type(a).__name__}, {type(b).__name__}]"\n'
+                "            )\n"
+                "        return str(a) + b\n\n\n"
+            ),
+            does_not_raise(),
+        ),
+        (
+            "get_mock_method",
+            True,
+            True,
+            (
+                "    def mock_method(self, a: int, b: str) -> str:\n"
+                "        for key, val in locals().items():\n"
+                '            logger.debug(f"{key} = {val}")\n'
+                "        if not all([isinstance(a, int), isinstance(b, str)]):\n"
+                "            raise TypeError(\n"
+                '                "mock_method expects arg types: [int, str], "\n'
+                '                f"received: [{type(a).__name__}, {type(b).__name__}]"\n'
+                "            )\n"
+                "        return str(a) + b\n\n\n"
             ),
             does_not_raise(),
         ),
