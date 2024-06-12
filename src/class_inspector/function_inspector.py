@@ -88,7 +88,7 @@ class FunctionInspector:
             if add_debugs:
                 func_str = func_str.replace(sig, f"{sig}{self._get_debugs()}")
 
-        logger.debug(f"{sig = }")
+            logger.debug(f"{sig = }")
         logger.debug(f"{func_str = }")
         return func_str + "\n\n"
 

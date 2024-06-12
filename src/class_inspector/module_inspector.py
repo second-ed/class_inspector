@@ -44,9 +44,13 @@ class ModuleInspector:
             tests += self.function_inspector.get_test(check_types, match)
         return tests
 
-    def add_guards(self) -> str:
+    def add_boilerplate(
+        self, add_guards: bool = False, add_debugs: bool = False
+    ) -> str:
         functions = ""
         for _, v in self.custom_functions.items():
             self.function_inspector.analyse(v)
-            functions += self.function_inspector.add_guards()
+            functions += self.function_inspector.add_boilerplate(
+                add_guards, add_debugs
+            )
         return functions
