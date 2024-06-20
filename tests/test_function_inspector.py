@@ -332,6 +332,25 @@ def test_get_params_types(
 
 
 @pytest.mark.parametrize(
+    "item, expected_result, expected_context",
+    [
+        ("TestCase", "test_case", does_not_raise()),
+    ],
+)
+def test_camel_to_snake(
+    get_instance: FunctionInspector,
+    get_mock_function,
+    item,
+    expected_result,
+    expected_context,
+) -> None:
+    with expected_context:
+        func = get_mock_function
+        get_instance.analyse(func)
+        assert get_instance._camel_to_snake(item) == expected_result
+
+
+@pytest.mark.parametrize(
     "fixture_name, expected_result, expected_context",
     [
         ("get_mock_function", "float", does_not_raise()),
