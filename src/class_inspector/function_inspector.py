@@ -446,7 +446,7 @@ class FunctionInspector:
         def replacer(match):
             content = match.group(1)
             cleaned_content = " ".join(content.split())
-            logger.debug(f"{cleaned_content = }")
+            logger.debug(f"cleaned_content = {cleaned_content}")
             return f"({cleaned_content})"
 
         return re.sub(r"\((.*?)\)", replacer, func_str, flags=re.DOTALL)
