@@ -30,7 +30,7 @@ def enforce_types(func: Callable) -> Callable:
 def check_type(arg: Any, param_name: str, param_type: type) -> str:
     if not isinstance(arg, simplify_annotation(param_type)):
         return (
-            f"\n    arg {param_name} expects type: {param_type.__name__}, "
+            f"\n    arg {param_name} expects type: {param_type}, "
             f"received: {type(arg).__name__}"
         )
     return ""
