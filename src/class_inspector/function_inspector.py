@@ -72,8 +72,8 @@ class FunctionInspector:
         end_idx = self._find_string_end(
             func_str, self._get_docstring_patterns()
         )
-        logger.debug(f"{func_str = }")
-        logger.debug(f"{end_idx = }")
+        logger.debug(f"func_str = {func_str}")
+        logger.debug(f"end_idx = {end_idx}")
 
         if end_idx:
             if add_guards:
@@ -94,8 +94,8 @@ class FunctionInspector:
             if add_debugs:
                 func_str = func_str.replace(sig, f"{sig}{self._get_debugs()}")
 
-            logger.debug(f"{sig = }")
-        logger.debug(f"{func_str = }")
+            logger.debug(f"sig = {sig}")
+        logger.debug(f"func_str = {func_str}")
         return func_str + "\n\n"
 
     def get_test(self, check_types: bool = True, match: bool = False) -> str:
