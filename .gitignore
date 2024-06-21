@@ -9,7 +9,8 @@ __pycache__/
 *.so
 
 *deprecated*.py
-
+*logs/
+*envs/
 *.csv
 
 # Distribution / packaging

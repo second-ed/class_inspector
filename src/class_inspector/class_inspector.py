@@ -248,13 +248,13 @@ class ClassInspector:
     def get_test_instance_fixture(self) -> str:
         return (
             f"@pytest.fixture\ndef get_instance() -> {self.class_name}:\n"
-            "    return {self.class_name}()\n\n\n"
+            f"    return {self.class_name}()\n\n\n"
         )
 
     def get_test_init(self) -> str:
         return (
             f"def test_init(get_instance: {self.class_name}) -> None:\n"
-            "    assert isinstance(get_instance, {self.class_name})\n\n\n"
+            f"    assert isinstance(get_instance, {self.class_name})\n\n\n"
         )
 
     def set_test_methods(self) -> None:
