@@ -2,7 +2,7 @@ import inspect
 import logging
 import os
 import re
-from typing import Callable
+from typing import Callable, Optional
 
 import attr
 from attr.validators import instance_of
@@ -362,7 +362,7 @@ class FunctionInspector:
         single_quotes = r"'''.*?'''\n"
         return f"({double_quotes}|{single_quotes})"
 
-    def _find_string_end(self, func_str: str, pattern: str) -> int | None:
+    def _find_string_end(self, func_str: str, pattern: str) -> Optional[int]:
         """
         Find the end index of the first match of a pattern in a string.
 
