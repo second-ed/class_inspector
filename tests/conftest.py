@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 import pytest
 from class_inspector.attr_generator import AttrGenerator, AttrMap
 from class_inspector.class_inspector import ClassInspector
