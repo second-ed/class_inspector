@@ -5,9 +5,11 @@ authors = [
 ]
 description = "class inspector class"
 readme = "README.md"
-requires-python = ">=3.8"
+requires-python = ">=3.7"
 version = "0.0.1"
-dependencies = []
+dependencies = [
+    "dotenv",
+]
 
 [project.optional-dependencies]
 test = [

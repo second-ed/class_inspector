@@ -1,14 +1,20 @@
 import inspect
 import logging
+import os
 import re
 from typing import Callable
 
 import attr
 from attr.validators import instance_of
+from dotenv import load_dotenv
 
 from ._logger import compress_logging_value, setup_logger
 
-setup_logger(__file__, 2)
+load_dotenv()
+
+if os.getenv("ENABLE_LOGGING", "false").lower() == "true":
+    setup_logger(__file__, 2)
+
 logger = logging.getLogger()
 
 
