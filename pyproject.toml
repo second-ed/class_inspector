@@ -8,12 +8,13 @@ readme = "README.md"
 requires-python = ">=3.7"
 version = "0.1.0"
 dependencies = [
-    "numpy >= 1.19.5",
+    "attr >= 22.1.0",
     "python-dotenv >=0.21.0",
 ]
 
 [project.optional-dependencies]
 test = [
+    "numpy >= 1.19.5",
     "pytest",
     "pytest-cov",
     "hypothesis",
