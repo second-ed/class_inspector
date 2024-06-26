@@ -20,7 +20,7 @@ test = [
     "hypothesis",
 ]
 lint = [
-    "black<24",
+    "black >= 24",
     "ruff",
     "pylint>=3.0.1",
 ]
