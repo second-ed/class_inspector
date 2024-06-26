@@ -2,7 +2,7 @@ import inspect
 import logging
 import os
 import re
-from typing import Callable, Optional
+from typing import Any, Callable, Dict, Optional, Union
 
 import attr
 from attr.validators import instance_of
@@ -45,10 +45,7 @@ class FunctionInspector:
         self.obj = object_
         self.name = self.obj.__name__
         self.doc = self._get_doc()
-        self.parameters = {
-            param.name: param.annotation
-            for _, param in inspect.signature(self.obj).parameters.items()
-        }
+        self.parameters = self._get_parameters()
         self.return_annotation = self._get_return_annotations()
         self.tab: str = "    "
         # add 1 tab to the start of each line if obj is a method
@@ -131,6 +128,26 @@ class FunctionInspector:
             return str(doc)
         return ""
 
+    def _get_parameters(self) -> Dict[str, Any]:
+        return {
+            param.name: param.annotation
+            for _, param in inspect.signature(self.obj).parameters.items()
+        }
+
+    def _get_object_name(self, param: Any):
+        if hasattr(param, "__name__"):
+            return param.__name__
+        return str(param)
+
+    def _unpack_parameter(self, param: Any) -> str:
+        if hasattr(param, "__origin__"):
+            if param.__origin__ is Optional or param.__origin__ is Union:
+                args = ", ".join(
+                    [self._get_object_name(arg) for arg in param.__args__]
+                )
+                return f"({args})"
+        return self._get_object_name(param)
+
     def _get_return_annotations(self) -> str:
         """
         Get the return annotation of the analysed object.
@@ -140,9 +157,7 @@ class FunctionInspector:
         """
         annot = inspect.signature(self.obj).return_annotation
         if annot is not inspect._empty:
-            if hasattr(annot, "__name__"):
-                return annot.__name__
-            return str(annot)
+            return self._get_object_name(annot)
         return "None"
 
     def _get_parametrize_decorator(
@@ -414,7 +429,7 @@ class FunctionInspector:
         if not self.parameters:
             return ""
         expected_types = ", ".join(
-            [arg.__name__ for arg in self.parameters.values()]
+            [self._unpack_parameter(arg) for arg in self.parameters.values()]
         )
         received_types = ", ".join(
             [f"{{type({arg}).__name__}}" for arg in self.parameters.keys()]
@@ -424,7 +439,7 @@ class FunctionInspector:
             f"{self.tab*(1 + self.is_method)}if not all(["
             + ", ".join(
                 [
-                    f"isinstance({arg_name}, {arg_type.__name__})"
+                    f"isinstance({arg_name}, {self._unpack_parameter(arg_type)})"
                     for arg_name, arg_type in self.parameters.items()
                 ]
             )
