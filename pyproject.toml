@@ -35,3 +35,14 @@ line-length = 79
 lint.extend-select = ["I", "W"]
 lint.ignore = ["E741"]
 line-length = 79
+
+[tool.coverage.paths]
+source = ["src"]
+
+[tool.coverage.run]
+branch = true
+source = ["src"]
+
+[tool.coverage.report]
+show_missing = true
+fail_under = 50

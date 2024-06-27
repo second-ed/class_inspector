@@ -79,7 +79,7 @@ class FunctionInspector:
                 )
             if add_debugs:
                 func_str = self._insert_string_at_idx(
-                    func_str, end_idx, self._get_guards()
+                    func_str, end_idx, self._get_debugs()
                 )
         else:
             sig = self._get_func_sig() + "\n"
@@ -90,6 +90,8 @@ class FunctionInspector:
                 func_str = func_str.replace(sig, f"{sig}{self._get_guards()}")
             if add_debugs:
                 func_str = func_str.replace(sig, f"{sig}{self._get_debugs()}")
+            if self.doc:
+                func_str = func_str.replace(sig, f"{sig}{self.doc}")
 
             logger.debug(f"sig = {sig}")
         logger.debug(f"func_str = {func_str}")

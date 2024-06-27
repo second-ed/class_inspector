@@ -15,5 +15,18 @@ def mock_function(
         return param1 + param2
 
 
-def mock_function_with_optional(param1: bool, param2: Optional[int]) -> None:
-    pass
+def mock_function_with_optional(
+    param1: bool, param2: Optional[int]
+) -> Optional[int]:
+    """mock function with optional
+
+    Args:
+        param1 (bool)
+        param2 (Optional[int])
+
+    Returns:
+        Optional[int]
+    """
+    if param1:
+        return param2
+    return None
