@@ -1,5 +1,5 @@
 from contextlib import nullcontext as does_not_raise
-from typing import Callable, Optional
+from typing import Callable, List, Optional, Union
 
 import pytest
 from class_inspector.function_inspector import FunctionInspector
@@ -420,6 +420,26 @@ def test_get_return_annotations(
         func = request.getfixturevalue(fixture_name)
         get_instance.analyse(func)
         assert get_instance._get_return_annotations() == expected_result
+
+
+@pytest.mark.parametrize(
+    "param, expected_result, expected_context",
+    [
+        (int, "int", does_not_raise()),
+        (float, "float", does_not_raise()),
+        (List, "List", does_not_raise()),
+        (Optional[List], "(List, NoneType)", does_not_raise()),
+        (Union[int, float], "(int, float)", does_not_raise()),
+    ],
+)
+def test_unpack_parameter(
+    get_instance: FunctionInspector,
+    param,
+    expected_result,
+    expected_context,
+) -> None:
+    with expected_context:
+        assert get_instance._unpack_parameter(param) == expected_result
 
 
 @pytest.mark.parametrize(
