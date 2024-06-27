@@ -1,22 +1,19 @@
-class TestClass:
-    def __init__(self, x: int, y: float) -> None:
-        self._x: int = x
-        self.y: float = y
-        self.z_: bool = x > y
-
-    def do_something(self) -> bool:
-        return self.z_
-
-    def _do_something_internally(self) -> float:
-        return self._x - self.y
-
-    def do_something_derived_(self) -> bool:
-        return self._x != self.z_
+from typing import Optional
 
 
-def mock_func1(a: int, b: int) -> int:
-    return a + b
+class MockClass:
+    def mock_method(self, a: int, b: str) -> str:
+        return str(a) + b
 
 
-def mock_func2(a: int, b: float) -> float:
-    return a * b
+def mock_function(
+    param1: float, param2: int, param3: bool, param4: str = "test"
+) -> float:
+    if param3:
+        return param1 - param2
+    else:
+        return param1 + param2
+
+
+def mock_function_with_optional(param1: bool, param2: Optional[int]) -> None:
+    pass

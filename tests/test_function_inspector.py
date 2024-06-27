@@ -4,24 +4,21 @@ from typing import Callable
 import pytest
 from class_inspector.function_inspector import FunctionInspector
 
-
-class MockClass:
-    def mock_method(self, a: int, b: str) -> str:
-        return str(a) + b
-
-
-def mock_function(
-    param1: float, param2: int, param3: bool, param4: str = "test"
-) -> float:
-    if param3:
-        return param1 - param2
-    else:
-        return param1 + param2
+from tests.mock_package.mock_module import (
+    MockClass,
+    mock_function,
+    mock_function_with_optional,
+)
 
 
 @pytest.fixture
 def get_mock_function() -> Callable:
     return mock_function
+
+
+@pytest.fixture
+def get_mock_function_with_optional() -> Callable:
+    return mock_function_with_optional
 
 
 @pytest.fixture
