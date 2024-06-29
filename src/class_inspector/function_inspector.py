@@ -136,7 +136,7 @@ class FunctionInspector:
             for _, param in inspect.signature(self.obj).parameters.items()
         }
 
-    def _get_object_name(self, param: Any):
+    def _get_object_name(self, param: Any) -> str:
         if hasattr(param, "__name__"):
             return param.__name__
         return str(param)
