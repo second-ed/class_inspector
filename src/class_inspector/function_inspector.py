@@ -146,9 +146,9 @@ class FunctionInspector:
             if param.__origin__ is Optional or param.__origin__ is Union:
                 args = ", ".join(
                     [self._get_object_name(arg) for arg in param.__args__]
-                )
+                ).replace("typing.", "")
                 return f"({args})"
-        return self._get_object_name(param)
+        return self._get_object_name(param).replace("typing.", "")
 
     def _get_return_annotations(self) -> str:
         """
