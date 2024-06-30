@@ -14,7 +14,7 @@ repos:
       args: [ --fix ]
     - id: pytest-check
       name: pytest-check
-      entry: pytest -v
+      entry: pytest
       language: system
       pass_filenames: false
       always_run: true
