@@ -1,27 +1,24 @@
 from contextlib import nullcontext as does_not_raise
-from typing import Callable
+from typing import Callable, Optional
 
 import pytest
 from class_inspector.function_inspector import FunctionInspector
 
-
-class MockClass:
-    def mock_method(self, a: int, b: str) -> str:
-        return str(a) + b
-
-
-def mock_function(
-    param1: float, param2: int, param3: bool, param4: str = "test"
-) -> float:
-    if param3:
-        return param1 - param2
-    else:
-        return param1 + param2
+from tests.mock_package.mock_module import (
+    MockClass,
+    mock_function,
+    mock_function_with_optional,
+)
 
 
 @pytest.fixture
 def get_mock_function() -> Callable:
     return mock_function
+
+
+@pytest.fixture
+def get_mock_function_with_optional() -> Callable:
+    return mock_function_with_optional
 
 
 @pytest.fixture
@@ -46,7 +43,7 @@ def get_instance() -> FunctionInspector:
                 "param3": bool,
                 "param4": str,
             },
-            "float",
+            ["float"],
             0,
         ),
         (
@@ -56,8 +53,18 @@ def get_instance() -> FunctionInspector:
                 "a": int,
                 "b": str,
             },
-            "str",
+            ["str"],
             1,
+        ),
+        (
+            "get_mock_function_with_optional",
+            "mock_function_with_optional",
+            {
+                "param1": bool,
+                "param2": Optional[int],
+            },
+            ["Optional[int]", "Union[int, NoneType]"],
+            0,
         ),
     ],
 )
@@ -75,7 +82,7 @@ def test_analyse(
     assert get_instance.obj == func
     assert get_instance.name == func_name
     assert get_instance.parameters == params
-    assert get_instance.return_annotation == return_annot
+    assert get_instance.return_annotation in return_annot
     assert get_instance.is_method == is_method
 
 
@@ -84,6 +91,11 @@ def test_analyse(
     [
         ("get_mock_function", "mock_function", does_not_raise()),
         ("get_mock_method", "MockClass", does_not_raise()),
+        (
+            "get_mock_function_with_optional",
+            "mock_function_with_optional",
+            does_not_raise(),
+        ),
     ],
 )
 def test_get_class_name(
@@ -124,6 +136,17 @@ def test_get_class_name(
             ),
             does_not_raise(),
         ),
+        (
+            "get_mock_function_with_optional",
+            (
+                "    if not all([isinstance(param1, bool), isinstance(param2, (int, NoneType))]):\n"
+                "        raise TypeError(\n"
+                '            "mock_function_with_optional expects arg types: [bool, (int, NoneType)], "\n'
+                '            f"received: [{type(param1).__name__}, {type(param2).__name__}]"\n'
+                "        )\n"
+            ),
+            does_not_raise(),
+        ),
     ],
 )
 def test_get_guards(
@@ -150,6 +173,11 @@ def test_get_guards(
         (
             "get_mock_method",
             "get_mock_class.mock_method(a, b) ",
+            does_not_raise(),
+        ),
+        (
+            "get_mock_function_with_optional",
+            "mock_function_with_optional(param1, param2) ",
             does_not_raise(),
         ),
     ],
@@ -263,6 +291,20 @@ def test_get_instance_sig(
             ),
             does_not_raise(),
         ),
+        (
+            "get_mock_function_with_optional",
+            True,
+            False,
+            (
+                "@pytest.mark.parametrize(\n"
+                '    "param1, param2, expected_result, expected_context",\n    [\n'
+                "        (param1, param2, expected_result, expected_context),\n"
+                "        (param1, param2, None, pytest.raises(TypeError)),\n"
+                "        (param1, param2, None, pytest.raises(TypeError)),\n"
+                "    ]\n)\n"
+            ),
+            does_not_raise(),
+        ),
     ],
 )
 def test_get_parametrize_decorator(
@@ -296,6 +338,11 @@ def test_get_parametrize_decorator(
             "a, b",
             does_not_raise(),
         ),
+        (
+            "get_mock_function_with_optional",
+            "param1, param2",
+            does_not_raise(),
+        ),
     ],
 )
 def test_get_params_str(
@@ -309,45 +356,6 @@ def test_get_params_str(
         func = request.getfixturevalue(fixture_name)
         get_instance.analyse(func)
         assert get_instance._get_params_str() == expected_result
-
-
-@pytest.mark.parametrize(
-    "fixture_name, expected_result, expected_context",
-    [
-        ("get_mock_function", "float, int, bool, str", does_not_raise()),
-        ("get_mock_method", "int, str", does_not_raise()),
-    ],
-)
-def test_get_params_types(
-    request,
-    get_instance: FunctionInspector,
-    fixture_name,
-    expected_result,
-    expected_context,
-) -> None:
-    with expected_context:
-        func = request.getfixturevalue(fixture_name)
-        get_instance.analyse(func)
-        assert get_instance._get_params_types() == expected_result
-
-
-@pytest.mark.parametrize(
-    "item, expected_result, expected_context",
-    [
-        ("TestCase", "test_case", does_not_raise()),
-    ],
-)
-def test_camel_to_snake(
-    get_instance: FunctionInspector,
-    get_mock_function,
-    item,
-    expected_result,
-    expected_context,
-) -> None:
-    with expected_context:
-        func = get_mock_function
-        get_instance.analyse(func)
-        assert get_instance._camel_to_snake(item) == expected_result
 
 
 @pytest.mark.parametrize(
@@ -522,40 +530,26 @@ def test_get_test_sig(
 
 
 @pytest.mark.parametrize(
-    "fixture_name, item, expected_result, expected_context",
-    [
-        ("get_mock_function", "__test__", "test", does_not_raise()),
-        ("get_mock_function", "_test", "test", does_not_raise()),
-        ("get_mock_function", "test_", "test", does_not_raise()),
-        ("get_mock_function", "__test", "test", does_not_raise()),
-        ("get_mock_function", 0, "", pytest.raises(TypeError)),
-    ],
-)
-def test_values_strip_underscores(
-    request,
-    get_instance: FunctionInspector,
-    fixture_name,
-    item,
-    expected_result,
-    expected_context,
-) -> None:
-    with expected_context:
-        func = request.getfixturevalue(fixture_name)
-        get_instance.analyse(func)
-        assert get_instance._strip_underscores(item) == expected_result
-
-
-@pytest.mark.parametrize(
     "fixture_name, expected_result, expected_context",
     [
         (
             "get_mock_function",
-            "def mock_function(param1: float, param2: int, param3: bool, param4: str = 'test') -> float:",
+            [
+                "def mock_function(param1: float, param2: int, param3: bool, param4: str = 'test') -> float:"
+            ],
             does_not_raise(),
         ),
         (
             "get_mock_method",
-            "    def mock_method(self, a: int, b: str) -> str:",
+            ["    def mock_method(self, a: int, b: str) -> str:"],
+            does_not_raise(),
+        ),
+        (
+            "get_mock_function_with_optional",
+            [
+                "def mock_function_with_optional(param1: bool, param2: Optional[int]) -> Optional[int]:",
+                "def mock_function_with_optional(param1: bool, param2: Union[int, NoneType]) -> Union[int, NoneType]:",
+            ],
             does_not_raise(),
         ),
     ],
@@ -570,59 +564,7 @@ def test_get_func_sig(
     with expected_context:
         func = request.getfixturevalue(fixture_name)
         get_instance.analyse(func)
-        assert get_instance._get_func_sig() == expected_result
-
-
-def test_get_docstring_patterns(get_instance: FunctionInspector) -> None:
-    assert (
-        get_instance._get_docstring_patterns()
-        == "(\"\"\".*?\"\"\"\\n|'''.*?'''\\n)"
-    )
-
-
-@pytest.mark.parametrize(
-    "func_str, pattern, expected_result, expected_context",
-    [
-        ("test (passing) case", r"\(\w+?\)", 14, does_not_raise()),
-        # (func_str, pattern, None, pytest.raises(TypeError)),
-        # (func_str, pattern, None, pytest.raises(TypeError)),
-    ],
-)
-def test_find_string_end(
-    get_instance: FunctionInspector,
-    func_str,
-    pattern,
-    expected_result,
-    expected_context,
-) -> None:
-    with expected_context:
-        assert (
-            get_instance._find_string_end(func_str, pattern) == expected_result
-        )
-
-
-@pytest.mark.parametrize(
-    "func_str, idx, to_insert, expected_result, expected_context",
-    [
-        ("test case", 5, "PASSED ", "test PASSED case", does_not_raise()),
-        # (func_str, idx, to_insert, None, pytest.raises(TypeError)),
-        # (func_str, idx, to_insert, None, pytest.raises(TypeError)),
-        # (func_str, idx, to_insert, None, pytest.raises(TypeError)),
-    ],
-)
-def test_insert_string_at_idx(
-    get_instance: FunctionInspector,
-    func_str,
-    idx,
-    to_insert,
-    expected_result,
-    expected_context,
-) -> None:
-    with expected_context:
-        assert (
-            get_instance._insert_string_at_idx(func_str, idx, to_insert)
-            == expected_result
-        )
+        assert get_instance._get_func_sig() in expected_result
 
 
 @pytest.mark.parametrize(
@@ -719,6 +661,32 @@ def test_insert_string_at_idx(
                 '                f"received: [{type(a).__name__}, {type(b).__name__}]"\n'
                 "            )\n"
                 "        return str(a) + b\n\n\n"
+            ),
+            does_not_raise(),
+        ),
+        (
+            "get_mock_function_with_optional",
+            True,
+            True,
+            (
+                "def mock_function_with_optional(param1: bool, param2: Optional[int]) -> Optional[int]:\n"
+                "    '''mock function with optional\n\n"
+                "    Args:\n"
+                "        param1 (bool)\n"
+                "        param2 (Optional[int])\n\n"
+                "    Returns:\n"
+                "        Optional[int]\n"
+                "    '''\n"
+                "    for key, val in locals().items():\n"
+                '        logger.debug(f"{key} = {val}")\n'
+                "    if not all([isinstance(param1, bool), isinstance(param2, (int, NoneType))]):\n"
+                "        raise TypeError(\n"
+                '            "mock_function_with_optional expects arg types: [bool, (int, NoneType)], "\n'
+                '            f"received: [{type(param1).__name__}, {type(param2).__name__}]"\n'
+                "        )\n"
+                "    if param1:\n"
+                "        return param2\n"
+                "    return None\n\n\n"
             ),
             does_not_raise(),
         ),

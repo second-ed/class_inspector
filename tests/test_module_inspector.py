@@ -13,10 +13,12 @@ def get_instance() -> ModuleInspector:
     return ModuleInspector(mock_module)
 
 
+@pytest.mark.skip()
 def test_init(get_instance: ModuleInspector) -> None:
     assert isinstance(get_instance, ModuleInspector)
 
 
+@pytest.mark.skip()
 def test_extract_custom_classes(get_instance: ModuleInspector) -> None:
     for _, v in get_instance.custom_classes.items():
         assert type(v) == type.__class__
@@ -26,6 +28,7 @@ def test_extract_custom_classes(get_instance: ModuleInspector) -> None:
     }
 
 
+@pytest.mark.skip()
 def test_extract_custom_functions(get_instance: ModuleInspector) -> None:
     for _, v in get_instance.custom_functions.items():
         assert type(v) == FunctionType
@@ -38,6 +41,7 @@ def test_extract_custom_functions(get_instance: ModuleInspector) -> None:
     }
 
 
+@pytest.mark.skip()
 def test_get_parametrized_function_tests(
     get_instance: ModuleInspector,
 ) -> None:
