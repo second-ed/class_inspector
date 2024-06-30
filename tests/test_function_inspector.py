@@ -43,7 +43,7 @@ def get_instance() -> FunctionInspector:
                 "param3": bool,
                 "param4": str,
             },
-            "float",
+            ["float"],
             0,
         ),
         (
@@ -53,7 +53,7 @@ def get_instance() -> FunctionInspector:
                 "a": int,
                 "b": str,
             },
-            "str",
+            ["str"],
             1,
         ),
         (
@@ -63,7 +63,7 @@ def get_instance() -> FunctionInspector:
                 "param1": bool,
                 "param2": Optional[int],
             },
-            "Optional[int]",
+            ["Optional[int]", "Union[int, NoneType]"],
             0,
         ),
     ],
@@ -82,7 +82,7 @@ def test_analyse(
     assert get_instance.obj == func
     assert get_instance.name == func_name
     assert get_instance.parameters == params
-    assert get_instance.return_annotation == return_annot
+    assert get_instance.return_annotation in return_annot
     assert get_instance.is_method == is_method
 
 
@@ -534,17 +534,22 @@ def test_get_test_sig(
     [
         (
             "get_mock_function",
-            "def mock_function(param1: float, param2: int, param3: bool, param4: str = 'test') -> float:",
+            [
+                "def mock_function(param1: float, param2: int, param3: bool, param4: str = 'test') -> float:"
+            ],
             does_not_raise(),
         ),
         (
             "get_mock_method",
-            "    def mock_method(self, a: int, b: str) -> str:",
+            ["    def mock_method(self, a: int, b: str) -> str:"],
             does_not_raise(),
         ),
         (
             "get_mock_function_with_optional",
-            "def mock_function_with_optional(param1: bool, param2: Optional[int]) -> Optional[int]:",
+            [
+                "def mock_function_with_optional(param1: bool, param2: Optional[int]) -> Optional[int]:",
+                "def mock_function_with_optional(param1: bool, param2: Union[int, NoneType]) -> Union[int, NoneType]:",
+            ],
             does_not_raise(),
         ),
     ],
@@ -559,7 +564,7 @@ def test_get_func_sig(
     with expected_context:
         func = request.getfixturevalue(fixture_name)
         get_instance.analyse(func)
-        assert get_instance._get_func_sig() == expected_result
+        assert get_instance._get_func_sig() in expected_result
 
 
 @pytest.mark.parametrize(

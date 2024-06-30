@@ -28,7 +28,7 @@ def _strip_underscores(item: str) -> str:
 
 
 def _unpack_parameter(param: Any) -> str:
-    if _is_optional_or_union(param):
+    if _is_union_origin(param):
         args = ", ".join(
             [_get_object_name(arg) for arg in param.__args__]
         ).replace("typing.", "")
@@ -36,9 +36,10 @@ def _unpack_parameter(param: Any) -> str:
     return _get_object_name(param).replace("typing.", "")
 
 
-def _is_optional_or_union(param: Any) -> bool:
+def _is_union_origin(param: Any) -> bool:
+    # Optional.__origin__ is Union so can use for both
     if hasattr(param, "__origin__"):
-        if param.__origin__ is Optional or param.__origin__ is Union:
+        if param.__origin__ is Union:
             return True
     return False
 

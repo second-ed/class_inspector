@@ -145,11 +145,9 @@ class FunctionInspector:
             str: The return annotation of the analysed object.
         """
         annot = inspect.signature(self.obj).return_annotation
-        if annot is not inspect._empty and not utils._is_optional_or_union(
-            annot
-        ):
+        if annot is not inspect._empty and not utils._is_union_origin(annot):
             return utils._get_object_name(annot)
-        if utils._is_optional_or_union(annot):
+        if utils._is_union_origin(annot):
             return str(annot).replace("typing.", "")
         return "None"
 
