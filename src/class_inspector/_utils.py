@@ -27,10 +27,13 @@ def _strip_underscores(item: str) -> str:
     return item.strip("_")
 
 
-def _get_object_name(param: Any) -> str:
-    if hasattr(param, "__name__"):
-        return param.__name__
-    return str(param)
+def _unpack_parameter(param: Any) -> str:
+    if _is_optional_or_union(param):
+        args = ", ".join(
+            [_get_object_name(arg) for arg in param.__args__]
+        ).replace("typing.", "")
+        return f"({args})"
+    return _get_object_name(param).replace("typing.", "")
 
 
 def _is_optional_or_union(param: Any) -> bool:
@@ -40,13 +43,10 @@ def _is_optional_or_union(param: Any) -> bool:
     return False
 
 
-def _unpack_parameter(param: Any) -> str:
-    if _is_optional_or_union(param):
-        args = ", ".join(
-            [_get_object_name(arg) for arg in param.__args__]
-        ).replace("typing.", "")
-        return f"({args})"
-    return _get_object_name(param).replace("typing.", "")
+def _get_object_name(param: Any) -> str:
+    if hasattr(param, "__name__"):
+        return param.__name__
+    return str(param)
 
 
 def _get_docstring_patterns() -> str:
