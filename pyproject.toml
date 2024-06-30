@@ -10,7 +10,12 @@ name = "class_inspector"
 authors = [
     {name="Ed Cuss"},
 ]
-description = "class inspector class"
+description = "class inspector package"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
 readme = "README.md"
 requires-python = ">=3.6"
 version = "0.1.1"
