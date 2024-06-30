@@ -327,7 +327,7 @@ class FunctionInspector:
         """
         return ", ".join(
             [
-                t_.__name__ if hasattr(t_, "__name__") else "no_type"
+                t_.__name__ if hasattr(t_, "__name__") else str(t_)
                 for t_ in self.parameters.values()
             ]
         )
