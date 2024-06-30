@@ -1,18 +1,18 @@
 import inspect
 import logging
-import os
 from typing import Any, Callable, Dict
 
 import attr
 from attr.validators import instance_of
-from dotenv import load_dotenv
 
 from . import _utils as utils
-from ._logger import compress_logging_value, setup_logger
+from ._logger import (
+    compress_logging_value,
+    is_logging_enabled,
+    setup_logger,
+)
 
-load_dotenv()
-
-if os.getenv("ENABLE_LOGGING", "false").lower() == "true":
+if is_logging_enabled(__file__):
     setup_logger(__file__, 2)
 
 logger = logging.getLogger()
