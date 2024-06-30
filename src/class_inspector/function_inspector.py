@@ -141,13 +141,18 @@ class FunctionInspector:
             return param.__name__
         return str(param)
 
-    def _unpack_parameter(self, param: Any) -> str:
+    def _is_optional_or_union(self, param: Any) -> bool:
         if hasattr(param, "__origin__"):
             if param.__origin__ is Optional or param.__origin__ is Union:
-                args = ", ".join(
-                    [self._get_object_name(arg) for arg in param.__args__]
-                ).replace("typing.", "")
-                return f"({args})"
+                return True
+        return False
+
+    def _unpack_parameter(self, param: Any) -> str:
+        if self._is_optional_or_union(param):
+            args = ", ".join(
+                [self._get_object_name(arg) for arg in param.__args__]
+            ).replace("typing.", "")
+            return f"({args})"
         return self._get_object_name(param).replace("typing.", "")
 
     def _get_return_annotations(self) -> str:
@@ -158,8 +163,12 @@ class FunctionInspector:
             str: The return annotation of the analysed object.
         """
         annot = inspect.signature(self.obj).return_annotation
-        if annot is not inspect._empty:
+        if annot is not inspect._empty and not self._is_optional_or_union(
+            annot
+        ):
             return self._get_object_name(annot)
+        if self._is_optional_or_union(annot):
+            return str(annot).replace("typing.", "")
         return "None"
 
     def _get_parametrize_decorator(

@@ -63,7 +63,7 @@ def get_instance() -> FunctionInspector:
                 "param1": bool,
                 "param2": Optional[int],
             },
-            "Optional",
+            "Optional[int]",
             0,
         ),
     ],
