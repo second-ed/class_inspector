@@ -8,16 +8,20 @@ from class_inspector import _utils as utils
 @pytest.mark.parametrize(
     "item, expected_result, expected_context",
     [
-        ("TestCase", "test_case", does_not_raise()),
+        ("__test__", "test", does_not_raise()),
+        ("_test", "test", does_not_raise()),
+        ("test_", "test", does_not_raise()),
+        ("__test", "test", does_not_raise()),
+        (0, "", pytest.raises(TypeError)),
     ],
 )
-def test_camel_to_snake(
+def test_values_strip_underscores(
     item,
     expected_result,
     expected_context,
 ) -> None:
     with expected_context:
-        assert utils._camel_to_snake(item) == expected_result
+        assert utils._strip_underscores(item) == expected_result
 
 
 @pytest.mark.parametrize(
@@ -37,25 +41,6 @@ def test_unpack_parameter(
 ) -> None:
     with expected_context:
         assert utils._unpack_parameter(param) == expected_result
-
-
-@pytest.mark.parametrize(
-    "item, expected_result, expected_context",
-    [
-        ("__test__", "test", does_not_raise()),
-        ("_test", "test", does_not_raise()),
-        ("test_", "test", does_not_raise()),
-        ("__test", "test", does_not_raise()),
-        (0, "", pytest.raises(TypeError)),
-    ],
-)
-def test_values_strip_underscores(
-    item,
-    expected_result,
-    expected_context,
-) -> None:
-    with expected_context:
-        assert utils._strip_underscores(item) == expected_result
 
 
 def test_get_docstring_patterns() -> None:
@@ -103,3 +88,18 @@ def test_insert_string_at_idx(
             utils._insert_string_at_idx(func_str, idx, to_insert)
             == expected_result
         )
+
+
+@pytest.mark.parametrize(
+    "item, expected_result, expected_context",
+    [
+        ("TestCase", "test_case", does_not_raise()),
+    ],
+)
+def test_camel_to_snake(
+    item,
+    expected_result,
+    expected_context,
+) -> None:
+    with expected_context:
+        assert utils._camel_to_snake(item) == expected_result
