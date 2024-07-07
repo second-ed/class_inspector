@@ -112,12 +112,12 @@ class FunctionInspector:
         """
         for key, val in locals().items():
             logger.debug(f"{key} = {compress_logging_value(val)}")
-        test_full = ""
-        test_full += self._get_parametrize_decorator(check_types, match)
-        test_full += self._get_test_sig()
-        test_full += self._get_test_body()
-        test_full += "\n\n"
-        return test_full
+        test_full = []
+        test_full.append(self._get_parametrize_decorator(check_types, match))
+        test_full.append(self._get_test_sig())
+        test_full.append(self._get_test_body())
+        test_full.append("\n\n")
+        return "".join(test_full)
 
     def _get_doc(self) -> str:
         """
@@ -199,14 +199,14 @@ class FunctionInspector:
         Returns:
             str: The body of the test function.
         """
-        test_body = f"{self.tab}with expected_context:\n"
-        test_body += f"{2*self.tab}assert "
-        test_body += self._get_instance_call()
+        test_body = [f"{self.tab}with expected_context:\n"]
+        test_body.append(f"{2*self.tab}assert ")
+        test_body.append(self._get_instance_call())
         if self.return_annotation != "None":
-            test_body += "== expected_result\n"
+            test_body.append("== expected_result\n")
         else:
-            test_body += "is None\n"
-        return test_body
+            test_body.append("is None\n")
+        return "".join(test_body)
 
     def _get_params_str(self) -> str:
         """
