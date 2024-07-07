@@ -4,6 +4,8 @@ import os
 from pathlib import Path
 from typing import Sequence, TypeVar, Union
 
+from dotenv import load_dotenv
+
 T = TypeVar("T")
 
 
@@ -30,3 +32,10 @@ def compress_logging_value(item: T) -> Union[T, str]:
 def get_dir_path(src: str, idx: int, dst: str) -> str:
     curr_dir = Path(src).parents[idx]
     return str(curr_dir.joinpath(dst)).replace("\\", "/")
+
+
+def is_logging_enabled(src: str):
+    if os.path.exists(get_dir_path(__file__, 2, "envs/.env")):
+        load_dotenv(get_dir_path(__file__, 2, "envs/.env"))
+        return os.getenv("ENABLE_LOGGING", "false").lower() == "true"
+    return False

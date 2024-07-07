@@ -1,15 +1,27 @@
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
 [project]
 name = "class_inspector"
 authors = [
     {name="Ed Cuss"},
 ]
-description = "class inspector class"
+description = "class inspector package"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
 readme = "README.md"
-requires-python = ">=3.7"
+requires-python = ">=3.6"
 version = "0.1.1"
 dependencies = [
-    "attrs>=22.1.0",
-    "python-dotenv >=0.21.0",
+    "attrs >= 22.1.0",
+    "python-dotenv >= 0.21.0",
 ]
 
 [project.optional-dependencies]
@@ -18,9 +30,11 @@ test = [
     "pytest",
     "pytest-cov",
     "hypothesis",
+    "pre-commit",
+    "tox",
 ]
 lint = [
-    "black<24",
+    "black >= 24",
     "ruff",
     "pylint>=3.0.1",
 ]
@@ -35,3 +49,11 @@ line-length = 79
 lint.extend-select = ["I", "W"]
 lint.ignore = ["E741"]
 line-length = 79
+
+[tool.coverage.run]
+branch = true
+source = ["src"]
+
+[tool.coverage.report]
+show_missing = true
+fail_under = 50
