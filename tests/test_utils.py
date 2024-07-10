@@ -15,7 +15,7 @@ from class_inspector import _utils as utils
         (0, "", pytest.raises(TypeError)),
     ],
 )
-def test_values_strip_underscores(
+def test_strip_underscores(
     item,
     expected_result,
     expected_context,
