@@ -244,10 +244,10 @@ def test_get_instance_sig(
                 '    "param1, param2, param3, param4, expected_result, expected_context",\n'
                 "    [\n"
                 "        (param1, param2, param3, param4, expected_result, expected_context),\n"
-                '        (param1, param2, param3, param4, None, pytest.raises(TypeError, match=r"")),\n'
-                '        (param1, param2, param3, param4, None, pytest.raises(TypeError, match=r"")),\n'
-                '        (param1, param2, param3, param4, None, pytest.raises(TypeError, match=r"")),\n'
-                '        (param1, param2, param3, param4, None, pytest.raises(TypeError, match=r"")),\n'
+                '        (param1, param2, param3, param4, None, pytest.raises(TypeError, match="")),\n'
+                '        (param1, param2, param3, param4, None, pytest.raises(TypeError, match="")),\n'
+                '        (param1, param2, param3, param4, None, pytest.raises(TypeError, match="")),\n'
+                '        (param1, param2, param3, param4, None, pytest.raises(TypeError, match="")),\n'
                 "    ]\n)\n"
             ),
             does_not_raise(),
@@ -410,10 +410,10 @@ def test_get_return_annotations(
                 '    "param1, param2, param3, param4, expected_result, expected_context",\n'
                 "    [\n"
                 "        (param1, param2, param3, param4, expected_result, expected_context),\n"
-                '        (param1, param2, param3, param4, None, pytest.raises(TypeError, match=r"")),\n'
-                '        (param1, param2, param3, param4, None, pytest.raises(TypeError, match=r"")),\n'
-                '        (param1, param2, param3, param4, None, pytest.raises(TypeError, match=r"")),\n'
-                '        (param1, param2, param3, param4, None, pytest.raises(TypeError, match=r"")),\n'
+                '        (param1, param2, param3, param4, None, pytest.raises(TypeError, match="")),\n'
+                '        (param1, param2, param3, param4, None, pytest.raises(TypeError, match="")),\n'
+                '        (param1, param2, param3, param4, None, pytest.raises(TypeError, match="")),\n'
+                '        (param1, param2, param3, param4, None, pytest.raises(TypeError, match="")),\n'
                 "    ]\n)\n"
                 "def test_mock_function(param1, param2, param3, param4, expected_result, expected_context) -> None:\n"
                 "    with expected_context:\n"

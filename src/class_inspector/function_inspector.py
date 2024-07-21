@@ -254,7 +254,7 @@ class FunctionInspector:
             return ""
         match_stmt = ""
         if match:
-            match_stmt = ', match=r""'
+            match_stmt = ', match=""'
         return f"{self.tab * 2}({args}, None, pytest.raises(TypeError{match_stmt})),\n"
 
     def _get_instance_sig(self) -> str:
