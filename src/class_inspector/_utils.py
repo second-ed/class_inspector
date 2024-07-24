@@ -2,7 +2,7 @@ import logging
 import re
 from typing import Any, Optional, Union
 
-from ._logger import compress_logging_value
+from class_inspector._logger import compress_logging_value
 
 logger = logging.getLogger()
 

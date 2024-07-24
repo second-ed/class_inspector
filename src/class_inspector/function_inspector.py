@@ -5,8 +5,8 @@ from typing import Any, Callable, Dict
 import attr
 from attr.validators import instance_of
 
-from . import _utils as utils
-from ._logger import (
+from class_inspector import _utils as utils
+from class_inspector._logger import (
     compress_logging_value,
     is_logging_enabled,
     setup_logger,
