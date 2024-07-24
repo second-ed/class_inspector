@@ -164,18 +164,3 @@ def test_is_public(
     get_instance: ClassInspector, item: str, result: bool
 ) -> None:
     assert get_instance.is_public(item) == result
-
-
-@pytest.mark.parametrize(
-    "item, result",
-    [
-        ("test", "test"),
-        ("_test", "test"),
-        ("test_", "test"),
-        ("__test__", "test"),
-    ],
-)
-def test_strip_underscores(
-    get_instance: ClassInspector, item: str, result: str
-) -> None:
-    assert get_instance.strip_underscores(item) == result

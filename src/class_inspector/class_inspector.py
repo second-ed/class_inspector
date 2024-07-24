@@ -1,6 +1,7 @@
 import inspect
 from typing import List
 
+from class_inspector._utils import _strip_underscores
 from class_inspector.function_inspector import FunctionInspector
 
 
@@ -82,9 +83,6 @@ class ClassInspector:
             item = f"_{item}"
         return item
 
-    def strip_underscores(self, item: str) -> str:
-        return item.strip("_")
-
     def is_not_dunder(self, item: str) -> bool:
         return not item.startswith("__") and not item.endswith("__")
 
@@ -146,7 +144,7 @@ class ClassInspector:
         return type(getattr(self.obj, item)).__name__
 
     def get_setter(self, item: str) -> str:
-        item_no_underscores = self.strip_underscores(item)
+        item_no_underscores = _strip_underscores(item)
         item_type: str = self.get_item_type(item)
 
         item = self.check_public_property(item)
@@ -165,7 +163,7 @@ class ClassInspector:
         return setter_method
 
     def get_getter(self, item: str) -> str:
-        item_no_underscores: str = self.strip_underscores(item)
+        item_no_underscores: str = _strip_underscores(item)
         item_type: str = self.get_item_type(item)
 
         item = self.check_public_property(item)
@@ -195,7 +193,7 @@ class ClassInspector:
         return [self.get_setter_getter_methods(item) for item in item_list]
 
     def get_init_setter(self, item: str) -> str:
-        item_no_underscores: str = self.strip_underscores(item)
+        item_no_underscores: str = _strip_underscores(item)
         if self.is_derived(item):
             return ""
         if self.use_properties:
@@ -211,7 +209,7 @@ class ClassInspector:
             if self.is_derived(attr):
                 continue
             attr_type: str = self.get_item_type(attr)
-            init_args += f"{sep}{self.strip_underscores(attr)}: {attr_type},"
+            init_args += f"{sep}{_strip_underscores(attr)}: {attr_type},"
             init_setters += f"{sep}{self.get_init_setter(attr)}"
         init_args += "\n) -> None:"
         return init_args + init_setters + "\n"
@@ -232,18 +230,6 @@ class ClassInspector:
             method = getattr(self.obj, method_name)
             method_docstrings += f"{s}{method_name}{inspect.signature(method)}"
         return method_docstrings
-
-    def print_docstring(self) -> None:
-        print(f"{self.class_name} class\n")
-        print(self.get_attrs_docstrings())
-        print(self.get_methods_docstrings())
-
-    def print_primary_methods(self) -> None:
-        for i in self.get_primary_methods(self.attrs):
-            print(i)
-
-    def print_init_setters(self) -> None:
-        print(self.get_init_setters())
 
     def get_test_instance_fixture(self) -> str:
         return (
@@ -269,7 +255,3 @@ class ClassInspector:
         tests_str += self.get_test_init()
         tests_str += "".join(self.test_functions)
         return tests_str
-
-    def print_tests(self) -> None:
-        self.set_test_methods()
-        print(self.get_tests())
