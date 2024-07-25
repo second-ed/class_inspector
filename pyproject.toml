@@ -50,9 +50,19 @@ lint.extend-select = ["I", "W"]
 lint.ignore = ["E741"]
 line-length = 79
 
+[tool.pytest.ini_options]
+testpaths = [
+    "tests",
+]
+
+
 [tool.coverage.run]
 branch = true
 source = ["src"]
+omit = [
+    "*__init__.py",
+    "*_logger.py",
+]
 
 [tool.coverage.report]
 show_missing = true
