@@ -124,3 +124,7 @@ def _clean_func(func_str: str) -> str:
         return f"({cleaned_content})"
 
     return re.sub(r"\((.*?)\)", replacer, func_str, flags=re.DOTALL)
+
+
+def is_not_dunder(item: str) -> bool:
+    return not item.startswith("__") and not item.endswith("__")

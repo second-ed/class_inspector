@@ -103,3 +103,17 @@ def test_camel_to_snake(
 ) -> None:
     with expected_context:
         assert utils._camel_to_snake(item) == expected_result
+
+
+@pytest.mark.parametrize(
+    "item, expected_result, expected_context",
+    [
+        ("test", True, does_not_raise()),
+        ("_test", True, does_not_raise()),
+        ("test_", True, does_not_raise()),
+        ("__test__", False, does_not_raise()),
+    ],
+)
+def test_is_not_dunder(item, expected_result, expected_context) -> None:
+    with expected_context:
+        assert utils.is_not_dunder(item) == expected_result
