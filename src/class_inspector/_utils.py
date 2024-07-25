@@ -1,3 +1,4 @@
+import inspect
 import logging
 import re
 from typing import Any, Optional, Union
@@ -128,3 +129,30 @@ def _clean_func(func_str: str) -> str:
 
 def is_not_dunder(item: str) -> bool:
     return not item.startswith("__") and not item.endswith("__")
+
+
+def sort_callables_by_line_numbers(callables: dict) -> dict:
+    return dict(
+        sorted(
+            callables.items(),
+            key=lambda item: inspect.getsourcelines(item[1])[1],
+        )
+    )
+
+
+def get_module_functions(inp_module):
+    funcs = {
+        name: func
+        for name, func in inspect.getmembers(inp_module, inspect.isfunction)
+        if func.__module__ == inp_module.__name__
+    }
+    return sort_callables_by_line_numbers(funcs)
+
+
+def get_class_methods(obj):
+    meths = {
+        name: func
+        for name, func in inspect.getmembers(obj, inspect.ismethod)
+        if func.__self__.__class__ == obj.__class__ and is_not_dunder(name)
+    }
+    return sort_callables_by_line_numbers(meths)
