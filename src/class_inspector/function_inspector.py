@@ -266,7 +266,7 @@ class FunctionInspector:
         """
         if inspect.ismethod(self.obj):
             instance = utils._camel_to_snake(self._get_class_name())
-            return f"get_{instance}: {self._get_class_name()}, "
+            return f"get_{instance}_instance: {self._get_class_name()}, "
         if inspect.isfunction(self.obj):
             return ""
         return ""
@@ -281,7 +281,7 @@ class FunctionInspector:
         sig: str = self._get_params_str()
         if inspect.ismethod(self.obj):
             instance = utils._camel_to_snake(self._get_class_name())
-            return f"get_{instance}.{self.name}({sig}) "
+            return f"get_{instance}_instance.{self.name}({sig}) "
         if inspect.isfunction(self.obj):
             return f"{self.name}({sig}) "
         return f"{self.name}({sig}) "

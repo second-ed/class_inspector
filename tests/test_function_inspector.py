@@ -172,7 +172,7 @@ def test_get_guards(
         ),
         (
             "get_mock_method",
-            "get_mock_class.mock_method(a, b) ",
+            "get_mock_class_instance.mock_method(a, b) ",
             does_not_raise(),
         ),
         (
@@ -199,7 +199,11 @@ def test_get_instance_call(
     "fixture_name, expected_result, expected_context",
     [
         ("get_mock_function", "", does_not_raise()),
-        ("get_mock_method", "get_mock_class: MockClass, ", does_not_raise()),
+        (
+            "get_mock_method",
+            "get_mock_class_instance: MockClass, ",
+            does_not_raise(),
+        ),
     ],
 )
 def test_get_instance_sig(
@@ -448,9 +452,9 @@ def test_get_return_annotations(
                 "        (a, b, None, pytest.raises(TypeError)),\n"
                 "        (a, b, None, pytest.raises(TypeError)),\n"
                 "    ]\n)\n"
-                "def test_mock_method(get_mock_class: MockClass, a, b, expected_result, expected_context) -> None:\n"
+                "def test_mock_method(get_mock_class_instance: MockClass, a, b, expected_result, expected_context) -> None:\n"
                 "    with expected_context:\n"
-                "        assert get_mock_class.mock_method(a, b) == expected_result\n\n\n"
+                "        assert get_mock_class_instance.mock_method(a, b) == expected_result\n\n\n"
             ),
             does_not_raise(),
         ),
@@ -483,7 +487,7 @@ def test_get_test(
         (
             "get_mock_method",
             "    with expected_context:\n"
-            "        assert get_mock_class.mock_method(a, b) == expected_result\n",
+            "        assert get_mock_class_instance.mock_method(a, b) == expected_result\n",
             does_not_raise(),
         ),
     ],
@@ -511,7 +515,7 @@ def test_get_test_body(
         ),
         (
             "get_mock_method",
-            "def test_mock_method(get_mock_class: MockClass, a, b, expected_result, expected_context) -> None:\n",
+            "def test_mock_method(get_mock_class_instance: MockClass, a, b, expected_result, expected_context) -> None:\n",
             does_not_raise(),
         ),
     ],
