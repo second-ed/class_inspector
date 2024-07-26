@@ -117,3 +117,41 @@ def test_camel_to_snake(
 def test_is_not_dunder(item, expected_result, expected_context) -> None:
     with expected_context:
         assert utils.is_not_dunder(item) == expected_result
+
+
+@pytest.mark.parametrize(
+    "callables_fixture_name, expected_result_fixture_name, expected_context",
+    [
+        (
+            "get_fixture_unsorted_callables_by_line_numbers",
+            "get_fixture_sorted_callables_by_line_numbers",
+            does_not_raise(),
+        ),
+    ],
+)
+def test_sort_callables_by_line_numbers(
+    request,
+    callables_fixture_name,
+    expected_result_fixture_name,
+    expected_context,
+) -> None:
+    with expected_context:
+        callables = request.getfixturevalue(callables_fixture_name)
+        expected_result = request.getfixturevalue(expected_result_fixture_name)
+        assert (
+            utils.sort_callables_by_line_numbers(callables) == expected_result
+        )
+
+
+# @pytest.mark.parametrize(
+#     "item, expected_result, expected_context",
+#     [
+#         ("test", {}, does_not_raise()),
+#         ("_test", {}, does_not_raise()),
+#         ("test_", {}, does_not_raise()),
+#         ("__test__", {}, does_not_raise()),
+#     ],
+# )
+# def test_get_module_functions(item, expected_result, expected_context) -> None:
+#     with expected_context:
+#         assert utils.get_module_functions(item) == expected_result

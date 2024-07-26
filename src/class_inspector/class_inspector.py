@@ -1,7 +1,7 @@
 import attr
 from attr.validators import instance_of
 
-from class_inspector._utils import get_class_methods
+from class_inspector import _utils as utils
 from class_inspector.function_inspector import FunctionInspector
 
 
@@ -16,7 +16,7 @@ class ClassInspector:
     )
 
     def __attrs_post_init__(self):
-        self.meths = get_class_methods(self.obj)
+        self.meths = utils.get_class_methods(self.obj)
         self.class_name = type(self.obj).__name__
 
     def get_parametrized_function_tests(
@@ -41,6 +41,6 @@ class ClassInspector:
 
     def _get_test_instance_fixture(self) -> str:
         return (
-            f"@pytest.fixture\ndef get_instance() -> {self.class_name}:\n"
+            f"@pytest.fixture\ndef get_{utils._camel_to_snake(self.class_name)}_instance() -> {self.class_name}:\n"
             f"    return {self.class_name}()\n\n\n"
         )

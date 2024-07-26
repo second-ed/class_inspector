@@ -4,6 +4,8 @@ import pytest
 from class_inspector.attr_generator import AttrGenerator, AttrMap
 from class_inspector.class_inspector import ClassInspector
 
+import tests.mock_package.mock_module as mm
+
 
 class TestClass:
     def __init__(self, x: int, y: float) -> None:
@@ -51,3 +53,19 @@ def get_attr_gen_instance(
     get_attr_gen_attributes: List[AttrMap],
 ) -> AttrGenerator:
     return AttrGenerator("TestClass", get_attr_gen_attributes)
+
+
+@pytest.fixture
+def get_fixture_sorted_callables_by_line_numbers():
+    return {
+        "mock_function": mm.mock_function,
+        "mock_function_with_optional": mm.mock_function_with_optional,
+    }
+
+
+@pytest.fixture
+def get_fixture_unsorted_callables_by_line_numbers():
+    return {
+        "mock_function_with_optional": mm.mock_function_with_optional,
+        "mock_function": mm.mock_function,
+    }
