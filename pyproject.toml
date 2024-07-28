@@ -27,6 +27,7 @@ dependencies = [
 [project.optional-dependencies]
 test = [
     "numpy >= 1.19.5",
+    "pandas",
     "pytest",
     "pytest-cov",
     "hypothesis",
