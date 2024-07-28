@@ -23,7 +23,7 @@ class ClassInspector:
         self, check_types: bool = True, match: bool = False
     ) -> str:
         tests = ["import pytest\n\n\n", self._get_test_instance_fixture()]
-        for _, v in self.meths.items():
+        for v in self.meths.values():
             self.function_inspector.analyse(v)
             tests.append(self.function_inspector.get_test(check_types, match))
         return "".join(tests)
@@ -32,7 +32,7 @@ class ClassInspector:
         self, add_guards: bool = False, add_debugs: bool = False
     ) -> str:
         methods = []
-        for _, v in self.meths.items():
+        for v in self.meths.values():
             self.function_inspector.analyse(v)
             methods.append(
                 self.function_inspector.add_boilerplate(add_guards, add_debugs)
