@@ -1,28 +1,7 @@
 from contextlib import nullcontext as does_not_raise
 
 import pytest
-from class_inspector.attr_generator import ITERABLES, MAPPINGS, AttrGenerator
-
-
-@pytest.mark.parametrize(
-    "attr_type, expected_result, expected_context",
-    [
-        ("List[str]", True, does_not_raise()),
-        ("str", False, does_not_raise()),
-        (0, False, pytest.raises(TypeError)),
-    ],
-)
-def test_contains_square_brackets(
-    get_attr_gen_instance: AttrGenerator,
-    attr_type,
-    expected_result,
-    expected_context,
-) -> None:
-    with expected_context:
-        assert (
-            get_attr_gen_instance.contains_square_brackets(attr_type)
-            == expected_result
-        )
+from class_inspector.attr_generator import AttrGenerator
 
 
 @pytest.mark.parametrize(
@@ -228,52 +207,6 @@ def test_get_init_bool(
 @pytest.mark.parametrize(
     "attr_type, expected_result, expected_context",
     [
-        ("List[str]", ("str", "list"), does_not_raise()),
-        ("Set[float]", ("float", "set"), does_not_raise()),
-        ("Dict[str, str]", ("str, str", "dict"), does_not_raise()),
-        ("int", "", pytest.raises(AttributeError)),
-        (0, "", pytest.raises(TypeError)),
-    ],
-)
-def test_get_inner_outer_types(
-    get_attr_gen_instance: AttrGenerator,
-    attr_type,
-    expected_result,
-    expected_context,
-) -> None:
-    with expected_context:
-        assert (
-            get_attr_gen_instance.get_inner_outer_types(attr_type)
-            == expected_result
-        )
-
-
-@pytest.mark.parametrize(
-    "attr_type, expected_result, expected_context",
-    [
-        ("int", "int", does_not_raise()),
-        ("str", "str", does_not_raise()),
-        ("List[str]", "list", does_not_raise()),
-        ("Set[float]", "set", does_not_raise()),
-        ("Dict[str, str]", "dict", does_not_raise()),
-        (0, "", pytest.raises(TypeError)),
-    ],
-)
-def test_get_type_hint(
-    get_attr_gen_instance: AttrGenerator,
-    attr_type,
-    expected_result,
-    expected_context,
-) -> None:
-    with expected_context:
-        assert (
-            get_attr_gen_instance.get_type_hint(attr_type) == expected_result
-        )
-
-
-@pytest.mark.parametrize(
-    "attr_type, expected_result, expected_context",
-    [
         ("int", "instance_of(int)", does_not_raise()),
         ("str", "instance_of(str)", does_not_raise()),
         (
@@ -304,78 +237,4 @@ def test_get_validator(
     with expected_context:
         assert (
             get_attr_gen_instance.get_validator(attr_type) == expected_result
-        )
-
-
-@pytest.mark.parametrize(
-    "attr_type, expected_result, expected_context",
-    [
-        ("int", False, does_not_raise()),
-        ("str", False, does_not_raise()),
-        ("List[str]", True, does_not_raise()),
-        ("Set[float]", True, does_not_raise()),
-        ("Dict[str, str]", False, does_not_raise()),
-        (0, False, pytest.raises(TypeError)),
-    ],
-)
-def test_is_deep_iterable(
-    get_attr_gen_instance: AttrGenerator,
-    attr_type,
-    expected_result,
-    expected_context,
-) -> None:
-    with expected_context:
-        assert (
-            get_attr_gen_instance.is_deep_iterable(attr_type)
-            == expected_result
-        )
-
-
-@pytest.mark.parametrize(
-    "attr_type, expected_result, expected_context",
-    [
-        ("int", False, does_not_raise()),
-        ("str", False, does_not_raise()),
-        ("List[str]", False, does_not_raise()),
-        ("Set[float]", False, does_not_raise()),
-        ("Dict[str, str]", True, does_not_raise()),
-        (0, False, pytest.raises(TypeError)),
-    ],
-)
-def test_is_deep_mapping(
-    get_attr_gen_instance: AttrGenerator,
-    attr_type,
-    expected_result,
-    expected_context,
-) -> None:
-    with expected_context:
-        assert (
-            get_attr_gen_instance.is_deep_mapping(attr_type) == expected_result
-        )
-
-
-@pytest.mark.parametrize(
-    "attr_type, deep_list, expected_result, expected_context",
-    [
-        ("List[str]", MAPPINGS, False, does_not_raise()),
-        ("Set[float]", MAPPINGS, False, does_not_raise()),
-        ("Dict[str, str]", MAPPINGS, True, does_not_raise()),
-        ("List[str]", ITERABLES, True, does_not_raise()),
-        ("Set[float]", ITERABLES, True, does_not_raise()),
-        ("Dict[str, str]", ITERABLES, False, does_not_raise()),
-        ("int", [], False, pytest.raises(AttributeError)),
-        (0, [], False, pytest.raises(TypeError)),
-    ],
-)
-def test_is_outer_type_in_list(
-    get_attr_gen_instance: AttrGenerator,
-    attr_type,
-    deep_list,
-    expected_result,
-    expected_context,
-) -> None:
-    with expected_context:
-        assert (
-            get_attr_gen_instance.is_outer_type_in_list(attr_type, deep_list)
-            == expected_result
         )
