@@ -86,7 +86,7 @@ A wrapper around FunctionInspector that can be given a module and perform Functi
 
 # ClassInspector
 
-Slightly out of date, this is used to help write getters and setters. However, I recommend using the attrs library instead as it's safer.
+A wrapper around FunctionInspector that can be given a class and perform FunctionInspector actions on the methods of that class.
 
 
 # Custom Validators

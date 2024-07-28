@@ -1,8 +1,9 @@
+import inspect
 import logging
 import re
-from typing import Any, Optional, Union
+from typing import Any, Callable, Optional, Union
 
-from ._logger import compress_logging_value
+from class_inspector._logger import compress_logging_value
 
 logger = logging.getLogger()
 
@@ -33,6 +34,8 @@ def _unpack_parameter(param: Any) -> str:
             [_get_object_name(arg) for arg in param.__args__]
         ).replace("typing.", "")
         return f"({args})"
+    if hasattr(param, "__origin__"):
+        return _get_object_name(param.__origin__)
     return _get_object_name(param).replace("typing.", "")
 
 
@@ -124,3 +127,42 @@ def _clean_func(func_str: str) -> str:
         return f"({cleaned_content})"
 
     return re.sub(r"\((.*?)\)", replacer, func_str, flags=re.DOTALL)
+
+
+def is_not_dunder(item: str) -> bool:
+    return not item.startswith("__") and not item.endswith("__")
+
+
+def sort_callables_by_line_numbers(callables: dict) -> dict:
+    return dict(
+        sorted(
+            callables.items(),
+            key=lambda item: inspect.getsourcelines(item[1])[1],
+        )
+    )
+
+
+def get_module_functions(inp_module):
+    return _get_module_classes_or_functions(inp_module, inspect.isfunction)
+
+
+def get_module_classes(inp_module):
+    return _get_module_classes_or_functions(inp_module, inspect.isclass)
+
+
+def _get_module_classes_or_functions(inp_module, is_type: Callable):
+    members = {
+        name: member
+        for name, member in inspect.getmembers(inp_module, is_type)
+        if member.__module__ == inp_module.__name__
+    }
+    return sort_callables_by_line_numbers(members)
+
+
+def get_class_methods(obj):
+    meths = {
+        name: func
+        for name, func in inspect.getmembers(obj, inspect.ismethod)
+        if func.__self__.__class__ == obj.__class__ and is_not_dunder(name)
+    }
+    return sort_callables_by_line_numbers(meths)

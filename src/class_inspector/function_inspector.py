@@ -5,8 +5,8 @@ from typing import Any, Callable, Dict
 import attr
 from attr.validators import instance_of
 
-from . import _utils as utils
-from ._logger import (
+from class_inspector import _utils as utils
+from class_inspector._logger import (
     compress_logging_value,
     is_logging_enabled,
     setup_logger,
@@ -254,7 +254,7 @@ class FunctionInspector:
             return ""
         match_stmt = ""
         if match:
-            match_stmt = ', match=r""'
+            match_stmt = ', match=""'
         return f"{self.tab * 2}({args}, None, pytest.raises(TypeError{match_stmt})),\n"
 
     def _get_instance_sig(self) -> str:
@@ -266,7 +266,7 @@ class FunctionInspector:
         """
         if inspect.ismethod(self.obj):
             instance = utils._camel_to_snake(self._get_class_name())
-            return f"get_{instance}: {self._get_class_name()}, "
+            return f"get_{instance}_instance: {self._get_class_name()}, "
         if inspect.isfunction(self.obj):
             return ""
         return ""
@@ -281,7 +281,7 @@ class FunctionInspector:
         sig: str = self._get_params_str()
         if inspect.ismethod(self.obj):
             instance = utils._camel_to_snake(self._get_class_name())
-            return f"get_{instance}.{self.name}({sig}) "
+            return f"get_{instance}_instance.{self.name}({sig}) "
         if inspect.isfunction(self.obj):
             return f"{self.name}({sig}) "
         return f"{self.name}({sig}) "
