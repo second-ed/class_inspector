@@ -46,6 +46,7 @@ def test_get_inner_outer_types(
         ("int", "int", does_not_raise()),
         ("str", "str", does_not_raise()),
         ("List[str]", "list", does_not_raise()),
+        # ("List[Dict[str, Any]]", "list", does_not_raise()),
         ("Set[float]", "set", does_not_raise()),
         ("Dict[str, str]", "dict", does_not_raise()),
         (0, "", pytest.raises(TypeError)),

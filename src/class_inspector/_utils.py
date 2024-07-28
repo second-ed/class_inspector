@@ -34,6 +34,8 @@ def _unpack_parameter(param: Any) -> str:
             [_get_object_name(arg) for arg in param.__args__]
         ).replace("typing.", "")
         return f"({args})"
+    if hasattr(param, "__origin__"):
+        return _get_object_name(param.__origin__)
     return _get_object_name(param).replace("typing.", "")
 
 

@@ -1,5 +1,5 @@
 from contextlib import nullcontext as does_not_raise
-from typing import List, Optional, Union
+from typing import Any, Dict, List, Optional, Union
 
 import pytest
 from class_inspector import _utils as utils
@@ -31,7 +31,8 @@ def test_strip_underscores(
     [
         (int, "int", does_not_raise()),
         (float, "float", does_not_raise()),
-        (List, "List", does_not_raise()),
+        (List, "list", does_not_raise()),
+        (List[Dict[str, Any]], "list", does_not_raise()),
         (Optional[List], "(List, NoneType)", does_not_raise()),
         (Union[int, float], "(int, float)", does_not_raise()),
     ],

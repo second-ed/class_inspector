@@ -197,9 +197,9 @@ def get_mock_utils_c_with_guards():
         "\n"
         "\n"
         "def merge_data(data_dict: Dict):\n"
-        "    if not all([isinstance(data_dict, Dict)]):\n"
+        "    if not all([isinstance(data_dict, dict)]):\n"
         "        raise TypeError(\n"
-        '            "merge_data expects arg types: [Dict], "\n'
+        '            "merge_data expects arg types: [dict], "\n'
         '            f"received: [{type(data_dict).__name__}]"\n'
         "        )\n"
         "    # this is an inline comment that hopefully will stay\n"
@@ -422,9 +422,9 @@ def get_mock_utils_c_with_guards_and_debugs():
         "def merge_data(data_dict: Dict):\n"
         "    for key, val in locals().items():\n"
         '        logger.debug(f"{key} = {val}")\n'
-        "    if not all([isinstance(data_dict, Dict)]):\n"
+        "    if not all([isinstance(data_dict, dict)]):\n"
         "        raise TypeError(\n"
-        '            "merge_data expects arg types: [Dict], "\n'
+        '            "merge_data expects arg types: [dict], "\n'
         '            f"received: [{type(data_dict).__name__}]"\n'
         "        )\n"
         "    # this is an inline comment that hopefully will stay\n"
@@ -668,9 +668,9 @@ def get_mock_service_boilerplate_add_guards():
         "        Returns:\n"
         "            Dict[str, Any]: A dictionary containing the processed data.\n"
         "        '''\n"
-        "        if not all([isinstance(data, List)]):\n"
+        "        if not all([isinstance(data, list)]):\n"
         "            raise TypeError(\n"
-        '                "process_data expects arg types: [List], "\n'
+        '                "process_data expects arg types: [list], "\n'
         '                f"received: [{type(data).__name__}]"\n'
         "            )\n"
         "        processed_data = {'summary': 'Processed Data', 'count': len(data)}\n"
@@ -687,9 +687,9 @@ def get_mock_service_boilerplate_add_guards():
         "        Returns:\n"
         "            bool: True if the data is valid, False otherwise.\n"
         "        '''\n"
-        "        if not all([isinstance(data, List)]):\n"
+        "        if not all([isinstance(data, list)]):\n"
         "            raise TypeError(\n"
-        '                "validate_data expects arg types: [List], "\n'
+        '                "validate_data expects arg types: [list], "\n'
         '                f"received: [{type(data).__name__}]"\n'
         "            )\n"
         "        for item in data:\n"
@@ -708,9 +708,9 @@ def get_mock_service_boilerplate_add_guards():
         "        Returns:\n"
         "            bool: True if the data was saved successfully, False otherwise.\n"
         "        '''\n"
-        "        if not all([isinstance(data, Dict)]):\n"
+        "        if not all([isinstance(data, dict)]):\n"
         "            raise TypeError(\n"
-        '                "save_data expects arg types: [Dict], "\n'
+        '                "save_data expects arg types: [dict], "\n'
         '                f"received: [{type(data).__name__}]"\n'
         "            )\n"
         "        return True\n"
