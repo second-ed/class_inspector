@@ -5,6 +5,7 @@ from typing import Any, Callable, Dict
 import attr
 from attr.validators import instance_of
 
+import class_inspector._type_hint_utils as thu
 from class_inspector import _utils as utils
 from class_inspector._logger import (
     compress_logging_value,
@@ -324,7 +325,10 @@ class FunctionInspector:
         if not self.parameters:
             return ""
         expected_types = ", ".join(
-            [utils._unpack_parameter(arg) for arg in self.parameters.values()]
+            [
+                thu.get_type_hint(utils._unpack_parameter(arg))
+                for arg in self.parameters.values()
+            ]
         )
         received_types = ", ".join(
             [f"{{type({arg}).__name__}}" for arg in self.parameters.keys()]
