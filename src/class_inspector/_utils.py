@@ -1,7 +1,7 @@
 import inspect
 import logging
 import re
-from typing import Any, Optional, Union
+from typing import Any, Callable, Optional, Union
 
 from class_inspector._logger import compress_logging_value
 
@@ -141,12 +141,20 @@ def sort_callables_by_line_numbers(callables: dict) -> dict:
 
 
 def get_module_functions(inp_module):
-    funcs = {
-        name: func
-        for name, func in inspect.getmembers(inp_module, inspect.isfunction)
-        if func.__module__ == inp_module.__name__
+    return _get_module_classes_or_functions(inp_module, inspect.isfunction)
+
+
+def get_module_classes(inp_module):
+    return _get_module_classes_or_functions(inp_module, inspect.isclass)
+
+
+def _get_module_classes_or_functions(inp_module, is_type: Callable):
+    members = {
+        name: member
+        for name, member in inspect.getmembers(inp_module, is_type)
+        if member.__module__ == inp_module.__name__
     }
-    return sort_callables_by_line_numbers(funcs)
+    return sort_callables_by_line_numbers(members)
 
 
 def get_class_methods(obj):

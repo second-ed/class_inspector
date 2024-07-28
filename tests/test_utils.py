@@ -4,7 +4,7 @@ from typing import List, Optional, Union
 import pytest
 from class_inspector import _utils as utils
 
-from tests.mock_package import mock_utils_c
+from tests.mock_package import mock_module, mock_utils_c
 
 
 @pytest.mark.parametrize(
@@ -161,6 +161,23 @@ def test_get_module_functions(
     with expected_context:
         expected_result = request.getfixturevalue(expected_result_fixture_name)
         assert utils.get_module_functions(inp_module) == expected_result
+
+
+@pytest.mark.parametrize(
+    "inp_module, expected_result, expected_context",
+    [
+        (
+            mock_module,
+            {"MockClass": mock_module.MockClass},
+            does_not_raise(),
+        ),
+    ],
+)
+def test_get_module_classes(
+    request, inp_module, expected_result, expected_context
+) -> None:
+    with expected_context:
+        assert utils.get_module_classes(inp_module) == expected_result
 
 
 @pytest.mark.parametrize(
