@@ -4,6 +4,8 @@ from typing import List, Optional, Union
 import pytest
 from class_inspector import _utils as utils
 
+from tests.mock_package import mock_utils_c
+
 
 @pytest.mark.parametrize(
     "item, expected_result, expected_context",
@@ -143,15 +145,19 @@ def test_sort_callables_by_line_numbers(
         )
 
 
-# @pytest.mark.parametrize(
-#     "item, expected_result, expected_context",
-#     [
-#         ("test", {}, does_not_raise()),
-#         ("_test", {}, does_not_raise()),
-#         ("test_", {}, does_not_raise()),
-#         ("__test__", {}, does_not_raise()),
-#     ],
-# )
-# def test_get_module_functions(item, expected_result, expected_context) -> None:
-#     with expected_context:
-#         assert utils.get_module_functions(item) == expected_result
+@pytest.mark.parametrize(
+    "inp_module, expected_result_fixture_name, expected_context",
+    [
+        (
+            mock_utils_c,
+            "get_fixture_sorted_callables_by_line_numbers",
+            does_not_raise(),
+        ),
+    ],
+)
+def test_get_module_functions(
+    request, inp_module, expected_result_fixture_name, expected_context
+) -> None:
+    with expected_context:
+        expected_result = request.getfixturevalue(expected_result_fixture_name)
+        assert utils.get_module_functions(inp_module) == expected_result
