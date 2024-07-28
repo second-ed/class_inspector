@@ -1,9 +1,9 @@
-import inspect
 from types import ModuleType
 
 import attr
 from attr.validators import instance_of
 
+from class_inspector._utils import get_module_classes, get_module_functions
 from class_inspector.function_inspector import FunctionInspector
 
 
@@ -22,18 +22,8 @@ class ModuleInspector:
     def __attrs_post_init__(self):
         self.module_vars = vars(self.module)
         self.module_name = self.module.__name__
-        self.extract_custom_classes()
-        self.extract_custom_functions()
-
-    def extract_custom_functions(self) -> None:
-        self.custom_functions = {
-            k: v for k, v in self.module_vars.items() if inspect.isfunction(v)
-        }
-
-    def extract_custom_classes(self) -> None:
-        self.custom_classes = {
-            k: v for k, v in self.module_vars.items() if inspect.isclass(v)
-        }
+        self.custom_functions = get_module_functions(self.module)
+        self.custom_classes = get_module_classes(self.module)
 
     def get_parametrized_function_tests(
         self, check_types: bool = True, match: bool = False

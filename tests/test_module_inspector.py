@@ -1,69 +1,123 @@
-from __future__ import annotations
-
-from types import FunctionType
+from contextlib import nullcontext as does_not_raise
 
 import pytest
 from class_inspector.module_inspector import ModuleInspector
 
-from tests.mock_package import mock_module
+from tests.mock_package import mock_service, mock_utils_c
 
 
-@pytest.fixture
-def get_instance() -> ModuleInspector:
-    return ModuleInspector(mock_module)
-
-
-@pytest.mark.skip()
-def test_init(get_instance: ModuleInspector) -> None:
-    assert isinstance(get_instance, ModuleInspector)
-
-
-@pytest.mark.skip()
-def test_extract_custom_classes(get_instance: ModuleInspector) -> None:
-    for _, v in get_instance.custom_classes.items():
-        assert type(v) == type.__class__
-
-    assert set(c.__name__ for c in get_instance.custom_classes.values()) == {
-        "TestClass",
-    }
-
-
-@pytest.mark.skip()
-def test_extract_custom_functions(get_instance: ModuleInspector) -> None:
-    for _, v in get_instance.custom_functions.items():
-        assert type(v) == FunctionType
-
-    assert set(
-        func.__name__ for func in get_instance.custom_functions.values()
-    ) == {
-        "mock_func1",
-        "mock_func2",
-    }
-
-
-@pytest.mark.skip()
-def test_get_parametrized_function_tests(
-    get_instance: ModuleInspector,
+@pytest.mark.parametrize(
+    "module, expected_result, expected_context",
+    [
+        (mock_utils_c, set(), does_not_raise()),
+        (
+            mock_service,
+            {"MockService"},
+            does_not_raise(),
+        ),
+    ],
+)
+def test_extract_custom_classes(
+    module, expected_result, expected_context
 ) -> None:
-    assert get_instance.get_parametrized_function_tests() == (
-        "@pytest.mark.parametrize(\n"
-        '    "a, b, expected_result, expected_context",\n'
-        "    [\n"
-        "        (a, b, expected_result, expected_context),\n"
-        "        (a, b, None, pytest.raises(TypeError)),\n"
-        "        (a, b, None, pytest.raises(TypeError)),\n"
-        "    ]\n)\n"
-        "def test_mock_func1(a, b, expected_result, expected_context) -> None:\n"
-        "    with expected_context:\n"
-        "        assert mock_func1(a, b) == expected_result\n\n\n"
-        "@pytest.mark.parametrize(\n"
-        '    "a, b, expected_result, expected_context",\n'
-        "    [\n"
-        "        (a, b, expected_result, expected_context),\n"
-        "        (a, b, None, pytest.raises(TypeError)),\n"
-        "        (a, b, None, pytest.raises(TypeError)),\n"
-        "    ]\n)\n"
-        "def test_mock_func2(a, b, expected_result, expected_context) -> None:\n"
-        "    with expected_context:\n"
-        "        assert mock_func2(a, b) == expected_result\n\n\n"
-    )
+    with expected_context:
+        mi = ModuleInspector(module)
+        assert (
+            set(c.__name__ for c in mi.custom_classes.values())
+            == expected_result
+        )
+
+
+@pytest.mark.parametrize(
+    "module, expected_result, expected_context",
+    [
+        (
+            mock_utils_c,
+            {
+                "_transform_data",
+                "check_extension",
+                "clean_data",
+                "filepath_exists",
+                "main",
+                "merge_data",
+                "read_data",
+                "rename_data",
+                "save_data",
+            },
+            does_not_raise(),
+        ),
+        (
+            mock_service,
+            set(),
+            does_not_raise(),
+        ),
+    ],
+)
+def test_extract_custom_functions(
+    module, expected_result, expected_context
+) -> None:
+    with expected_context:
+        mi = ModuleInspector(module)
+        assert (
+            set(func.__name__ for func in mi.custom_functions.values())
+            == expected_result
+        )
+
+
+@pytest.mark.parametrize(
+    "module, expected_result_fixture_name, expected_context",
+    [
+        (
+            mock_utils_c,
+            "get_mock_utils_c_parametrized_tests",
+            does_not_raise(),
+        ),
+    ],
+)
+def test_get_parametrized_function_tests(
+    request, module, expected_result_fixture_name, expected_context
+) -> None:
+    with expected_context:
+        mi = ModuleInspector(module)
+        expected_result = request.getfixturevalue(expected_result_fixture_name)
+        assert mi.get_parametrized_function_tests() == expected_result
+
+
+@pytest.mark.parametrize(
+    "module, add_guards, add_debugs, expected_result_fixture_name, expected_context",
+    [
+        (
+            mock_utils_c,
+            True,
+            False,
+            "get_mock_utils_c_with_guards",
+            does_not_raise(),
+        ),
+        (
+            mock_utils_c,
+            False,
+            True,
+            "get_mock_utils_c_with_debugs",
+            does_not_raise(),
+        ),
+        (
+            mock_utils_c,
+            True,
+            True,
+            "get_mock_utils_c_with_guards_and_debugs",
+            does_not_raise(),
+        ),
+    ],
+)
+def test_add_boilerplate(
+    request,
+    module,
+    add_guards,
+    add_debugs,
+    expected_result_fixture_name,
+    expected_context,
+) -> None:
+    with expected_context:
+        mi = ModuleInspector(module)
+        expected_result = request.getfixturevalue(expected_result_fixture_name)
+        assert mi.add_boilerplate(add_guards, add_debugs) == expected_result
