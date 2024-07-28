@@ -20,7 +20,7 @@ def main(filepath: str) -> bool:
 
 
 # this is a comment related to the function below
-def read_data(filepath: str) -> pd.DataFrame:
+def read_data(filepath: str):
     if check_extension(filepath):
         return pd.DataFrame({})
     raise FileNotFoundError
@@ -38,18 +38,18 @@ def check_extension(filepath: str) -> bool:
     return bool(filepath)
 
 
-def clean_data(data: pd.DataFrame) -> pd.DataFrame:
+def clean_data(data):
     return data
 
 
-def _transform_data(data: pd.DataFrame) -> dict:
+def _transform_data(data) -> dict:
     def transform() -> dict:
         return {"data": data}
 
     return transform()
 
 
-def rename_data(value: pd.DataFrame) -> str:
+def rename_data(value) -> str:
     def replacer(match) -> str:
         content = match.group(1)
         cleaned_content = " ".join(content.split())
@@ -60,13 +60,13 @@ def rename_data(value: pd.DataFrame) -> str:
     )
 
 
-def merge_data(data_dict: Dict) -> pd.DataFrame:
+def merge_data(data_dict: Dict):
     # this is an inline comment that hopefully will stay
     data = pd.concat([v for v in data_dict.values()])
     return data
 
 
-def save_data(data: pd.DataFrame, filepath: str) -> bool:
+def save_data(data, filepath: str) -> bool:
     if filepath_exists(filepath):
         return True
     return False
