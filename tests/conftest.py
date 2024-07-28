@@ -4,7 +4,7 @@ import pytest
 from class_inspector.attr_generator import AttrGenerator, AttrMap
 from class_inspector.class_inspector import ClassInspector
 
-import tests.mock_package.mock_module as mm
+from tests.mock_package import mock_utils_c
 
 
 class TestClass:
@@ -58,14 +58,28 @@ def get_attr_gen_instance(
 @pytest.fixture
 def get_fixture_sorted_callables_by_line_numbers():
     return {
-        "mock_function": mm.mock_function,
-        "mock_function_with_optional": mm.mock_function_with_optional,
+        "main": mock_utils_c.main,
+        "read_data": mock_utils_c.read_data,
+        "check_extension": mock_utils_c.check_extension,
+        "clean_data": mock_utils_c.clean_data,
+        "_transform_data": mock_utils_c._transform_data,
+        "rename_data": mock_utils_c.rename_data,
+        "merge_data": mock_utils_c.merge_data,
+        "save_data": mock_utils_c.save_data,
+        "filepath_exists": mock_utils_c.filepath_exists,
     }
 
 
 @pytest.fixture
 def get_fixture_unsorted_callables_by_line_numbers():
     return {
-        "mock_function_with_optional": mm.mock_function_with_optional,
-        "mock_function": mm.mock_function,
+        "clean_data": mock_utils_c.clean_data,
+        "check_extension": mock_utils_c.check_extension,
+        "main": mock_utils_c.main,
+        "read_data": mock_utils_c.read_data,
+        "_transform_data": mock_utils_c._transform_data,
+        "filepath_exists": mock_utils_c.filepath_exists,
+        "merge_data": mock_utils_c.merge_data,
+        "save_data": mock_utils_c.save_data,
+        "rename_data": mock_utils_c.rename_data,
     }
