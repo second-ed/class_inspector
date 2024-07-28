@@ -161,3 +161,27 @@ def test_get_module_functions(
     with expected_context:
         expected_result = request.getfixturevalue(expected_result_fixture_name)
         assert utils.get_module_functions(inp_module) == expected_result
+
+
+@pytest.mark.parametrize(
+    "class_instance_fixture_name, expected_result_fixture_name, expected_context",
+    [
+        (
+            "get_mock_service_instance",
+            "get_sorted_mock_service_methods",
+            does_not_raise(),
+        ),
+    ],
+)
+def test_get_class_methods(
+    request,
+    class_instance_fixture_name,
+    expected_result_fixture_name,
+    expected_context,
+) -> None:
+    with expected_context:
+        inp_class_instance = request.getfixturevalue(
+            class_instance_fixture_name
+        )
+        expected_result = request.getfixturevalue(expected_result_fixture_name)
+        assert utils.get_class_methods(inp_class_instance) == expected_result

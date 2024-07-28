@@ -5,6 +5,7 @@ from class_inspector.attr_generator import AttrGenerator, AttrMap
 from class_inspector.class_inspector import ClassInspector
 
 from tests.mock_package import mock_utils_c
+from tests.mock_package.mock_service import MockService
 
 
 class TestClass:
@@ -82,4 +83,29 @@ def get_fixture_unsorted_callables_by_line_numbers():
         "merge_data": mock_utils_c.merge_data,
         "save_data": mock_utils_c.save_data,
         "rename_data": mock_utils_c.rename_data,
+    }
+
+
+@pytest.fixture
+def get_mock_service_instance():
+    return MockService()
+
+
+@pytest.fixture
+def get_unsorted_mock_service_methods(get_mock_service_instance):
+    return {
+        "validate_data": get_mock_service_instance.validate_data,
+        "process_data": get_mock_service_instance.process_data,
+        "save_data": get_mock_service_instance.save_data,
+        "fetch_data": get_mock_service_instance.fetch_data,
+    }
+
+
+@pytest.fixture
+def get_sorted_mock_service_methods(get_mock_service_instance):
+    return {
+        "fetch_data": get_mock_service_instance.fetch_data,
+        "process_data": get_mock_service_instance.process_data,
+        "validate_data": get_mock_service_instance.validate_data,
+        "save_data": get_mock_service_instance.save_data,
     }
