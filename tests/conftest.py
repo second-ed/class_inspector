@@ -462,6 +462,7 @@ def get_mock_utils_c_with_guards_and_debugs():
 @pytest.fixture
 def get_mock_utils_c_parametrized_tests():
     return (
+        "import pytest\n\n\n"
         "@pytest.mark.parametrize(\n"
         '    "filepath, expected_result, expected_context",\n'
         "    [\n"

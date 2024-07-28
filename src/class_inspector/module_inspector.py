@@ -28,7 +28,7 @@ class ModuleInspector:
     def get_parametrized_function_tests(
         self, check_types: bool = True, match: bool = False
     ) -> str:
-        tests = []
+        tests = ["import pytest\n\n\n"]
         for _, v in self.custom_functions.items():
             self.function_inspector.analyse(v)
             tests.append(self.function_inspector.get_test(check_types, match))
