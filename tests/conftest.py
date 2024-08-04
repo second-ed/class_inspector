@@ -161,20 +161,10 @@ def get_mock_utils_c_with_guards():
         "\n"
         "\n"
         "def clean_data(data):\n"
-        "    if not all([isinstance(data, _empty)]):\n"
-        "        raise TypeError(\n"
-        '            "clean_data expects arg types: [_empty], "\n'
-        '            f"received: [{type(data).__name__}]"\n'
-        "        )\n"
         "    return data\n"
         "\n"
         "\n"
         "def _transform_data(data) -> dict:\n"
-        "    if not all([isinstance(data, _empty)]):\n"
-        "        raise TypeError(\n"
-        '            "_transform_data expects arg types: [_empty], "\n'
-        '            f"received: [{type(data).__name__}]"\n'
-        "        )\n"
         "    def transform() -> dict:\n"
         "        return {'data': data}\n"
         "\n"
@@ -182,11 +172,6 @@ def get_mock_utils_c_with_guards():
         "\n"
         "\n"
         "def rename_data(value) -> str:\n"
-        "    if not all([isinstance(value, _empty)]):\n"
-        "        raise TypeError(\n"
-        '            "rename_data expects arg types: [_empty], "\n'
-        '            f"received: [{type(value).__name__}]"\n'
-        "        )\n"
         "    def replacer(match) -> str:\n"
         "        content = match.group(1)\n"
         "        cleaned_content = ' '.join(content.split())\n"
@@ -208,10 +193,10 @@ def get_mock_utils_c_with_guards():
         "\n"
         "\n"
         "def save_data(data, filepath: str) -> bool:\n"
-        "    if not all([isinstance(data, _empty), isinstance(filepath, str)]):\n"
+        "    if not all([isinstance(filepath, str)]):\n"
         "        raise TypeError(\n"
-        '            "save_data expects arg types: [_empty, str], "\n'
-        '            f"received: [{type(data).__name__}, {type(filepath).__name__}]"\n'
+        '            "save_data expects arg types: [str], "\n'
+        '            f"received: [{type(filepath).__name__}]"\n'
         "        )\n"
         "    if filepath_exists(filepath):\n"
         "        return True\n"
@@ -380,22 +365,12 @@ def get_mock_utils_c_with_guards_and_debugs():
         "def clean_data(data):\n"
         "    for key, val in locals().items():\n"
         '        logger.debug(f"{key} = {val}")\n'
-        "    if not all([isinstance(data, _empty)]):\n"
-        "        raise TypeError(\n"
-        '            "clean_data expects arg types: [_empty], "\n'
-        '            f"received: [{type(data).__name__}]"\n'
-        "        )\n"
         "    return data\n"
         "\n"
         "\n"
         "def _transform_data(data) -> dict:\n"
         "    for key, val in locals().items():\n"
         '        logger.debug(f"{key} = {val}")\n'
-        "    if not all([isinstance(data, _empty)]):\n"
-        "        raise TypeError(\n"
-        '            "_transform_data expects arg types: [_empty], "\n'
-        '            f"received: [{type(data).__name__}]"\n'
-        "        )\n"
         "    def transform() -> dict:\n"
         "        return {'data': data}\n"
         "\n"
@@ -405,11 +380,6 @@ def get_mock_utils_c_with_guards_and_debugs():
         "def rename_data(value) -> str:\n"
         "    for key, val in locals().items():\n"
         '        logger.debug(f"{key} = {val}")\n'
-        "    if not all([isinstance(value, _empty)]):\n"
-        "        raise TypeError(\n"
-        '            "rename_data expects arg types: [_empty], "\n'
-        '            f"received: [{type(value).__name__}]"\n'
-        "        )\n"
         "    def replacer(match) -> str:\n"
         "        content = match.group(1)\n"
         "        cleaned_content = ' '.join(content.split())\n"
@@ -435,10 +405,10 @@ def get_mock_utils_c_with_guards_and_debugs():
         "def save_data(data, filepath: str) -> bool:\n"
         "    for key, val in locals().items():\n"
         '        logger.debug(f"{key} = {val}")\n'
-        "    if not all([isinstance(data, _empty), isinstance(filepath, str)]):\n"
+        "    if not all([isinstance(filepath, str)]):\n"
         "        raise TypeError(\n"
-        '            "save_data expects arg types: [_empty, str], "\n'
-        '            f"received: [{type(data).__name__}, {type(filepath).__name__}]"\n'
+        '            "save_data expects arg types: [str], "\n'
+        '            f"received: [{type(filepath).__name__}]"\n'
         "        )\n"
         "    if filepath_exists(filepath):\n"
         "        return True\n"

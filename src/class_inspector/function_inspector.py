@@ -323,31 +323,38 @@ class FunctionInspector:
         """
         if not self.parameters:
             return ""
-        expected_types = ", ".join(
-            [utils._unpack_parameter(arg) for arg in self.parameters.values()]
-        )
-        received_types = ", ".join(
-            [f"{{type({arg}).__name__}}" for arg in self.parameters.keys()]
-        )
 
-        guards: str = (
-            f"{self.tab*(1 + self.is_method)}if not all(["
-            + ", ".join(
-                [
-                    f"isinstance({arg_name}, {utils._unpack_parameter(arg_type)})"
-                    for arg_name, arg_type in self.parameters.items()
-                ]
+        expected_types, received_types = [], []
+
+        for arg, annot in self.parameters.items():
+            if annot != inspect._empty:
+                expected_types.append(utils._unpack_parameter(annot))
+                received_types.append(f"{{type({arg}).__name__}}")
+
+        expected_types = ", ".join(expected_types)
+        received_types = ", ".join(received_types)
+
+        if expected_types and received_types:
+            guards: str = (
+                f"{self.tab*(1 + self.is_method)}if not all(["
+                + ", ".join(
+                    [
+                        f"isinstance({arg_name}, {utils._unpack_parameter(arg_type)})"
+                        for arg_name, arg_type in self.parameters.items()
+                        if arg_type != inspect._empty
+                    ]
+                )
+                + "]):\n"
             )
-            + "]):\n"
-        )
-        raises = (
-            f"{self.tab*(2 + self.is_method)}raise TypeError(\n"
-            + f'{self.tab*(3 + self.is_method)}"{self.name} '
-            + f'expects arg types: [{expected_types}], "\n'
-            + f'{self.tab*(3 + self.is_method)}f"received: [{received_types}]"\n'
-            + f"{self.tab*(2 + self.is_method)})\n"
-        )
-        return guards + raises
+            raises = (
+                f"{self.tab*(2 + self.is_method)}raise TypeError(\n"
+                + f'{self.tab*(3 + self.is_method)}"{self.name} '
+                + f'expects arg types: [{expected_types}], "\n'
+                + f'{self.tab*(3 + self.is_method)}f"received: [{received_types}]"\n'
+                + f"{self.tab*(2 + self.is_method)})\n"
+            )
+            return guards + raises
+        return ""
 
     def _get_debugs(self) -> str:
         if not self.parameters:
