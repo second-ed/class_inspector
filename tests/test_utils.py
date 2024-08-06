@@ -1,5 +1,4 @@
 from contextlib import nullcontext as does_not_raise
-from typing import Any, Dict, List, Optional, Union
 
 import pytest
 from class_inspector import _utils as utils
@@ -24,26 +23,6 @@ def test_strip_underscores(
 ) -> None:
     with expected_context:
         assert utils._strip_underscores(item) == expected_result
-
-
-@pytest.mark.parametrize(
-    "param, expected_result, expected_context",
-    [
-        (int, "int", does_not_raise()),
-        (float, "float", does_not_raise()),
-        (List, "list", does_not_raise()),
-        (List[Dict[str, Any]], "list", does_not_raise()),
-        (Optional[List], "(List, NoneType)", does_not_raise()),
-        (Union[int, float], "(int, float)", does_not_raise()),
-    ],
-)
-def test_unpack_parameter(
-    param,
-    expected_result,
-    expected_context,
-) -> None:
-    with expected_context:
-        assert utils._unpack_parameter(param) == expected_result
 
 
 def test_get_docstring_patterns() -> None:

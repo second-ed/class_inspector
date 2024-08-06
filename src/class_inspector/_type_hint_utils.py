@@ -1,8 +1,33 @@
 import re
-from typing import List, Tuple
+from typing import Any, List, Tuple, Union
 
 ITERABLES = ["list", "set", "tuple"]
 MAPPINGS = ["dict"]
+
+
+def _unpack_parameter(param: Any) -> str:
+    if _is_union_origin(param):
+        args = ", ".join(
+            [_get_object_name(arg) for arg in param.__args__]
+        ).replace("typing.", "")
+        return f"({args})"
+    if hasattr(param, "__origin__"):
+        return _get_object_name(param.__origin__)
+    return _get_object_name(param).replace("typing.", "")
+
+
+def _is_union_origin(param: Any) -> bool:
+    # Optional.__origin__ is Union so can use for both
+    if hasattr(param, "__origin__"):
+        if param.__origin__ is Union:
+            return True
+    return False
+
+
+def _get_object_name(param: Any) -> str:
+    if hasattr(param, "__name__"):
+        return param.__name__
+    return str(param)
 
 
 def contains_square_brackets(attr_type: str) -> bool:

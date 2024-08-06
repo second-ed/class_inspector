@@ -1,7 +1,28 @@
 from contextlib import nullcontext as does_not_raise
+from typing import Any, Dict, List, Optional, Union
 
 import class_inspector._type_hint_utils as thu
 import pytest
+
+
+@pytest.mark.parametrize(
+    "param, expected_result, expected_context",
+    [
+        (int, "int", does_not_raise()),
+        (float, "float", does_not_raise()),
+        (List, "list", does_not_raise()),
+        (List[Dict[str, Any]], "list", does_not_raise()),
+        (Optional[List], "(List, NoneType)", does_not_raise()),
+        (Union[int, float], "(int, float)", does_not_raise()),
+    ],
+)
+def test_unpack_parameter(
+    param,
+    expected_result,
+    expected_context,
+) -> None:
+    with expected_context:
+        assert thu._unpack_parameter(param) == expected_result
 
 
 @pytest.mark.parametrize(
