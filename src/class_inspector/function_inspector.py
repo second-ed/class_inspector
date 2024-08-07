@@ -5,6 +5,7 @@ from typing import Any, Callable, Dict
 import attr
 from attr.validators import instance_of
 
+from class_inspector import _type_hint_utils as thu
 from class_inspector import _utils as utils
 from class_inspector._logger import (
     compress_logging_value,
@@ -145,9 +146,9 @@ class FunctionInspector:
             str: The return annotation of the analysed object.
         """
         annot = inspect.signature(self.obj).return_annotation
-        if annot is not inspect._empty and not utils._is_union_origin(annot):
-            return utils._get_object_name(annot)
-        if utils._is_union_origin(annot):
+        if annot is not inspect._empty and not thu._is_union_origin(annot):
+            return thu._get_object_name(annot)
+        if thu._is_union_origin(annot):
             return str(annot).replace("typing.", "")
         return "None"
 
@@ -328,7 +329,7 @@ class FunctionInspector:
 
         for arg, annot in self.parameters.items():
             if annot != inspect._empty:
-                expected_types.append(utils._unpack_parameter(annot))
+                expected_types.append(thu._unpack_parameter(annot))
                 received_types.append(f"{{type({arg}).__name__}}")
 
         expected_types = ", ".join(expected_types)
@@ -339,7 +340,7 @@ class FunctionInspector:
                 f"{self.tab*(1 + self.is_method)}if not all(["
                 + ", ".join(
                     [
-                        f"isinstance({arg_name}, {utils._unpack_parameter(arg_type)})"
+                        f"isinstance({arg_name}, {thu._unpack_parameter(arg_type)})"
                         for arg_name, arg_type in self.parameters.items()
                         if arg_type != inspect._empty
                     ]
