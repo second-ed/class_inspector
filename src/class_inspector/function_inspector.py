@@ -13,7 +13,7 @@ from class_inspector._logger import (
     setup_logger,
 )
 
-if is_logging_enabled(__file__):
+if is_logging_enabled():
     setup_logger(__file__, 2)
 
 logger = logging.getLogger()

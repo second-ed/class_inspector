@@ -9,7 +9,7 @@ from dotenv import load_dotenv
 T = TypeVar("T")
 
 
-def is_logging_enabled(src: str):
+def is_logging_enabled() -> bool:
     if os.path.exists(get_dir_path(__file__, 2, "envs/.env")):
         load_dotenv(get_dir_path(__file__, 2, "envs/.env"))
         return os.getenv("ENABLE_LOGGING", "false").lower() == "true"
