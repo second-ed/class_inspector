@@ -63,7 +63,7 @@ def test_is_deep_iterable(
     expected_context,
 ) -> None:
     with expected_context:
-        assert thu._is_deep_iterable(attr_type) == expected_result
+        assert thu.is_deep_iterable(attr_type) == expected_result
 
 
 @pytest.mark.parametrize(
@@ -83,7 +83,7 @@ def test_is_deep_mapping(
     expected_context,
 ) -> None:
     with expected_context:
-        assert thu._is_deep_mapping(attr_type) == expected_result
+        assert thu.is_deep_mapping(attr_type) == expected_result
 
 
 @pytest.mark.parametrize(
@@ -125,7 +125,7 @@ def test_contains_square_brackets(
     expected_context,
 ) -> None:
     with expected_context:
-        assert thu._contains_square_brackets(attr_type) == expected_result
+        assert thu.contains_square_brackets(attr_type) == expected_result
 
 
 @pytest.mark.parametrize(
@@ -144,4 +144,4 @@ def test_get_inner_outer_types(
     expected_context,
 ) -> None:
     with expected_context:
-        assert thu._get_inner_outer_types(attr_type) == expected_result
+        assert thu.get_inner_outer_types(attr_type) == expected_result

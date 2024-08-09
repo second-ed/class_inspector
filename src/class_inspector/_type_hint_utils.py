@@ -23,24 +23,24 @@ def get_type_hint(attr_type: str) -> str:
             "get_type_hint expects arg types: [str], "
             f"received: [{type(attr_type).__name__}]"
         )
-    if _is_deep_iterable(attr_type) or _is_deep_mapping(attr_type):
-        _, outer_type = _get_inner_outer_types(attr_type)
+    if is_deep_iterable(attr_type) or is_deep_mapping(attr_type):
+        _, outer_type = get_inner_outer_types(attr_type)
         return outer_type
     return attr_type
 
 
 def unpack_parameter(param: Any) -> str:
-    if _is_union_origin(param):
+    if is_union_origin(param):
         args = ", ".join(
-            [_get_object_name(arg) for arg in param.__args__]
+            [get_object_name(arg) for arg in param.__args__]
         ).replace("typing.", "")
         return f"({args})"
     if hasattr(param, "__origin__"):
-        return _get_object_name(param.__origin__)
-    return _get_object_name(param).replace("typing.", "")
+        return get_object_name(param.__origin__)
+    return get_object_name(param).replace("typing.", "")
 
 
-def _is_deep_iterable(attr_type: str) -> bool:
+def is_deep_iterable(attr_type: str) -> bool:
     """
     Check if the attribute type is a deep iterable.
 
@@ -58,12 +58,12 @@ def _is_deep_iterable(attr_type: str) -> bool:
             "is_deep_iterable expects arg types: [str], received: "
             f"[{type(attr_type).__name__}]"
         )
-    return _contains_square_brackets(attr_type) and _is_outer_type_in_list(
+    return contains_square_brackets(attr_type) and _is_outer_type_in_list(
         attr_type, ITERABLES
     )
 
 
-def _is_deep_mapping(attr_type: str) -> bool:
+def is_deep_mapping(attr_type: str) -> bool:
     """
     Check if the attribute type is a deep mapping.
 
@@ -81,18 +81,18 @@ def _is_deep_mapping(attr_type: str) -> bool:
             "is_deep_mapping expects arg types: [str], "
             f"received: [{type(attr_type).__name__}]"
         )
-    return _contains_square_brackets(attr_type) and _is_outer_type_in_list(
+    return contains_square_brackets(attr_type) and _is_outer_type_in_list(
         attr_type, MAPPINGS
     )
 
 
-def _get_object_name(param: Any) -> str:
+def get_object_name(param: Any) -> str:
     if hasattr(param, "__name__"):
         return param.__name__
     return str(param)
 
 
-def _is_union_origin(param: Any) -> bool:
+def is_union_origin(param: Any) -> bool:
     # Optional.__origin__ is Union so can use for both
     if hasattr(param, "__origin__"):
         if param.__origin__ is Union:
@@ -119,11 +119,11 @@ def _is_outer_type_in_list(attr_type: str, deep_list: List[str]) -> bool:
             "is_outer_type_in_list expects arg types: [str, List], "
             f"received: [{type(attr_type).__name__}, {type(deep_list).__name__}]"
         )
-    _, outer_type = _get_inner_outer_types(attr_type)
+    _, outer_type = get_inner_outer_types(attr_type)
     return outer_type in deep_list
 
 
-def _contains_square_brackets(attr_type: str) -> bool:
+def contains_square_brackets(attr_type: str) -> bool:
     """
     Check if the given attribute type contains square brackets.
 
@@ -144,7 +144,7 @@ def _contains_square_brackets(attr_type: str) -> bool:
     return bool(re.search(r"\[.*?\]", attr_type))
 
 
-def _get_inner_outer_types(attr_type: str) -> Tuple[str, str]:
+def get_inner_outer_types(attr_type: str) -> Tuple[str, str]:
     """
     Get the inner and outer types from the attribute type string.
 

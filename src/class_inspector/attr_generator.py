@@ -41,7 +41,7 @@ class AttrGenerator:
                 "get_deep_iterable expects arg types: [str], "
                 f"received: [{type(attr_type).__name__}]"
             )
-        inner_type, outer_type = thu._get_inner_outer_types(attr_type)
+        inner_type, outer_type = thu.get_inner_outer_types(attr_type)
         return (
             f"deep_iterable(member_validator=instance_of({inner_type}),"
             f" iterable_validator=instance_of({outer_type}))"
@@ -65,7 +65,7 @@ class AttrGenerator:
                 "get_deep_mapping expects arg types: [str], "
                 f"received: [{type(attr_type).__name__}]"
             )
-        inner_type, outer_type = thu._get_inner_outer_types(attr_type)
+        inner_type, outer_type = thu.get_inner_outer_types(attr_type)
         inner_k, inner_v = inner_type.split(", ")
         return (
             f"deep_mapping(key_validator=instance_of({inner_k}), "
@@ -92,11 +92,11 @@ class AttrGenerator:
                 "get_validator expects arg types: [str], "
                 f"received: [{type(attr_type).__name__}]"
             )
-        if not thu._contains_square_brackets(attr_type):
+        if not thu.contains_square_brackets(attr_type):
             return f"instance_of({attr_type})"
-        if thu._is_deep_iterable(attr_type):
+        if thu.is_deep_iterable(attr_type):
             return self._get_deep_iterable(attr_type)
-        if thu._is_deep_mapping(attr_type):
+        if thu.is_deep_mapping(attr_type):
             return self._get_deep_mapping(attr_type)
         raise NotImplementedError(f"{attr_type} is not implemented")
 
