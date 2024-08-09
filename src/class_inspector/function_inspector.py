@@ -65,22 +65,22 @@ class FunctionInspector:
             logger.debug(f"{key} = {compress_logging_value(val)}")
 
         # replace double quotes with single quotes as strings default to single quotes
-        func_str = utils._clean_func(
+        func_str = utils.clean_func(
             str(inspect.getsource(self.obj)).replace('"', "'")
         )
-        end_idx = utils._find_string_end(
-            func_str, utils._get_docstring_patterns()
+        end_idx = utils.find_string_end(
+            func_str, utils.get_docstring_patterns()
         )
         logger.debug(f"func_str = {func_str}")
         logger.debug(f"end_idx = {end_idx}")
 
         if end_idx:
             if add_guards:
-                func_str = utils._insert_string_at_idx(
+                func_str = utils.insert_string_at_idx(
                     func_str, end_idx, self._get_guards()
                 )
             if add_debugs:
-                func_str = utils._insert_string_at_idx(
+                func_str = utils.insert_string_at_idx(
                     func_str, end_idx, self._get_debugs()
                 )
         else:
@@ -189,7 +189,7 @@ class FunctionInspector:
         """
         sig = self._get_instance_sig() + self._get_params_str()
         return (
-            f"def test_{utils._strip_underscores(self.name)}"
+            f"def test_{utils.strip_underscores(self.name)}"
             f"({sig}, expected_result, expected_context) -> None:\n"
         )
 
@@ -266,7 +266,7 @@ class FunctionInspector:
             str: The signature string for calling an instance method.
         """
         if inspect.ismethod(self.obj):
-            instance = utils._camel_to_snake(self._get_class_name())
+            instance = utils.camel_to_snake(self._get_class_name())
             return f"get_{instance}_instance: {self._get_class_name()}, "
         if inspect.isfunction(self.obj):
             return ""
@@ -281,7 +281,7 @@ class FunctionInspector:
         """
         sig: str = self._get_params_str()
         if inspect.ismethod(self.obj):
-            instance = utils._camel_to_snake(self._get_class_name())
+            instance = utils.camel_to_snake(self._get_class_name())
             return f"get_{instance}_instance.{self.name}({sig}) "
         if inspect.isfunction(self.obj):
             return f"{self.name}({sig}) "
@@ -329,7 +329,7 @@ class FunctionInspector:
 
         for arg, annot in self.parameters.items():
             if annot != inspect._empty:
-                expected_types.append(thu._unpack_parameter(annot))
+                expected_types.append(thu.unpack_parameter(annot))
                 received_types.append(f"{{type({arg}).__name__}}")
 
         expected_types = ", ".join(expected_types)
@@ -340,7 +340,7 @@ class FunctionInspector:
                 f"{self.tab*(1 + self.is_method)}if not all(["
                 + ", ".join(
                     [
-                        f"isinstance({arg_name}, {thu._unpack_parameter(arg_type)})"
+                        f"isinstance({arg_name}, {thu.unpack_parameter(arg_type)})"
                         for arg_name, arg_type in self.parameters.items()
                         if arg_type != inspect._empty
                     ]

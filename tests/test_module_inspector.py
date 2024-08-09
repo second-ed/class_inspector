@@ -3,7 +3,7 @@ from contextlib import nullcontext as does_not_raise
 import pytest
 from class_inspector.module_inspector import ModuleInspector
 
-from tests.mock_package import mock_service, mock_utils_c
+from mock_package import mock_service, mock_utils_c
 
 
 @pytest.mark.parametrize(

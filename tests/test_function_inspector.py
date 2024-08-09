@@ -4,7 +4,7 @@ from typing import Callable, Optional
 import pytest
 from class_inspector.function_inspector import FunctionInspector
 
-from tests.mock_package.mock_module import (
+from mock_package.mock_module import (
     MockClass,
     mock_function,
     mock_function_with_optional,
@@ -68,7 +68,7 @@ def get_instance() -> FunctionInspector:
         ),
     ],
 )
-def test_analyse(
+def testanalyse(
     request,
     get_instance: FunctionInspector,
     fixture_name,
