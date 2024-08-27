@@ -230,11 +230,11 @@ def test_get_instance_sig(
                 "@pytest.mark.parametrize(\n"
                 '    "param1, param2, param3, param4, expected_result, expected_context",\n'
                 "    [\n"
-                "        (param1, param2, param3, param4, expected_result, expected_context),\n"
-                "        (param1, param2, param3, param4, None, pytest.raises(TypeError)),\n"
-                "        (param1, param2, param3, param4, None, pytest.raises(TypeError)),\n"
-                "        (param1, param2, param3, param4, None, pytest.raises(TypeError)),\n"
-                "        (param1, param2, param3, param4, None, pytest.raises(TypeError)),\n"
+                "        pytest.param(param1, param2, param3, param4, expected_result, expected_context),\n"
+                "        pytest.param(param1, param2, param3, param4, None, pytest.raises(TypeError)),\n"
+                "        pytest.param(param1, param2, param3, param4, None, pytest.raises(TypeError)),\n"
+                "        pytest.param(param1, param2, param3, param4, None, pytest.raises(TypeError)),\n"
+                "        pytest.param(param1, param2, param3, param4, None, pytest.raises(TypeError)),\n"
                 "    ]\n)\n"
             ),
             does_not_raise(),
@@ -247,11 +247,11 @@ def test_get_instance_sig(
                 "@pytest.mark.parametrize(\n"
                 '    "param1, param2, param3, param4, expected_result, expected_context",\n'
                 "    [\n"
-                "        (param1, param2, param3, param4, expected_result, expected_context),\n"
-                '        (param1, param2, param3, param4, None, pytest.raises(TypeError, match="")),\n'
-                '        (param1, param2, param3, param4, None, pytest.raises(TypeError, match="")),\n'
-                '        (param1, param2, param3, param4, None, pytest.raises(TypeError, match="")),\n'
-                '        (param1, param2, param3, param4, None, pytest.raises(TypeError, match="")),\n'
+                "        pytest.param(param1, param2, param3, param4, expected_result, expected_context),\n"
+                '        pytest.param(param1, param2, param3, param4, None, pytest.raises(TypeError, match="")),\n'
+                '        pytest.param(param1, param2, param3, param4, None, pytest.raises(TypeError, match="")),\n'
+                '        pytest.param(param1, param2, param3, param4, None, pytest.raises(TypeError, match="")),\n'
+                '        pytest.param(param1, param2, param3, param4, None, pytest.raises(TypeError, match="")),\n'
                 "    ]\n)\n"
             ),
             does_not_raise(),
@@ -264,7 +264,7 @@ def test_get_instance_sig(
                 "@pytest.mark.parametrize(\n"
                 '    "param1, param2, param3, param4, expected_result, expected_context",\n'
                 "    [\n"
-                "        (param1, param2, param3, param4, expected_result, expected_context),\n"
+                "        pytest.param(param1, param2, param3, param4, expected_result, expected_context),\n"
                 "    ]\n)\n"
             ),
             does_not_raise(),
@@ -276,9 +276,9 @@ def test_get_instance_sig(
             (
                 "@pytest.mark.parametrize(\n"
                 '    "a, b, expected_result, expected_context",\n    [\n'
-                "        (a, b, expected_result, expected_context),\n"
-                "        (a, b, None, pytest.raises(TypeError)),\n"
-                "        (a, b, None, pytest.raises(TypeError)),\n"
+                "        pytest.param(a, b, expected_result, expected_context),\n"
+                "        pytest.param(a, b, None, pytest.raises(TypeError)),\n"
+                "        pytest.param(a, b, None, pytest.raises(TypeError)),\n"
                 "    ]\n)\n"
             ),
             does_not_raise(),
@@ -290,7 +290,7 @@ def test_get_instance_sig(
             (
                 "@pytest.mark.parametrize(\n"
                 '    "a, b, expected_result, expected_context",\n    [\n'
-                "        (a, b, expected_result, expected_context),\n"
+                "        pytest.param(a, b, expected_result, expected_context),\n"
                 "    ]\n)\n"
             ),
             does_not_raise(),
@@ -302,9 +302,9 @@ def test_get_instance_sig(
             (
                 "@pytest.mark.parametrize(\n"
                 '    "param1, param2, expected_result, expected_context",\n    [\n'
-                "        (param1, param2, expected_result, expected_context),\n"
-                "        (param1, param2, None, pytest.raises(TypeError)),\n"
-                "        (param1, param2, None, pytest.raises(TypeError)),\n"
+                "        pytest.param(param1, param2, expected_result, expected_context),\n"
+                "        pytest.param(param1, param2, None, pytest.raises(TypeError)),\n"
+                "        pytest.param(param1, param2, None, pytest.raises(TypeError)),\n"
                 "    ]\n)\n"
             ),
             does_not_raise(),
@@ -393,11 +393,11 @@ def test_get_return_annotations(
                 "@pytest.mark.parametrize(\n"
                 '    "param1, param2, param3, param4, expected_result, expected_context",\n'
                 "    [\n"
-                "        (param1, param2, param3, param4, expected_result, expected_context),\n"
-                "        (param1, param2, param3, param4, None, pytest.raises(TypeError)),\n"
-                "        (param1, param2, param3, param4, None, pytest.raises(TypeError)),\n"
-                "        (param1, param2, param3, param4, None, pytest.raises(TypeError)),\n"
-                "        (param1, param2, param3, param4, None, pytest.raises(TypeError)),\n"
+                "        pytest.param(param1, param2, param3, param4, expected_result, expected_context),\n"
+                "        pytest.param(param1, param2, param3, param4, None, pytest.raises(TypeError)),\n"
+                "        pytest.param(param1, param2, param3, param4, None, pytest.raises(TypeError)),\n"
+                "        pytest.param(param1, param2, param3, param4, None, pytest.raises(TypeError)),\n"
+                "        pytest.param(param1, param2, param3, param4, None, pytest.raises(TypeError)),\n"
                 "    ]\n)\n"
                 "def test_mock_function(param1, param2, param3, param4, expected_result, expected_context) -> None:\n"
                 "    with expected_context:\n"
@@ -413,11 +413,11 @@ def test_get_return_annotations(
                 "@pytest.mark.parametrize(\n"
                 '    "param1, param2, param3, param4, expected_result, expected_context",\n'
                 "    [\n"
-                "        (param1, param2, param3, param4, expected_result, expected_context),\n"
-                '        (param1, param2, param3, param4, None, pytest.raises(TypeError, match="")),\n'
-                '        (param1, param2, param3, param4, None, pytest.raises(TypeError, match="")),\n'
-                '        (param1, param2, param3, param4, None, pytest.raises(TypeError, match="")),\n'
-                '        (param1, param2, param3, param4, None, pytest.raises(TypeError, match="")),\n'
+                "        pytest.param(param1, param2, param3, param4, expected_result, expected_context),\n"
+                '        pytest.param(param1, param2, param3, param4, None, pytest.raises(TypeError, match="")),\n'
+                '        pytest.param(param1, param2, param3, param4, None, pytest.raises(TypeError, match="")),\n'
+                '        pytest.param(param1, param2, param3, param4, None, pytest.raises(TypeError, match="")),\n'
+                '        pytest.param(param1, param2, param3, param4, None, pytest.raises(TypeError, match="")),\n'
                 "    ]\n)\n"
                 "def test_mock_function(param1, param2, param3, param4, expected_result, expected_context) -> None:\n"
                 "    with expected_context:\n"
@@ -433,7 +433,7 @@ def test_get_return_annotations(
                 "@pytest.mark.parametrize(\n"
                 '    "param1, param2, param3, param4, expected_result, expected_context",\n'
                 "    [\n"
-                "        (param1, param2, param3, param4, expected_result, expected_context),\n"
+                "        pytest.param(param1, param2, param3, param4, expected_result, expected_context),\n"
                 "    ]\n)\n"
                 "def test_mock_function(param1, param2, param3, param4, expected_result, expected_context) -> None:\n"
                 "    with expected_context:\n"
@@ -448,9 +448,9 @@ def test_get_return_annotations(
             (
                 "@pytest.mark.parametrize(\n"
                 '    "a, b, expected_result, expected_context",\n    [\n'
-                "        (a, b, expected_result, expected_context),\n"
-                "        (a, b, None, pytest.raises(TypeError)),\n"
-                "        (a, b, None, pytest.raises(TypeError)),\n"
+                "        pytest.param(a, b, expected_result, expected_context),\n"
+                "        pytest.param(a, b, None, pytest.raises(TypeError)),\n"
+                "        pytest.param(a, b, None, pytest.raises(TypeError)),\n"
                 "    ]\n)\n"
                 "def test_mock_method(get_mock_class_instance: MockClass, a, b, expected_result, expected_context) -> None:\n"
                 "    with expected_context:\n"

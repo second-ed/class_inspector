@@ -233,7 +233,7 @@ class FunctionInspector:
         """
         for key, val in locals().items():
             logger.debug(f"{key} = {compress_logging_value(val)}")
-        return f"{self.tab * 2}({args}, expected_result, expected_context),\n"
+        return f"{self.tab * 2}pytest.param({args}, expected_result, expected_context),\n"
 
     def _get_raises_type_error_test_case(
         self, args: str, check_types: bool = True, match: bool = False
@@ -256,7 +256,7 @@ class FunctionInspector:
         match_stmt = ""
         if match:
             match_stmt = ', match=""'
-        return f"{self.tab * 2}({args}, None, pytest.raises(TypeError{match_stmt})),\n"
+        return f"{self.tab * 2}pytest.param({args}, None, pytest.raises(TypeError{match_stmt})),\n"
 
     def _get_instance_sig(self) -> str:
         """
