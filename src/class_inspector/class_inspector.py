@@ -41,6 +41,6 @@ class ClassInspector:
 
     def _get_test_instance_fixture(self) -> str:
         return (
-            f"@pytest.fixture\ndef get_{utils._camel_to_snake(self.class_name)}_instance() -> {self.class_name}:\n"
+            f"@pytest.fixture\ndef get_{utils.camel_to_snake(self.class_name)}_instance() -> {self.class_name}:\n"
             f"    return {self.class_name}()\n\n\n"
         )

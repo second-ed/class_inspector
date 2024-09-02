@@ -23,7 +23,7 @@ class AttrGenerator:
         ]
     )
 
-    def get_deep_iterable(self, attr_type: str) -> str:
+    def _get_deep_iterable(self, attr_type: str) -> str:
         """
         Generate a deep iterable validator string.
 
@@ -47,7 +47,7 @@ class AttrGenerator:
             f" iterable_validator=instance_of({outer_type}))"
         )
 
-    def get_deep_mapping(self, attr_type: str) -> str:
+    def _get_deep_mapping(self, attr_type: str) -> str:
         """
         Generate a deep mapping validator string.
 
@@ -73,7 +73,7 @@ class AttrGenerator:
             f"mapping_validator=instance_of({outer_type}))"
         )
 
-    def get_validator(self, attr_type: str) -> str:
+    def _get_validator(self, attr_type: str) -> str:
         """
         Get the appropriate validator string for the attribute type.
 
@@ -95,12 +95,12 @@ class AttrGenerator:
         if not thu.contains_square_brackets(attr_type):
             return f"instance_of({attr_type})"
         if thu.is_deep_iterable(attr_type):
-            return self.get_deep_iterable(attr_type)
+            return self._get_deep_iterable(attr_type)
         if thu.is_deep_mapping(attr_type):
-            return self.get_deep_mapping(attr_type)
+            return self._get_deep_mapping(attr_type)
         raise NotImplementedError(f"{attr_type} is not implemented")
 
-    def get_init_bool(self, attr_init: bool) -> str:
+    def _get_init_bool(self, attr_init: bool) -> str:
         """
         Get the init boolean string for attribute initialization.
 
@@ -122,7 +122,7 @@ class AttrGenerator:
             return ""
         return f", init={attr_init}"
 
-    def get_imports(self) -> str:
+    def _get_imports(self) -> str:
         """
         Get import statements required for generating the class.
 
@@ -134,7 +134,7 @@ class AttrGenerator:
             "import instance_of, deep_iterable, deep_mapping\n\n"
         )
 
-    def get_class_sig(self) -> str:
+    def _get_class_sig(self) -> str:
         """
         Get the class signature string.
 
@@ -143,7 +143,7 @@ class AttrGenerator:
         """
         return f"@attr.define\nclass {self.class_name}:"
 
-    def get_attrib(
+    def _get_attrib(
         self, attr_name: str, attr_type: str, attr_init: bool
     ) -> str:
         """
@@ -173,13 +173,13 @@ class AttrGenerator:
                 f"{type(attr_type).__name__}, {type(attr_init).__name__}]"
             )
 
-        init_true = self.get_init_bool(attr_init)
+        init_true = self._get_init_bool(attr_init)
         return (
             f"    {attr_name}: {thu.get_type_hint(attr_type)} = "
-            f"attr.ib(validator=[{self.get_validator(attr_type)}]{init_true})"
+            f"attr.ib(validator=[{self._get_validator(attr_type)}]{init_true})"
         )
 
-    def get_attr_class(self) -> str:
+    def _get_attr_class(self) -> str:
         """
         Generate the entire class string with attributes and validators.
 
@@ -187,15 +187,15 @@ class AttrGenerator:
             str: The complete class string.
         """
         class_str = []
-        class_str.append(self.get_imports())
-        class_str.append(self.get_class_sig())
+        class_str.append(self._get_imports())
+        class_str.append(self._get_class_sig())
         for at_dict in self.attributes:
             if isinstance(at_dict, dict):
                 at_map = AttrMap(**at_dict)
             elif isinstance(at_dict, AttrMap):
                 at_map = at_dict
             class_str.append(
-                self.get_attrib(
+                self._get_attrib(
                     at_map.attr_name, at_map.attr_type, at_map.attr_init
                 )
             )

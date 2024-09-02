@@ -28,7 +28,7 @@ def test_get_attr_class(
     get_attr_gen_instance: AttrGenerator, expected_result, expected_context
 ) -> None:
     with expected_context:
-        assert get_attr_gen_instance.get_attr_class() == expected_result
+        assert get_attr_gen_instance._get_attr_class() == expected_result
 
 
 @pytest.mark.parametrize(
@@ -81,7 +81,7 @@ def test_get_attrib(
 ) -> None:
     with expected_context:
         assert (
-            get_attr_gen_instance.get_attrib(attr_name, attr_type, attr_init)
+            get_attr_gen_instance._get_attrib(attr_name, attr_type, attr_init)
             == expected_result
         )
 
@@ -99,7 +99,7 @@ def test_get_class_sig(
     get_attr_gen_instance: AttrGenerator, expected_result, expected_context
 ) -> None:
     with expected_context:
-        assert get_attr_gen_instance.get_class_sig() == expected_result
+        assert get_attr_gen_instance._get_class_sig() == expected_result
 
 
 @pytest.mark.parametrize(
@@ -131,7 +131,7 @@ def test_get_deep_iterable(
 ) -> None:
     with expected_context:
         assert (
-            get_attr_gen_instance.get_deep_iterable(attr_type)
+            get_attr_gen_instance._get_deep_iterable(attr_type)
             == expected_result
         )
 
@@ -160,7 +160,7 @@ def test_get_deep_mapping(
 ) -> None:
     with expected_context:
         assert (
-            get_attr_gen_instance.get_deep_mapping(attr_type)
+            get_attr_gen_instance._get_deep_mapping(attr_type)
             == expected_result
         )
 
@@ -181,7 +181,7 @@ def test_get_imports(
     get_attr_gen_instance: AttrGenerator, expected_result, expected_context
 ) -> None:
     with expected_context:
-        assert get_attr_gen_instance.get_imports() == expected_result
+        assert get_attr_gen_instance._get_imports() == expected_result
 
 
 @pytest.mark.parametrize(
@@ -200,7 +200,7 @@ def test_get_init_bool(
 ) -> None:
     with expected_context:
         assert (
-            get_attr_gen_instance.get_init_bool(attr_init) == expected_result
+            get_attr_gen_instance._get_init_bool(attr_init) == expected_result
         )
 
 
@@ -236,5 +236,5 @@ def test_get_validator(
 ) -> None:
     with expected_context:
         assert (
-            get_attr_gen_instance.get_validator(attr_type) == expected_result
+            get_attr_gen_instance._get_validator(attr_type) == expected_result
         )
