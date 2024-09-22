@@ -89,7 +89,7 @@ class FunctionInspector:
             if sig not in func_str:
                 raise ValueError(
                     "function does not have docstring to locate where to insert boilerplate "
-                    "when using aliased type hints "
+                    "when using aliased type hints, "
                     "add docstring to ensure correct behaviour. "
                     f"sig not found in function str: {sig = } {func_str = }"
                 )
