@@ -87,7 +87,12 @@ class FunctionInspector:
             sig = self._get_func_sig() + "\n"
 
             if sig not in func_str:
-                raise ValueError(f"sig not in function str: {sig} {func_str}")
+                raise ValueError(
+                    "function does not have docstring to locate where to insert boilerplate "
+                    "when using aliased type hints "
+                    "add docstring to ensure correct behaviour. "
+                    f"sig not found in function str: {sig = } {func_str = }"
+                )
             if add_guards:
                 func_str = func_str.replace(sig, f"{sig}{self._get_guards()}")
             if add_debugs:
