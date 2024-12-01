@@ -3,6 +3,9 @@ import logging
 import re
 from typing import Callable, Optional
 
+import black
+import isort
+
 from class_inspector._logger import compress_logging_value
 
 logger = logging.getLogger()
@@ -141,3 +144,7 @@ def _sort_callables_by_line_numbers(callables: dict) -> dict:
             key=lambda item: inspect.getsourcelines(item[1])[1],
         )
     )
+
+
+def format_code_str(code_snippet: str) -> str:
+    return black.format_str(isort.code(code_snippet), mode=black.FileMode())

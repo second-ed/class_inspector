@@ -112,9 +112,7 @@ def validate_generic(generic_type: Type) -> Callable:
     return _
 
 
-def validate_generic_bool_func(
-    generic_type: Type, bool_func: Callable
-) -> Callable:
+def validate_generic_bool_func(generic_type: Type, bool_func: Callable) -> Callable:
     """
     Validate that the value is a collection of a specific generic type
     using a custom boolean function.
@@ -148,9 +146,7 @@ def validate_generic_bool_func(
     return _
 
 
-def validate_generic_of_type(
-    generic_type: Type, allowed_type: Type
-) -> Callable:
+def validate_generic_of_type(generic_type: Type, allowed_type: Type) -> Callable:
     """
     Validate that the value is a collection of a specific generic type.
 

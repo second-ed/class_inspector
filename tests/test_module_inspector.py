@@ -1,8 +1,9 @@
 from contextlib import nullcontext as does_not_raise
 
 import pytest
-from class_inspector.module_inspector import ModuleInspector
 
+from class_inspector import _utils as utils
+from class_inspector.module_inspector import ModuleInspector
 from mock_package import mock_service, mock_utils_c
 
 
@@ -17,15 +18,10 @@ from mock_package import mock_service, mock_utils_c
         ),
     ],
 )
-def test_extract_custom_classes(
-    module, expected_result, expected_context
-) -> None:
+def test_extract_custom_classes(module, expected_result, expected_context) -> None:
     with expected_context:
         mi = ModuleInspector(module)
-        assert (
-            set(c.__name__ for c in mi.custom_classes.values())
-            == expected_result
-        )
+        assert set(c.__name__ for c in mi.custom_classes.values()) == expected_result
 
 
 @pytest.mark.parametrize(
@@ -53,9 +49,7 @@ def test_extract_custom_classes(
         ),
     ],
 )
-def test_extract_custom_functions(
-    module, expected_result, expected_context
-) -> None:
+def test_extract_custom_functions(module, expected_result, expected_context) -> None:
     with expected_context:
         mi = ModuleInspector(module)
         assert (
@@ -80,7 +74,9 @@ def test_get_parametrized_function_tests(
     with expected_context:
         mi = ModuleInspector(module)
         expected_result = request.getfixturevalue(expected_result_fixture_name)
-        assert mi.get_parametrized_function_tests() == expected_result
+        assert utils.format_code_str(
+            mi.get_parametrized_function_tests()
+        ) == utils.format_code_str(expected_result)
 
 
 @pytest.mark.parametrize(
@@ -120,4 +116,6 @@ def test_add_boilerplate(
     with expected_context:
         mi = ModuleInspector(module)
         expected_result = request.getfixturevalue(expected_result_fixture_name)
-        assert mi.add_boilerplate(add_guards, add_debugs) == expected_result
+        assert utils.format_code_str(
+            mi.add_boilerplate(add_guards, add_debugs)
+        ) == utils.format_code_str(expected_result)

@@ -1,6 +1,7 @@
 from contextlib import nullcontext as does_not_raise
 
 import pytest
+
 from class_inspector.attr_generator import AttrGenerator
 
 
@@ -130,10 +131,7 @@ def test_get_deep_iterable(
     expected_context,
 ) -> None:
     with expected_context:
-        assert (
-            get_attr_gen_instance._get_deep_iterable(attr_type)
-            == expected_result
-        )
+        assert get_attr_gen_instance._get_deep_iterable(attr_type) == expected_result
 
 
 @pytest.mark.parametrize(
@@ -159,10 +157,7 @@ def test_get_deep_mapping(
     expected_context,
 ) -> None:
     with expected_context:
-        assert (
-            get_attr_gen_instance._get_deep_mapping(attr_type)
-            == expected_result
-        )
+        assert get_attr_gen_instance._get_deep_mapping(attr_type) == expected_result
 
 
 @pytest.mark.parametrize(
@@ -199,9 +194,7 @@ def test_get_init_bool(
     expected_context,
 ) -> None:
     with expected_context:
-        assert (
-            get_attr_gen_instance._get_init_bool(attr_init) == expected_result
-        )
+        assert get_attr_gen_instance._get_init_bool(attr_init) == expected_result
 
 
 @pytest.mark.parametrize(
@@ -235,6 +228,4 @@ def test_get_validator(
     expected_context,
 ) -> None:
     with expected_context:
-        assert (
-            get_attr_gen_instance._get_validator(attr_type) == expected_result
-        )
+        assert get_attr_gen_instance._get_validator(attr_type) == expected_result

@@ -52,9 +52,7 @@ class FunctionInspector:
         # add 1 tab to the start of each line if obj is a method
         self.is_method = int(inspect.ismethod(self.obj))
 
-    def add_boilerplate(
-        self, add_guards: bool = True, add_debugs: bool = True
-    ) -> str:
+    def add_boilerplate(self, add_guards: bool = True, add_debugs: bool = True) -> str:
         """finds the last index of the doctsring if present and inserts
         the guard conditions in there
 
@@ -65,12 +63,8 @@ class FunctionInspector:
             logger.debug(f"{key} = {compress_logging_value(val)}")
 
         # replace double quotes with single quotes as strings default to single quotes
-        func_str = utils.clean_func(
-            str(inspect.getsource(self.obj)).replace('"', "'")
-        )
-        end_idx = utils.find_string_end(
-            func_str, utils.get_docstring_patterns()
-        )
+        func_str = utils.clean_func(str(inspect.getsource(self.obj)).replace('"', "'"))
+        end_idx = utils.find_string_end(func_str, utils.get_docstring_patterns())
         logger.debug(f"func_str = {func_str}")
         logger.debug(f"end_idx = {end_idx}")
 
@@ -102,7 +96,7 @@ class FunctionInspector:
 
             logger.debug(f"sig = {sig}")
         logger.debug(f"func_str = {func_str}")
-        return func_str + "\n\n"
+        return utils.format_code_str(func_str)
 
     def get_test(self, check_types: bool = True, match: bool = False) -> str:
         """
@@ -123,7 +117,7 @@ class FunctionInspector:
         test_full.append(self._get_test_sig())
         test_full.append(self._get_test_body())
         test_full.append("\n\n")
-        return "".join(test_full)
+        return utils.format_code_str("".join(test_full))
 
     def _get_doc(self) -> str:
         """
@@ -173,16 +167,18 @@ class FunctionInspector:
         for key, val in locals().items():
             logger.debug(f"{key} = {compress_logging_value(val)}")
         args = self._get_params_str()
-        return (
-            "@pytest.mark.parametrize(\n"
-            + f'{self.tab}"{args}, expected_result, expected_context",\n'
-            + f"{self.tab}[\n"
-            + self._get_test_case(args)
-            + (
-                self._get_raises_type_error_test_case(args, check_types, match)
-                * len(self.parameters)
-            )
-            + f"{self.tab}]\n)\n"
+        return "".join(
+            [
+                "@pytest.mark.parametrize(\n",
+                f'{self.tab}"{args}, expected_result, expected_context",\n',
+                f"{self.tab}[\n",
+                self._get_test_case(args),
+                (
+                    self._get_raises_type_error_test_case(args, check_types, match)
+                    * len(self.parameters)
+                ),
+                f"{self.tab}]\n)\n",
+            ]
         )
 
     def _get_test_sig(self) -> str:
@@ -238,7 +234,9 @@ class FunctionInspector:
         """
         for key, val in locals().items():
             logger.debug(f"{key} = {compress_logging_value(val)}")
-        return f"{self.tab * 2}pytest.param({args}, expected_result, expected_context),\n"
+        return (
+            f"{self.tab * 2}pytest.param({args}, expected_result, expected_context),\n"
+        )
 
     def _get_raises_type_error_test_case(
         self, args: str, check_types: bool = True, match: bool = False

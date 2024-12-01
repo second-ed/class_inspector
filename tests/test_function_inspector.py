@@ -2,8 +2,9 @@ from contextlib import nullcontext as does_not_raise
 from typing import Callable, Optional
 
 import pytest
-from class_inspector.function_inspector import FunctionInspector
 
+from class_inspector import _utils as utils
+from class_inspector.function_inspector import FunctionInspector
 from mock_package.mock_module import (
     MockClass,
     mock_function,
@@ -159,7 +160,9 @@ def test_get_guards(
     with expected_context:
         func = request.getfixturevalue(fixture_name)
         get_instance.analyse(func)
-        assert get_instance._get_guards() == expected_result
+        assert utils.format_code_str(
+            get_instance._get_guards()
+        ) == utils.format_code_str(expected_result)
 
 
 @pytest.mark.parametrize(
@@ -472,7 +475,9 @@ def test_get_test(
     with expected_context:
         func = request.getfixturevalue(fixture_name)
         get_instance.analyse(func)
-        assert get_instance.get_test(check_types, match) == expected_result
+        assert utils.format_code_str(
+            get_instance.get_test(check_types, match)
+        ) == utils.format_code_str(expected_result)
 
 
 @pytest.mark.parametrize(
@@ -708,7 +713,6 @@ def test_add_boilerplate(
     with expected_context:
         func = request.getfixturevalue(fixture_name)
         get_instance.analyse(func)
-        assert (
+        assert utils.format_code_str(
             get_instance.add_boilerplate(add_guards, add_debugs)
-            == expected_result
-        )
+        ) == utils.format_code_str(expected_result)

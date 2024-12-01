@@ -1,9 +1,9 @@
 from typing import List
 
 import pytest
+
 from class_inspector.attr_generator import AttrGenerator, AttrMap
 from class_inspector.class_inspector import ClassInspector
-
 from mock_package import mock_utils_c
 from mock_package.mock_service import MockService
 
@@ -84,82 +84,61 @@ def get_instance(get_test_class: TestClass) -> ClassInspector:
 @pytest.fixture
 def get_mock_service_boilerplate_add_guards():
     return (
-        "    def fetch_data(self, param: str) -> List[Dict[str, Any]]:\n"
-        "        '''\n"
-        "        Mock method to fetch data based on a parameter.\n"
-        "\n"
-        "        Args:\n"
-        "            param (str): The parameter to fetch data for.\n"
-        "\n"
-        "        Returns:\n"
-        "            List[Dict[str, Any]]: A list of dictionaries containing the fetched data.\n"
-        "        '''\n"
-        "        if not all([isinstance(param, str)]):\n"
-        "            raise TypeError(\n"
-        '                "fetch_data expects arg types: [str], "\n'
-        '                f"received: [{type(param).__name__}]"\n'
-        "            )\n"
-        "        return [{'id': 1, 'value': 'data1'}, {'id': 2, 'value': 'data2'}]\n"
-        "\n"
-        "\n"
-        "    def process_data(self, data: List[Dict[str, Any]]) -> Dict[str, Any]:\n"
-        "        '''\n"
-        "        Mock method to process data.\n"
-        "\n"
-        "        Args:\n"
-        "            data (List[Dict[str, Any]]): A list of dictionaries containing the data to be processed.\n"
-        "\n"
-        "        Returns:\n"
-        "            Dict[str, Any]: A dictionary containing the processed data.\n"
-        "        '''\n"
-        "        if not all([isinstance(data, list)]):\n"
-        "            raise TypeError(\n"
-        '                "process_data expects arg types: [list], "\n'
-        '                f"received: [{type(data).__name__}]"\n'
-        "            )\n"
-        "        processed_data = {'summary': 'Processed Data', 'count': len(data)}\n"
-        "        return processed_data\n"
-        "\n"
-        "\n"
-        "    def validate_data(self, data: List[Dict[str, Any]]) -> bool:\n"
-        "        '''\n"
-        "        Mock method to validate data.\n"
-        "\n"
-        "        Args:\n"
-        "            data (List[Dict[str, Any]]): A list of dictionaries containing the data to be validated.\n"
-        "\n"
-        "        Returns:\n"
-        "            bool: True if the data is valid, False otherwise.\n"
-        "        '''\n"
-        "        if not all([isinstance(data, list)]):\n"
-        "            raise TypeError(\n"
-        '                "validate_data expects arg types: [list], "\n'
-        '                f"received: [{type(data).__name__}]"\n'
-        "            )\n"
-        "        for item in data:\n"
-        "            if 'id' not in item or 'value' not in item:\n"
-        "                return False\n"
-        "        return True\n"
-        "\n"
-        "\n"
-        "    def save_data(self, data: Dict[str, Any]) -> bool:\n"
-        "        '''\n"
-        "        Mock method to save data.\n"
-        "\n"
-        "        Args:\n"
-        "            data (Dict[str, Any]): A dictionary containing the data to be saved.\n"
-        "\n"
-        "        Returns:\n"
-        "            bool: True if the data was saved successfully, False otherwise.\n"
-        "        '''\n"
-        "        if not all([isinstance(data, dict)]):\n"
-        "            raise TypeError(\n"
-        '                "save_data expects arg types: [dict], "\n'
-        '                f"received: [{type(data).__name__}]"\n'
-        "            )\n"
-        "        return True\n"
-        "\n"
-        "\n"
+        "def fetch_data(self, param: str) -> List[Dict[str, Any]]:\n"
+        '    """Mock method to fetch data based on a parameter.\n\n'
+        "    Args:\n"
+        "        param (str): The parameter to fetch data for.\n\n"
+        "    Returns:\n"
+        "        List[Dict[str, Any]]: A list of dictionaries containing the fetched data.\n"
+        '    """\n'
+        "    if not all([isinstance(param, str)]):\n"
+        "        raise TypeError(\n"
+        '            "fetch_data expects arg types: [str], "\n'
+        '            f"received: [{type(param).__name__}]"\n'
+        "        )\n"
+        '    return [{"id": 1, "value": "data1"}, {"id": 2, "value": "data2"}]\n\n\n'
+        "def process_data(self, data: List[Dict[str, Any]]) -> Dict[str, Any]:\n"
+        '    """Mock method to process data.\n\n'
+        "    Args:\n"
+        "        data (List[Dict[str, Any]]): A list of dictionaries containing the data to be processed.\n\n"
+        "    Returns:\n"
+        "        Dict[str, Any]: A dictionary containing the processed data.\n"
+        '    """\n'
+        "    if not all([isinstance(data, list)]):\n"
+        "        raise TypeError(\n"
+        '            "process_data expects arg types: [list], "\n'
+        '            f"received: [{type(data).__name__}]"\n'
+        "        )\n"
+        '    processed_data = {"summary": "Processed Data", "count": len(data)}\n'
+        "    return processed_data\n\n\n"
+        "def validate_data(self, data: List[Dict[str, Any]]) -> bool:\n"
+        '    """Mock method to validate data.\n\n'
+        "    Args:\n"
+        "        data (List[Dict[str, Any]]): A list of dictionaries containing the data to be validated.\n\n"
+        "    Returns:\n"
+        "        bool: True if the data is valid, False otherwise.\n"
+        '    """\n'
+        "    if not all([isinstance(data, list)]):\n"
+        "        raise TypeError(\n"
+        '            "validate_data expects arg types: [list], "\n'
+        '            f"received: [{type(data).__name__}]"\n'
+        "        )\n"
+        "    for item in data:\n"
+        '        if "id" not in item or "value" not in item:\n'
+        "            return False\n"
+        "    return True\n\n\n"
+        "def save_data(self, data: Dict[str, Any]) -> bool:\n"
+        '    """Mock method to save data.\n\n'
+        "    Args:\n"
+        "        data (Dict[str, Any]): A dictionary containing the data to be saved.\n\n"
+        "    Returns:\n"
+        "        bool: True if the data was saved successfully, False otherwise.\n"
+        '    """\n'
+        "    if not all([isinstance(data, dict)]):\n"
+        "        raise TypeError(\n"
+        '            "save_data expects arg types: [dict], " f"received: [{type(data).__name__}]"\n'
+        "        )\n"
+        "    return True\n"
     )
 
 
@@ -620,8 +599,7 @@ def get_mock_utils_c_with_guards_and_debugs():
         "        cleaned_content = ' '.join(content.split())\n"
         "        return f'({cleaned_content})'\n"
         "\n"
-        "    return re.sub(r'\\((.*?)\\)', replacer, str(value.iloc[0, 0]), flags=re.DOTALL\n"
-        "    )\n"
+        "    return re.sub(r'\\((.*?)\\)', replacer, str(value.iloc[0, 0]), flags=re.DOTALL)\n"
         "\n"
         "\n"
         "def merge_data(data_dict: Dict):\n"

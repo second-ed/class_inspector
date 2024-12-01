@@ -31,9 +31,9 @@ def get_type_hint(attr_type: str) -> str:
 
 def unpack_parameter(param: Any) -> str:
     if is_union_origin(param):
-        args = ", ".join(
-            [get_object_name(arg) for arg in param.__args__]
-        ).replace("typing.", "")
+        args = ", ".join([get_object_name(arg) for arg in param.__args__]).replace(
+            "typing.", ""
+        )
         return f"({args})"
     if hasattr(param, "__origin__"):
         return get_object_name(param.__origin__)

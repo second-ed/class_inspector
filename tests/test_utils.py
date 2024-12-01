@@ -1,8 +1,8 @@
 from contextlib import nullcontext as does_not_raise
 
 import pytest
-from class_inspector import _utils as utils
 
+from class_inspector import _utils as utils
 from mock_package import mock_module, mock_utils_c
 
 
@@ -23,9 +23,7 @@ def test_get_class_methods(
     expected_context,
 ) -> None:
     with expected_context:
-        inp_class_instance = request.getfixturevalue(
-            class_instance_fixture_name
-        )
+        inp_class_instance = request.getfixturevalue(class_instance_fixture_name)
         expected_result = request.getfixturevalue(expected_result_fixture_name)
         assert utils.get_class_methods(inp_class_instance) == expected_result
 
@@ -99,9 +97,7 @@ def test_find_string_end(
 
 
 def test_get_docstring_patterns() -> None:
-    assert (
-        utils.get_docstring_patterns() == "(\"\"\".*?\"\"\"\\n|'''.*?'''\\n)"
-    )
+    assert utils.get_docstring_patterns() == "(\"\"\".*?\"\"\"\\n|'''.*?'''\\n)"
 
 
 @pytest.mark.parametrize(
@@ -121,10 +117,7 @@ def test_insert_string_at_idx(
     expected_context,
 ) -> None:
     with expected_context:
-        assert (
-            utils.insert_string_at_idx(func_str, idx, to_insert)
-            == expected_result
-        )
+        assert utils.insert_string_at_idx(func_str, idx, to_insert) == expected_result
 
 
 @pytest.mark.parametrize(
@@ -179,6 +172,4 @@ def test_sort_callables_by_line_numbers(
     with expected_context:
         callables = request.getfixturevalue(callables_fixture_name)
         expected_result = request.getfixturevalue(expected_result_fixture_name)
-        assert (
-            utils._sort_callables_by_line_numbers(callables) == expected_result
-        )
+        assert utils._sort_callables_by_line_numbers(callables) == expected_result

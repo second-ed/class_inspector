@@ -3,8 +3,7 @@ from typing import Any, Dict, List
 
 class MockService:
     def fetch_data(self, param: str) -> List[Dict[str, Any]]:
-        """
-        Mock method to fetch data based on a parameter.
+        """Mock method to fetch data based on a parameter.
 
         Args:
             param (str): The parameter to fetch data for.
@@ -15,8 +14,7 @@ class MockService:
         return [{"id": 1, "value": "data1"}, {"id": 2, "value": "data2"}]
 
     def process_data(self, data: List[Dict[str, Any]]) -> Dict[str, Any]:
-        """
-        Mock method to process data.
+        """Mock method to process data.
 
         Args:
             data (List[Dict[str, Any]]): A list of dictionaries containing the data to be processed.
@@ -28,8 +26,7 @@ class MockService:
         return processed_data
 
     def validate_data(self, data: List[Dict[str, Any]]) -> bool:
-        """
-        Mock method to validate data.
+        """Mock method to validate data.
 
         Args:
             data (List[Dict[str, Any]]): A list of dictionaries containing the data to be validated.
@@ -43,8 +40,7 @@ class MockService:
         return True
 
     def save_data(self, data: Dict[str, Any]) -> bool:
-        """
-        Mock method to save data.
+        """Mock method to save data.
 
         Args:
             data (Dict[str, Any]): A dictionary containing the data to be saved.

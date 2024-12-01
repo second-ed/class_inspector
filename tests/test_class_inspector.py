@@ -1,8 +1,9 @@
 from contextlib import nullcontext as does_not_raise
 
 import pytest
-from class_inspector.class_inspector import ClassInspector
 
+from class_inspector import _utils as utils
+from class_inspector.class_inspector import ClassInspector
 from mock_package.mock_service import MockService
 
 
@@ -22,7 +23,9 @@ def test_get_parametrized_function_tests(
     with expected_context:
         ci = ClassInspector(inp_class)
         expected_result = request.getfixturevalue(expected_result_fixture_name)
-        assert ci.get_parametrized_function_tests() == expected_result
+        assert utils.format_code_str(
+            ci.get_parametrized_function_tests()
+        ) == utils.format_code_str(expected_result)
 
 
 @pytest.mark.parametrize(
@@ -48,4 +51,6 @@ def test_add_boilerplate(
     with expected_context:
         ci = ClassInspector(inp_class)
         expected_result = request.getfixturevalue(expected_result_fixture_name)
-        assert ci.add_boilerplate(add_guards, add_debugs) == expected_result
+        assert utils.format_code_str(
+            ci.add_boilerplate(add_guards, add_debugs)
+        ) == utils.format_code_str(expected_result)

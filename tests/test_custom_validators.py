@@ -4,6 +4,7 @@ from contextlib import nullcontext as does_not_raise
 import attr
 import numpy as np
 import pytest
+
 from class_inspector.custom_validators import (
     validate_bool_func,
     validate_collection,

@@ -143,9 +143,7 @@ class AttrGenerator:
         """
         return f"@attr.define\nclass {self.class_name}:"
 
-    def _get_attrib(
-        self, attr_name: str, attr_type: str, attr_init: bool
-    ) -> str:
+    def _get_attrib(self, attr_name: str, attr_type: str, attr_init: bool) -> str:
         """
         Generate attribute string with type hint and validator.
 
@@ -195,8 +193,6 @@ class AttrGenerator:
             elif isinstance(at_dict, AttrMap):
                 at_map = at_dict
             class_str.append(
-                self._get_attrib(
-                    at_map.attr_name, at_map.attr_type, at_map.attr_init
-                )
+                self._get_attrib(at_map.attr_name, at_map.attr_type, at_map.attr_init)
             )
         return "\n".join(class_str)

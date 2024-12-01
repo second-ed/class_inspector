@@ -1,8 +1,9 @@
 from contextlib import nullcontext as does_not_raise
 from typing import Any, Dict, List, Optional, Union
 
-import class_inspector._type_hint_utils as thu
 import pytest
+
+import class_inspector._type_hint_utils as thu
 
 
 @pytest.mark.parametrize(
@@ -106,9 +107,7 @@ def test_is_outer_type_in_list(
     expected_context,
 ) -> None:
     with expected_context:
-        assert (
-            thu._is_outer_type_in_list(attr_type, deep_list) == expected_result
-        )
+        assert thu._is_outer_type_in_list(attr_type, deep_list) == expected_result
 
 
 @pytest.mark.parametrize(
