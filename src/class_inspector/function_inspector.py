@@ -60,15 +60,13 @@ class FunctionInspector:
         Returns:
             str: the analysed function with added guard conditions
         """
-        logger.debug(
-            {key: compress_logging_value(val) for key, val in locals().items()}
-        )
 
         # replace double quotes with single quotes as strings default to single quotes
         func_str = utils.clean_func(str(inspect.getsource(self.obj)).replace('"', "'"))
         end_idx = utils.find_string_end(func_str, utils.get_docstring_patterns())
-        logger.debug(f"func_str = {func_str}")
-        logger.debug(f"end_idx = {end_idx}")
+        logger.debug(
+            {key: compress_logging_value(val) for key, val in locals().items()}
+        )
 
         if end_idx:
             if add_guards:

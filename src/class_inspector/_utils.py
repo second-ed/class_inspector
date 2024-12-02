@@ -35,8 +35,7 @@ def camel_to_snake(name: str) -> str:
 
 
 def clean_func(func_str: str) -> str:
-    for key, val in locals().items():
-        logger.debug(f"{key} = {compress_logging_value(val)}")
+    logger.debug({key: compress_logging_value(val) for key, val in locals().items()})
 
     def _replacer(match):
         content = match.group(1)
@@ -61,8 +60,7 @@ def find_string_end(func_str: str, pattern: str) -> Optional[int]:
     Returns:
         int | None: The end index of the first match if found, otherwise None.
     """
-    for key, val in locals().items():
-        logger.debug(f"{key} = {compress_logging_value(val)}")
+    logger.debug({key: compress_logging_value(val) for key, val in locals().items()})
     match = re.search(pattern, func_str, re.DOTALL)
     if match:
         return match.end()
@@ -99,8 +97,7 @@ def insert_string_at_idx(func_str: str, idx: int, to_insert: str) -> str:
     Returns:
         str: The modified string with `to_insert` inserted at the specified index.
     """
-    for key, val in locals().items():
-        logger.debug(f"{key} = {compress_logging_value(val)}")
+    logger.debug({key: compress_logging_value(val) for key, val in locals().items()})
     return func_str[:idx] + to_insert + func_str[idx:]
 
 
@@ -117,8 +114,7 @@ def strip_underscores(item: str) -> str:
     Raises:
         TypeError: If the input is not a string.
     """
-    for key, val in locals().items():
-        logger.debug(f"{key} = {compress_logging_value(val)}")
+    logger.debug({key: compress_logging_value(val) for key, val in locals().items()})
     if not isinstance(item, str):
         raise TypeError(f"item must be of type str, got {type(item)}")
     return item.strip("_")
