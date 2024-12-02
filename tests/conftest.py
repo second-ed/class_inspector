@@ -329,8 +329,7 @@ def get_mock_utils_c_parametrized_tests():
 def get_mock_utils_c_with_debugs():
     return (
         "def main(filepath: str) -> bool:\n"
-        "    for key, val in locals().items():\n"
-        '        logger.debug(f"{key} = {val}")\n'
+        "    logger.debug(locals())\n"
         "    data = read_data(filepath)\n"
         "    data = clean_data(data)\n"
         "    data_dict = _transform_data(data)\n"
@@ -344,8 +343,7 @@ def get_mock_utils_c_with_debugs():
         "\n"
         "\n"
         "def read_data(filepath: str):\n"
-        "    for key, val in locals().items():\n"
-        '        logger.debug(f"{key} = {val}")\n'
+        "    logger.debug(locals())\n"
         "    if check_extension(filepath):\n"
         "        return pd.DataFrame({})\n"
         "    raise FileNotFoundError\n"
@@ -360,20 +358,17 @@ def get_mock_utils_c_with_debugs():
         "    Returns:\n"
         "        bool: if the extension is valid\n"
         "    '''\n"
-        "    for key, val in locals().items():\n"
-        '        logger.debug(f"{key} = {val}")\n'
+        "    logger.debug(locals())\n"
         "    return bool(filepath)\n"
         "\n"
         "\n"
         "def clean_data(data):\n"
-        "    for key, val in locals().items():\n"
-        '        logger.debug(f"{key} = {val}")\n'
+        "    logger.debug(locals())\n"
         "    return data\n"
         "\n"
         "\n"
         "def _transform_data(data) -> dict:\n"
-        "    for key, val in locals().items():\n"
-        '        logger.debug(f"{key} = {val}")\n'
+        "    logger.debug(locals())\n"
         "    def transform() -> dict:\n"
         "        return {'data': data}\n"
         "\n"
@@ -381,8 +376,7 @@ def get_mock_utils_c_with_debugs():
         "\n"
         "\n"
         "def rename_data(value) -> str:\n"
-        "    for key, val in locals().items():\n"
-        '        logger.debug(f"{key} = {val}")\n'
+        "    logger.debug(locals())\n"
         "    def replacer(match) -> str:\n"
         "        content = match.group(1)\n"
         "        cleaned_content = ' '.join(content.split())\n"
@@ -393,24 +387,21 @@ def get_mock_utils_c_with_debugs():
         "\n"
         "\n"
         "def merge_data(data_dict: Dict):\n"
-        "    for key, val in locals().items():\n"
-        '        logger.debug(f"{key} = {val}")\n'
+        "    logger.debug(locals())\n"
         "    # this is an inline comment that hopefully will stay\n"
         "    data = pd.concat([v for v in data_dict.values()])\n"
         "    return data\n"
         "\n"
         "\n"
         "def save_data(data, filepath: str) -> bool:\n"
-        "    for key, val in locals().items():\n"
-        '        logger.debug(f"{key} = {val}")\n'
+        "    logger.debug(locals())\n"
         "    if filepath_exists(filepath):\n"
         "        return True\n"
         "    return False\n"
         "\n"
         "\n"
         "def filepath_exists(filepath: str) -> bool:\n"
-        "    for key, val in locals().items():\n"
-        '        logger.debug(f"{key} = {val}")\n'
+        "    logger.debug(locals())\n"
         "    return bool(filepath)\n"
         "\n"
         "\n"
@@ -525,8 +516,7 @@ def get_mock_utils_c_with_guards():
 def get_mock_utils_c_with_guards_and_debugs():
     return (
         "def main(filepath: str) -> bool:\n"
-        "    for key, val in locals().items():\n"
-        '        logger.debug(f"{key} = {val}")\n'
+        "    logger.debug(locals())\n"
         "    if not all([isinstance(filepath, str)]):\n"
         "        raise TypeError(\n"
         '            "main expects arg types: [str], "\n'
@@ -545,8 +535,7 @@ def get_mock_utils_c_with_guards_and_debugs():
         "\n"
         "\n"
         "def read_data(filepath: str):\n"
-        "    for key, val in locals().items():\n"
-        '        logger.debug(f"{key} = {val}")\n'
+        "    logger.debug(locals())\n"
         "    if not all([isinstance(filepath, str)]):\n"
         "        raise TypeError(\n"
         '            "read_data expects arg types: [str], "\n'
@@ -566,8 +555,7 @@ def get_mock_utils_c_with_guards_and_debugs():
         "    Returns:\n"
         "        bool: if the extension is valid\n"
         "    '''\n"
-        "    for key, val in locals().items():\n"
-        '        logger.debug(f"{key} = {val}")\n'
+        "    logger.debug(locals())\n"
         "    if not all([isinstance(filepath, str)]):\n"
         "        raise TypeError(\n"
         '            "check_extension expects arg types: [str], "\n'
@@ -577,14 +565,12 @@ def get_mock_utils_c_with_guards_and_debugs():
         "\n"
         "\n"
         "def clean_data(data):\n"
-        "    for key, val in locals().items():\n"
-        '        logger.debug(f"{key} = {val}")\n'
+        "    logger.debug(locals())\n"
         "    return data\n"
         "\n"
         "\n"
         "def _transform_data(data) -> dict:\n"
-        "    for key, val in locals().items():\n"
-        '        logger.debug(f"{key} = {val}")\n'
+        "    logger.debug(locals())\n"
         "    def transform() -> dict:\n"
         "        return {'data': data}\n"
         "\n"
@@ -592,8 +578,7 @@ def get_mock_utils_c_with_guards_and_debugs():
         "\n"
         "\n"
         "def rename_data(value) -> str:\n"
-        "    for key, val in locals().items():\n"
-        '        logger.debug(f"{key} = {val}")\n'
+        "    logger.debug(locals())\n"
         "    def replacer(match) -> str:\n"
         "        content = match.group(1)\n"
         "        cleaned_content = ' '.join(content.split())\n"
@@ -603,8 +588,7 @@ def get_mock_utils_c_with_guards_and_debugs():
         "\n"
         "\n"
         "def merge_data(data_dict: Dict):\n"
-        "    for key, val in locals().items():\n"
-        '        logger.debug(f"{key} = {val}")\n'
+        "    logger.debug(locals())\n"
         "    if not all([isinstance(data_dict, dict)]):\n"
         "        raise TypeError(\n"
         '            "merge_data expects arg types: [dict], "\n'
@@ -616,8 +600,7 @@ def get_mock_utils_c_with_guards_and_debugs():
         "\n"
         "\n"
         "def save_data(data, filepath: str) -> bool:\n"
-        "    for key, val in locals().items():\n"
-        '        logger.debug(f"{key} = {val}")\n'
+        "    logger.debug(locals())\n"
         "    if not all([isinstance(filepath, str)]):\n"
         "        raise TypeError(\n"
         '            "save_data expects arg types: [str], "\n'
@@ -629,8 +612,7 @@ def get_mock_utils_c_with_guards_and_debugs():
         "\n"
         "\n"
         "def filepath_exists(filepath: str) -> bool:\n"
-        "    for key, val in locals().items():\n"
-        '        logger.debug(f"{key} = {val}")\n'
+        "    logger.debug(locals())\n"
         "    if not all([isinstance(filepath, str)]):\n"
         "        raise TypeError(\n"
         '            "filepath_exists expects arg types: [str], "\n'

@@ -585,8 +585,7 @@ def test_get_func_sig(
             True,
             (
                 "def mock_function(param1: float, param2: int, param3: bool, param4: str = 'test') -> float:\n"
-                "    for key, val in locals().items():\n"
-                '        logger.debug(f"{key} = {val}")\n'
+                "    logger.debug(locals())\n"
                 "    if not all([isinstance(param1, float), isinstance(param2, int), isinstance(param3, bool), isinstance(param4, str)]):\n"
                 "        raise TypeError(\n"
                 '            "mock_function expects arg types: [float, int, bool, str], "\n'
@@ -605,8 +604,7 @@ def test_get_func_sig(
             True,
             (
                 "def mock_function(param1: float, param2: int, param3: bool, param4: str = 'test') -> float:\n"
-                "    for key, val in locals().items():\n"
-                '        logger.debug(f"{key} = {val}")\n'
+                "    logger.debug(locals())\n"
                 "    if param3:\n"
                 "        return param1 - param2\n"
                 "    else:\n"
@@ -662,8 +660,7 @@ def test_get_func_sig(
             True,
             (
                 "    def mock_method(self, a: int, b: str) -> str:\n"
-                "        for key, val in locals().items():\n"
-                '            logger.debug(f"{key} = {val}")\n'
+                "        logger.debug(locals())\n"
                 "        if not all([isinstance(a, int), isinstance(b, str)]):\n"
                 "            raise TypeError(\n"
                 '                "mock_method expects arg types: [int, str], "\n'
@@ -686,8 +683,7 @@ def test_get_func_sig(
                 "    Returns:\n"
                 "        Optional[int]\n"
                 "    '''\n"
-                "    for key, val in locals().items():\n"
-                '        logger.debug(f"{key} = {val}")\n'
+                "    logger.debug(locals())\n"
                 "    if not all([isinstance(param1, bool), isinstance(param2, (int, NoneType))]):\n"
                 "        raise TypeError(\n"
                 '            "mock_function_with_optional expects arg types: [bool, (int, NoneType)], "\n'

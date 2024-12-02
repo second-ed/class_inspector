@@ -41,8 +41,9 @@ class FunctionInspector:
         Args:
             object_ (Callable): The callable object to be analysed.
         """
-        for key, val in locals().items():
-            logger.debug(f"{key} = {compress_logging_value(val)}")
+        logger.debug(
+            {key: compress_logging_value(val) for key, val in locals().items()}
+        )
         self.obj = object_
         self.name = self.obj.__name__
         self.doc = self._get_doc()
@@ -59,8 +60,9 @@ class FunctionInspector:
         Returns:
             str: the analysed function with added guard conditions
         """
-        for key, val in locals().items():
-            logger.debug(f"{key} = {compress_logging_value(val)}")
+        logger.debug(
+            {key: compress_logging_value(val) for key, val in locals().items()}
+        )
 
         # replace double quotes with single quotes as strings default to single quotes
         func_str = utils.clean_func(str(inspect.getsource(self.obj)).replace('"', "'"))
@@ -110,8 +112,9 @@ class FunctionInspector:
         Returns:
             str: The complete test function.
         """
-        for key, val in locals().items():
-            logger.debug(f"{key} = {compress_logging_value(val)}")
+        logger.debug(
+            {key: compress_logging_value(val) for key, val in locals().items()}
+        )
         test_full = []
         test_full.append(self._get_parametrize_decorator(check_types, match))
         test_full.append(self._get_test_sig())
@@ -164,8 +167,9 @@ class FunctionInspector:
         Returns:
             str: The parametrize decorator for the test function.
         """
-        for key, val in locals().items():
-            logger.debug(f"{key} = {compress_logging_value(val)}")
+        logger.debug(
+            {key: compress_logging_value(val) for key, val in locals().items()}
+        )
         args = self._get_params_str()
         return "".join(
             [
@@ -232,8 +236,9 @@ class FunctionInspector:
         Returns:
             str: The test case for the test function.
         """
-        for key, val in locals().items():
-            logger.debug(f"{key} = {compress_logging_value(val)}")
+        logger.debug(
+            {key: compress_logging_value(val) for key, val in locals().items()}
+        )
         return (
             f"{self.tab * 2}pytest.param({args}, expected_result, expected_context),\n"
         )
@@ -252,8 +257,9 @@ class FunctionInspector:
         Returns:
             str: The test case for raising a type error in the test function.
         """
-        for key, val in locals().items():
-            logger.debug(f"{key} = {compress_logging_value(val)}")
+        logger.debug(
+            {key: compress_logging_value(val) for key, val in locals().items()}
+        )
         if not check_types:
             return ""
         match_stmt = ""
@@ -363,8 +369,5 @@ class FunctionInspector:
     def _get_debugs(self) -> str:
         if not self.parameters:
             return ""
-        debugs = (
-            f"{self.tab*(1 + self.is_method)}for key, val in locals().items():\n"
-            f'{self.tab*(2 + self.is_method)}logger.debug(f"{{key}} = {{val}}")\n'
-        )
+        debugs = f"{self.tab*(1 + self.is_method)}logger.debug(locals())\n"
         return debugs
