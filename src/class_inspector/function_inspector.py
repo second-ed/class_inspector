@@ -31,6 +31,7 @@ class FunctionInspector:
     parameters: dict = attr.ib(init=False, validator=[instance_of(dict)])
     return_annotation: str = attr.ib(init=False, validator=[instance_of(str)])
     is_method: int = attr.ib(init=False, validator=[instance_of(int)])
+    use_id: bool = attr.ib(default=False, validator=[instance_of(bool)])
     tab: str = attr.ib(default="    ", validator=instance_of(str), init=False)  # type: ignore
 
     def analyse(self, object_) -> None:
@@ -237,9 +238,11 @@ class FunctionInspector:
         logger.debug(
             {key: compress_logging_value(val) for key, val in locals().items()}
         )
-        return (
-            f"{self.tab * 2}pytest.param({args}, expected_result, expected_context),\n"
-        )
+        if self.use_id:
+            test_id = ', id=""'
+        else:
+            test_id = ""
+        return f"{self.tab * 2}pytest.param({args}, expected_result, expected_context{test_id}),\n"
 
     def _get_raises_type_error_test_case(
         self, args: str, check_types: bool = True, match: bool = False
