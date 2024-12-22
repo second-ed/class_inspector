@@ -124,6 +124,10 @@ def _is_not_dunder(item: str) -> bool:
     return not item.startswith("__") and not item.endswith("__")
 
 
+def _is_dunder(item: str) -> bool:
+    return item.startswith("__") and item.endswith("__")
+
+
 def _get_module_classes_or_functions(inp_module, is_type: Callable):
     members = {
         name: member

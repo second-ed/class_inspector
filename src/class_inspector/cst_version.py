@@ -4,9 +4,10 @@ from typing import Dict, Optional
 
 import attrs
 import libcst as cst
+import libcst.matchers as m
 from attrs.validators import instance_of, optional
 
-from class_inspector._utils import format_code_str
+from class_inspector._utils import _is_dunder, camel_to_snake, format_code_str
 
 
 def str_to_cst(code: str) -> cst.Module:
@@ -17,38 +18,79 @@ def cst_to_str(node) -> str:
     return cst.Module([]).code_for_node(node)
 
 
-def get_test_case(args: str, test_arg: str, raises: bool = False) -> str:
-    print(locals())
-    if not raises:
-        return f"pytest.param({args}, expected_result, does_not_raise(), id='Ensure behaviour x when {test_arg} is y')"
-    return f"pytest.param({args}, expected_result, pytest.raises(TypeError), id='Ensure raises TypeError if given wrong type for `{test_arg}`')"
+def _get_test_case(
+    args: str,
+    test_arg: str = "",
+    raises_error: str = "",
+    raises_arg_types: bool = False,
+) -> str:
+    if raises_arg_types:
+        return f"pytest.param({args}, expected_result, pytest.raises(TypeError), id='Ensure raises `TypeError` if given wrong type for `{test_arg}`')"
+    elif raises_error:
+        return f"pytest.param({args}, expected_result, pytest.raises({raises_error}), id='Ensure raises `{raises_error}` if...')"
+    return f"pytest.param({args}, expected_result, does_not_raise(), id='Ensure x when `{test_arg}` is y')"
 
 
-def get_test(func_details: FuncDetails, test_raises: bool = False) -> str:
+def _get_test(
+    func_details: FuncDetails, test_raises: bool = True, raises_arg_types: bool = False
+) -> str:
     args_str = ", ".join(func_details.params.keys())
     test_cases = [
-        get_test_case(args_str, test_arg) for test_arg in func_details.params.keys()
+        _get_test_case(args_str, test_arg) for test_arg in func_details.params.keys()
     ]
     if test_raises:
-        test_cases = [
-            test_cases,
-            *[
-                get_test_case(args_str, test_arg, True)
+        test_cases.extend(
+            [
+                _get_test_case(args_str, raises_error=raises)
+                for raises in func_details.raises
+            ]
+        )
+
+    if raises_arg_types:
+        test_cases.extend(
+            [
+                _get_test_case(args_str, test_arg, raises_arg_types=True)
                 for test_arg in func_details.params.keys()
             ],
-        ]
+        )
 
-    return (
-        "from contextlib import nullcontext as does_not_raise\n"
-        "import pytest\n"
-        "@pytest.mark.parametrize("
-        f"'{args_str}, expected_result, expected_context',"
-        f"[{','.join(test_cases)}]"
-        ")\n"
-        f"def test_{func_details.name}({args_str}, expected_result, expected_context):\n"
-        "    with expected_context:"
-        f"        assert {func_details.name}({args_str}) == expected_result"
+    std_name = func_details.name.strip("_")
+    class_instance = (
+        ""
+        if not func_details.class_name
+        else f"{camel_to_snake(func_details.class_name)} = {func_details.class_name}()"
     )
+    func_call = (
+        func_details.name
+        if not func_details.class_name
+        else f"{camel_to_snake(func_details.class_name)}.{func_details.name}"
+    )
+    test_cases = ",".join(test_cases)
+    test_str = [
+        "@pytest.mark.parametrize(",
+        f"'{args_str}, expected_result, expected_context',",
+        f"[{test_cases}])",
+        f"def test_{std_name}({args_str}, expected_result, expected_context):",
+        "    with expected_context:",
+        f"        assert {func_call}({args_str}) == expected_result\n\n",
+    ]
+
+    if class_instance:
+        test_str.insert(-1, f"        {class_instance}")
+
+    return "\n".join(test_str)
+
+
+def get_tests(funcs: Dict[str, FuncDetails]) -> str:
+    tests_str = [
+        "from contextlib import nullcontext as does_not_raise",
+        "import pytest",
+    ]
+    for func in funcs.values():
+        if func.params:
+            tests_str.append(_get_test(func))
+
+    return format_code_str("\n".join(tests_str))
 
 
 def get_guard_conditions(func_details: FuncDetails) -> str:
@@ -56,7 +98,7 @@ def get_guard_conditions(func_details: FuncDetails) -> str:
 
     for param in func_details.params.values():
         if param.annot:
-            expected_types.append(param.annot)
+            expected_types.append(param.annot.split("[")[0])
             received_types.append(f"{{type({param.name}).__name__}}")
 
     expected_types = ", ".join(expected_types)
@@ -65,8 +107,9 @@ def get_guard_conditions(func_details: FuncDetails) -> str:
     if expected_types and received_types:
         is_instances = ", ".join(
             [
-                f"isinstance({param.name}, {param.annot})"
+                f"isinstance({param.name}, {param.annot.split('[')[0]})"
                 for param in func_details.params.values()
+                if param.annot
             ]
         )
         guards = (
@@ -85,6 +128,15 @@ def get_annotation_type(annot_node: cst.Annotation | None) -> str:
             return node.value
         elif isinstance(node, cst.Attribute):
             return f"{parse_node(node.value)}.{node.attr.value}"
+        elif isinstance(node, cst.Subscript):
+            base = parse_node(node.value)
+            slices = ", ".join(
+                parse_node(element.slice.value)
+                for element in node.slice
+                if isinstance(element, cst.SubscriptElement)
+                and isinstance(element.slice, cst.Index)
+            )
+            return f"{base}[{slices}]"
         return ""
 
     if isinstance(annot_node, cst.Annotation):
@@ -106,23 +158,35 @@ class FuncDetails:
     name: str = attrs.field()
     params: dict = attrs.field(default=None)
     return_annot: str = attrs.field(default="", validator=[instance_of(str)])
+    raises: list = attrs.field(default=None)
+    class_name: str = attrs.field(default="")
 
     def __attrs_post_init__(self):
-        self.params = {}
+        self.params, self.raises = {}, []
 
 
 @attrs.define
 class FuncVisitor(cst.CSTVisitor):
     funcs: Dict[str, FuncDetails] = attrs.field(default=None)
+    curr_class: str = attrs.field(default="", validator=[instance_of(str)])
     curr_func: str = attrs.field(default="", validator=[instance_of(str)])
     curr_param: str = attrs.field(default="", validator=[instance_of(str)])
+    in_lambda: bool = attrs.field(default=False, validator=[instance_of(bool)])
 
     def __attrs_post_init__(self):
         self.funcs = {}
 
+    def visit_ClassDef(self, node: cst.ClassDef):
+        self.curr_class = node.name.value
+
+    def leave_ClassDef(self, node: cst.ClassDef):
+        self.curr_class = ""
+
     def visit_FunctionDef(self, node: cst.FunctionDef) -> None:
         self.curr_func = node.name.value
-        self.funcs[self.curr_func] = FuncDetails(node.name.value)
+        self.funcs[self.curr_func] = FuncDetails(
+            node.name.value, class_name=self.curr_class
+        )
         self.funcs[self.curr_func].return_annot = get_annotation_type(node.returns)
 
     def leave_FunctionDef(self, node: cst.FunctionDef) -> None:
@@ -131,11 +195,23 @@ class FuncVisitor(cst.CSTVisitor):
     def visit_Param(self, node: cst.Param) -> None:
         if self.curr_func:
             self.curr_param = node.name.value
-            self.funcs[self.curr_func].params[node.name.value] = ParamDetails(
-                self.curr_param,
-                get_annotation_type(node.annotation),
-                node.default.value if node.default else None,
-            )
+            if (
+                not self.curr_class or self.curr_param != "self"
+            ) and not self.in_lambda:
+                self.funcs[self.curr_func].params[node.name.value] = ParamDetails(
+                    self.curr_param,
+                    get_annotation_type(node.annotation),
+                    node.default.value if node.default else None,
+                )
+
+    def visit_Raise(self, node: cst.Raise) -> None:
+        self.funcs[self.curr_func].raises.append(node.exc.func.value)
+
+    def visit_Lambda(self, node: cst.Lambda):
+        self.in_lambda = True
+
+    def leave_Lambda(self, node: cst.Lambda):
+        self.in_lambda = False
 
 
 @attrs.define
@@ -147,18 +223,22 @@ class AddBoilerplateTransformer(cst.CSTTransformer):
     def leave_FunctionDef(
         self, original_node: cst.FunctionDef, updated_node: cst.FunctionDef
     ) -> cst.FunctionDef:
-        if original_node.name.value not in self.funcs:
+        if any(
+            [
+                original_node.name.value not in self.funcs,
+                _is_dunder(original_node.name.value),
+                not self.funcs[original_node.name.value].params,
+            ]
+        ):
             return updated_node
 
         existing_body = list(updated_node.body.body)
-        if (
-            len(existing_body) > 0
-            and isinstance(existing_body[0], cst.SimpleStatementLine)
-            and isinstance(existing_body[0].body[0], cst.Expr)
-            and isinstance(existing_body[0].body[0].value, cst.SimpleString)
+
+        if existing_body and m.matches(
+            existing_body[0],
+            m.SimpleStatementLine(body=[m.Expr(value=m.SimpleString())]),
         ):
-            docstring = existing_body[0]
-            existing_body = existing_body[1:]
+            docstring = existing_body.pop(0)
         else:
             docstring = None
 
