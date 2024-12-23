@@ -1,8 +1,10 @@
 import inspect
 
-from class_inspector.cst_version import (
+from class_inspector.cst_walkers import (
     AddBoilerplateTransformer,
     FuncVisitor,
+)
+from class_inspector.utils import (
     format_code_str,
     str_to_cst,
 )
