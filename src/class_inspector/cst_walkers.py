@@ -9,7 +9,7 @@ from attrs.validators import instance_of
 
 from class_inspector.data_structures import FuncDetails, ParamDetails
 from class_inspector.guard_conditions import get_guard_conditions
-from class_inspector.utils import _is_dunder
+from class_inspector.utils import is_dunder
 
 
 def get_annotation_type(annot_node: cst.Annotation | None) -> str:
@@ -76,10 +76,10 @@ class FuncVisitor(cst.CSTVisitor):
     def visit_Raise(self, node: cst.Raise) -> None:
         self.funcs[self.curr_func].raises.append(node.exc.func.value)
 
-    def visit_Lambda(self, node: cst.Lambda):
+    def visit_Lambda(self, node: cst.Lambda) -> None:
         self.in_lambda = True
 
-    def leave_Lambda(self, node: cst.Lambda):
+    def leave_Lambda(self, node: cst.Lambda) -> None:
         self.in_lambda = False
 
 
@@ -95,7 +95,7 @@ class AddBoilerplateTransformer(cst.CSTTransformer):
         if any(
             [
                 original_node.name.value not in self.funcs,
-                _is_dunder(original_node.name.value),
+                is_dunder(original_node.name.value),
                 not self.funcs[original_node.name.value].params,
             ]
         ):

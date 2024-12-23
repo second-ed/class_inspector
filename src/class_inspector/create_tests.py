@@ -6,17 +6,16 @@ from class_inspector.data_structures import FuncDetails
 from class_inspector.utils import camel_to_snake, format_code_str
 
 
-def _get_test_case(
-    args: str,
-    test_arg: str = "",
-    raises_error: str = "",
-    raises_arg_types: bool = False,
-) -> str:
-    if raises_arg_types:
-        return f"pytest.param({args}, expected_result, pytest.raises(TypeError), id='Ensure raises `TypeError` if given wrong type for `{test_arg}`')"
-    elif raises_error:
-        return f"pytest.param({args}, expected_result, pytest.raises({raises_error}), id='Ensure raises `{raises_error}` if...')"
-    return f"pytest.param({args}, expected_result, does_not_raise(), id='Ensure x when `{test_arg}` is y')"
+def get_tests(funcs: Dict[str, FuncDetails]) -> str:
+    tests_str = [
+        "from contextlib import nullcontext as does_not_raise",
+        "import pytest",
+    ]
+    for func in funcs.values():
+        if func.params:
+            tests_str.append(_get_test(func))
+
+    return format_code_str("\n".join(tests_str))
 
 
 def _get_test(
@@ -69,13 +68,14 @@ def _get_test(
     return "\n".join(test_str)
 
 
-def get_tests(funcs: Dict[str, FuncDetails]) -> str:
-    tests_str = [
-        "from contextlib import nullcontext as does_not_raise",
-        "import pytest",
-    ]
-    for func in funcs.values():
-        if func.params:
-            tests_str.append(_get_test(func))
-
-    return format_code_str("\n".join(tests_str))
+def _get_test_case(
+    args: str,
+    test_arg: str = "",
+    raises_error: str = "",
+    raises_arg_types: bool = False,
+) -> str:
+    if raises_arg_types:
+        return f"pytest.param({args}, expected_result, pytest.raises(TypeError), id='Ensure raises `TypeError` if given wrong type for `{test_arg}`')"
+    elif raises_error:
+        return f"pytest.param({args}, expected_result, pytest.raises({raises_error}), id='Ensure raises `{raises_error}` if...')"
+    return f"pytest.param({args}, expected_result, does_not_raise(), id='Ensure x when `{test_arg}` is y')"

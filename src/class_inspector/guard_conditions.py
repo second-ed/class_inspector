@@ -5,6 +5,8 @@ from typing import Tuple
 
 from class_inspector.data_structures import FuncDetails
 
+ITERABLES = ["list", "set", "tuple", "dict"]
+
 
 def get_inner_outer_types(attr_type: str) -> Tuple[str, str] | str:
     """
@@ -18,7 +20,6 @@ def get_inner_outer_types(attr_type: str) -> Tuple[str, str] | str:
 
     Raises:
         TypeError: If the input is not a string.
-        AttributeError: If the regular expression does not match.
     """
     if not all([isinstance(attr_type, str)]):
         raise TypeError(
@@ -31,9 +32,6 @@ def get_inner_outer_types(attr_type: str) -> Tuple[str, str] | str:
         inner_type = bracket_type.group(1)
         return inner_type, outer_type
     return attr_type
-
-
-ITERABLES = ["list", "set", "tuple", "dict"]
 
 
 def get_isinstance_type(attr_type: str) -> str:

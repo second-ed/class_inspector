@@ -24,4 +24,5 @@ class FuncDetails:
     class_name: str = attrs.field(default="")
 
     def __attrs_post_init__(self):
-        self.params, self.raises = {}, []
+        self.params = self.params or {}
+        self.raises = self.raises or []
