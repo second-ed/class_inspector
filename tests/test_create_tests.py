@@ -32,7 +32,7 @@ from class_inspector.utils import format_code_str
             },
             'from contextlib import nullcontext as does_not_raise\n\nimport pytest\n\n\n@pytest.mark.parametrize(\n    "a, b, expected_result, expected_context",\n    [\n        pytest.param(\n            a, b, expected_result, does_not_raise(), id="Ensure x when `a` is y"\n        ),\n        pytest.param(\n            a, b, expected_result, does_not_raise(), id="Ensure x when `b` is y"\n        ),\n        pytest.param(\n            a,\n            b,\n            expected_result,\n            pytest.raises(TypeError),\n            id="Ensure raises `TypeError` if...",\n        ),\n    ],\n)\ndef test_mock_method(a, b, expected_result, expected_context):\n    with expected_context:\n        mock_class = MockClass()\n        assert mock_class.mock_method(a, b) == expected_result\n',
             does_not_raise(),
-            id="Ensure x when `funcs` is y",
+            id="Ensure returns tests for funcs with parameters when `funcs` is a mix of methods, functions and constants",
         )
     ],
 )
