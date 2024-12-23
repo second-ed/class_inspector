@@ -99,7 +99,7 @@ def test_get_test(
             False,
             "pytest.param(a, b, expected_result, does_not_raise(), id='Ensure x when `a` is y')",
             does_not_raise(),
-            id="Ensure x when `args` is y",
+            id="Ensure returns standard param",
         ),
         pytest.param(
             "a, b",
@@ -108,7 +108,7 @@ def test_get_test(
             False,
             "pytest.param(a, b, expected_result, does_not_raise(), id='Ensure x when `b` is y')",
             does_not_raise(),
-            id="Ensure x when `test_arg` is y",
+            id="Ensure id changes when `test_arg` is `b`",
         ),
         pytest.param(
             "a, b",
@@ -117,7 +117,7 @@ def test_get_test(
             False,
             "pytest.param(a, b, expected_result, pytest.raises(ValueError), id='Ensure raises `ValueError` if...')",
             does_not_raise(),
-            id="Ensure x when `raises_error` is y",
+            id="Ensure returns raises error when `raises_error` is `ValueError`",
         ),
         pytest.param(
             "a, b",
@@ -126,7 +126,7 @@ def test_get_test(
             True,
             "pytest.param(a, b, expected_result, pytest.raises(TypeError), id='Ensure raises `TypeError` if given wrong type for `a`')",
             does_not_raise(),
-            id="Ensure x when `raises_arg_types` is y",
+            id="Ensure returns type check error when `raises_arg_types` is True",
         ),
     ],
 )
