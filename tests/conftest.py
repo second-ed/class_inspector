@@ -1,9 +1,5 @@
-from typing import List
-
 import pytest
 
-from class_inspector.attr_generator import AttrGenerator, AttrMap
-from class_inspector.class_inspector import ClassInspector
 from mock_package import mock_utils_c
 from mock_package.mock_service import MockService
 
@@ -25,25 +21,6 @@ class TestClass:
 
     def _do_something_with_args(self, a, b):
         return a + b
-
-
-@pytest.fixture
-def get_attr_gen_attributes() -> List[AttrMap]:
-    return [
-        AttrMap("test1", "int", True),
-        AttrMap("test2", "float", False),
-        AttrMap("test3", "bool", True),
-        AttrMap("test4", "str", False),
-        AttrMap("test5", "List[int]", True),
-        AttrMap("test6", "Dict[str, float]", False),
-    ]
-
-
-@pytest.fixture
-def get_attr_gen_instance(
-    get_attr_gen_attributes: List[AttrMap],
-) -> AttrGenerator:
-    return AttrGenerator("TestClass", get_attr_gen_attributes)
 
 
 @pytest.fixture
@@ -74,11 +51,6 @@ def get_fixture_unsorted_callables_by_line_numbers():
         "save_data": mock_utils_c.save_data,
         "rename_data": mock_utils_c.rename_data,
     }
-
-
-@pytest.fixture
-def get_instance(get_test_class: TestClass) -> ClassInspector:
-    return ClassInspector(get_test_class)
 
 
 @pytest.fixture

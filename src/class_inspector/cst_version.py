@@ -1,13 +1,28 @@
 from __future__ import annotations
 
-from typing import Dict, Optional
+import re
+from typing import Dict, Optional, Tuple
 
 import attrs
+import black
+import isort
 import libcst as cst
 import libcst.matchers as m
 from attrs.validators import instance_of, optional
 
-from class_inspector._utils import _is_dunder, camel_to_snake, format_code_str
+
+def _is_dunder(item: str) -> bool:
+    return item.startswith("__") and item.endswith("__")
+
+
+def camel_to_snake(name: str) -> str:
+    s1 = re.sub("(.)([A-Z][a-z]+)", r"\1_\2", name)
+    s2 = re.sub("([a-z0-9])([A-Z])", r"\1_\2", s1)
+    return s2.lower()
+
+
+def format_code_str(code_snippet: str) -> str:
+    return black.format_str(isort.code(code_snippet), mode=black.FileMode())
 
 
 def str_to_cst(code: str) -> cst.Module:
@@ -93,12 +108,58 @@ def get_tests(funcs: Dict[str, FuncDetails]) -> str:
     return format_code_str("\n".join(tests_str))
 
 
+def get_inner_outer_types(attr_type: str) -> Tuple[str, str] | str:
+    """
+    Get the inner and outer types from the attribute type string.
+
+    Args:
+        attr_type (str): The attribute type string.
+
+    Returns:
+        Tuple[str, str]: The inner and outer types extracted from attr_type.
+
+    Raises:
+        TypeError: If the input is not a string.
+        AttributeError: If the regular expression does not match.
+    """
+    if not all([isinstance(attr_type, str)]):
+        raise TypeError(
+            "get_inner_outer_types expects arg types: [str], "
+            f"received: [{type(attr_type).__name__}]"
+        )
+    bracket_type = re.search(r"\[(.*?)\]", attr_type)
+    if bracket_type:
+        outer_type = attr_type.replace(bracket_type.group(), "")
+        inner_type = bracket_type.group(1)
+        return inner_type, outer_type
+    return attr_type
+
+
+ITERABLES = ["list", "set", "tuple", "dict"]
+
+
+def get_isinstance_type(attr_type: str) -> str:
+    if not bool(re.search(r"\[.*?\]", attr_type)):
+        return attr_type
+
+    inner_type, outer_type = get_inner_outer_types(attr_type)
+
+    if outer_type == "Optional":
+        inner_type = ", ".join([inner_type, "NoneType"])
+
+    if outer_type.lower() in ITERABLES:
+        return outer_type
+    if len(inner_type.split(",")) > 1:
+        return f"({inner_type})"
+    return inner_type
+
+
 def get_guard_conditions(func_details: FuncDetails) -> str:
     expected_types, received_types = [], []
 
     for param in func_details.params.values():
         if param.annot:
-            expected_types.append(param.annot.split("[")[0])
+            expected_types.append(get_isinstance_type(param.annot))
             received_types.append(f"{{type({param.name}).__name__}}")
 
     expected_types = ", ".join(expected_types)
@@ -107,7 +168,7 @@ def get_guard_conditions(func_details: FuncDetails) -> str:
     if expected_types and received_types:
         is_instances = ", ".join(
             [
-                f"isinstance({param.name}, {param.annot.split('[')[0]})"
+                f"isinstance({param.name}, {get_isinstance_type(param.annot)})"
                 for param in func_details.params.values()
                 if param.annot
             ]
@@ -243,6 +304,7 @@ class AddBoilerplateTransformer(cst.CSTTransformer):
             docstring = None
 
         additions = []
+
         if self.add_debugs:
             debugs = format_code_str("logger.debug(locals())")
             additions.append(cst.parse_statement(debugs))

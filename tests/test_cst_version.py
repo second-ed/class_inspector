@@ -1,9 +1,9 @@
 import inspect
 
-from class_inspector._utils import format_code_str
 from class_inspector.cst_version import (
     AddBoilerplateTransformer,
     FuncVisitor,
+    format_code_str,
     str_to_cst,
 )
 from mock_package.mock_module import mock_function
