@@ -20,22 +20,6 @@ def test_str_cst_conversions(input_str, expected_context):
         assert utils.cst_to_str(utils.str_to_cst(input_str)) == input_str
 
 
-# @pytest.mark.parametrize(
-#     "code_snippet, expected_result, expected_context",
-#     [
-#         pytest.param(
-#             code_snippet,
-#             expected_result,
-#             does_not_raise(),
-#             id="Ensure x when `code_snippet` is y",
-#         )
-#     ],
-# )
-# def test_format_code_str(code_snippet, expected_result, expected_context):
-#     with expected_context:
-#         assert utils.format_code_str(code_snippet) == expected_result
-
-
 @pytest.mark.parametrize(
     "item, expected_result, expected_context",
     [
