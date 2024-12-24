@@ -21,6 +21,7 @@ requires-python = ">=3.6"
 version = "0.2.0"
 dependencies = [
     "attrs >= 22.2.0",
+    "libcst >=1.5.1,<2",
     "python-dotenv >= 0.20.0",
     "black >= 24",
     "isort >= 5",
