@@ -91,3 +91,15 @@ def test_mock_function_with_optional(param1, param2, expected_result, expected_c
     with expected_context:
         assert mock_function_with_optional(param1, param2) == expected_result
 
+
+@pytest.mark.parametrize(
+    "data, expected_result, expected_context",
+    [
+        pytest.param(
+            data, expected_result, does_not_raise(), id="Ensure x when `data` is y"
+        )
+    ],
+)
+def test_mock_func_with_alias_typehint(data, expected_result, expected_context):
+    with expected_context:
+        assert mock_func_with_alias_typehint(data) == expected_result
