@@ -79,7 +79,7 @@ def _get_test_case(
     raises_arg_types: bool = False,
 ) -> str:
     if raises_arg_types:
-        return f"pytest.param({args}, expected_result, pytest.raises(TypeError), id='Ensure raises `TypeError` if given wrong type for `{test_arg}`')"
+        return f"pytest.param({args}, None, pytest.raises(TypeError), id='Ensure raises `TypeError` if given wrong type for `{test_arg}`')"
     elif raises_error:
-        return f"pytest.param({args}, expected_result, pytest.raises({raises_error}), id='Ensure raises `{raises_error}` if...')"
+        return f"pytest.param({args}, None, pytest.raises({raises_error}), id='Ensure raises `{raises_error}` if...')"
     return f"pytest.param({args}, expected_result, does_not_raise(), id='Ensure x when `{test_arg}` is y')"

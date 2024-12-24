@@ -30,7 +30,7 @@ from class_inspector.utils import format_code_str
                     class_name="MockClass",
                 ),
             },
-            'from contextlib import nullcontext as does_not_raise\n\nimport pytest\n\n\n@pytest.mark.parametrize(\n    "a, b, expected_result, expected_context",\n    [\n        pytest.param(\n            a, b, expected_result, does_not_raise(), id="Ensure x when `a` is y"\n        ),\n        pytest.param(\n            a, b, expected_result, does_not_raise(), id="Ensure x when `b` is y"\n        ),\n        pytest.param(\n            a,\n            b,\n            expected_result,\n            pytest.raises(TypeError),\n            id="Ensure raises `TypeError` if...",\n        ),\n    ],\n)\ndef test_mock_method(a, b, expected_result, expected_context):\n    with expected_context:\n        mock_class = MockClass()\n        assert mock_class.mock_method(a, b) == expected_result\n',
+            'from contextlib import nullcontext as does_not_raise\n\nimport pytest\n\n\n@pytest.mark.parametrize(\n    "a, b, expected_result, expected_context",\n    [\n        pytest.param(\n            a, b, expected_result, does_not_raise(), id="Ensure x when `a` is y"\n        ),\n        pytest.param(\n            a, b, expected_result, does_not_raise(), id="Ensure x when `b` is y"\n        ),\n        pytest.param(a, b, None, pytest.raises(TypeError), id="Ensure raises `TypeError` if..."),\n    ],\n)\ndef test_mock_method(a, b, expected_result, expected_context):\n    with expected_context:\n        mock_class = MockClass()\n        assert mock_class.mock_method(a, b) == expected_result\n',
             does_not_raise(),
             id="Ensure returns tests for funcs with parameters when `funcs` is a mix of methods, functions and constants",
         )
@@ -38,7 +38,7 @@ from class_inspector.utils import format_code_str
 )
 def test_get_tests(funcs, expected_result, expected_context):
     with expected_context:
-        assert ct.get_tests(funcs) == expected_result
+        assert format_code_str(ct.get_tests(funcs)) == format_code_str(expected_result)
 
 
 @pytest.mark.parametrize(
@@ -57,7 +57,7 @@ def test_get_tests(funcs, expected_result, expected_context):
             ),
             True,
             True,
-            "@pytest.mark.parametrize(\n'a, b, expected_result, expected_context',\n[pytest.param(a, b, expected_result, does_not_raise(), id='Ensure x when `a` is y'),pytest.param(a, b, expected_result, does_not_raise(), id='Ensure x when `b` is y'),pytest.param(a, b, expected_result, pytest.raises(ValueError), id='Ensure raises `ValueError` if...'),pytest.param(a, b, expected_result, pytest.raises(TypeError), id='Ensure raises `TypeError` if given wrong type for `a`'),pytest.param(a, b, expected_result, pytest.raises(TypeError), id='Ensure raises `TypeError` if given wrong type for `b`')])\ndef test_mock_function(a, b, expected_result, expected_context):\n    with expected_context:\n        assert mock_function(a, b) == expected_result\n\n",
+            "@pytest.mark.parametrize(\n'a, b, expected_result, expected_context',\n[pytest.param(a, b, expected_result, does_not_raise(), id='Ensure x when `a` is y'),pytest.param(a, b, expected_result, does_not_raise(), id='Ensure x when `b` is y'),pytest.param(a, b, None, pytest.raises(ValueError), id='Ensure raises `ValueError` if...'),pytest.param(a, b, None, pytest.raises(TypeError), id='Ensure raises `TypeError` if given wrong type for `a`'),pytest.param(a, b, None, pytest.raises(TypeError), id='Ensure raises `TypeError` if given wrong type for `b`')])\ndef test_mock_function(a, b, expected_result, expected_context):\n    with expected_context:\n        assert mock_function(a, b) == expected_result\n\n",
             does_not_raise(),
             id="Ensure returns all raises cases when `func_details` is a function and raises options are True",
         ),
@@ -115,7 +115,7 @@ def test_get_test(
             "b",
             "ValueError",
             False,
-            "pytest.param(a, b, expected_result, pytest.raises(ValueError), id='Ensure raises `ValueError` if...')",
+            "pytest.param(a, b, None, pytest.raises(ValueError), id='Ensure raises `ValueError` if...')",
             does_not_raise(),
             id="Ensure returns raises error when `raises_error` is `ValueError`",
         ),
@@ -124,7 +124,7 @@ def test_get_test(
             "a",
             "ValueError",
             True,
-            "pytest.param(a, b, expected_result, pytest.raises(TypeError), id='Ensure raises `TypeError` if given wrong type for `a`')",
+            "pytest.param(a, b, None, pytest.raises(TypeError), id='Ensure raises `TypeError` if given wrong type for `a`')",
             does_not_raise(),
             id="Ensure returns type check error when `raises_arg_types` is True",
         ),
