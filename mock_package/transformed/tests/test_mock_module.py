@@ -103,3 +103,22 @@ def test_mock_function_with_optional(param1, param2, expected_result, expected_c
 def test_mock_func_with_alias_typehint(data, expected_result, expected_context):
     with expected_context:
         assert mock_func_with_alias_typehint(data) == expected_result
+
+
+@pytest.mark.parametrize(
+    "a, b, expected_result, expected_context",
+    [
+        pytest.param(
+            a, b, expected_result, does_not_raise(), id="Ensure x when `a` is y"
+        ),
+        pytest.param(
+            a, b, expected_result, does_not_raise(), id="Ensure x when `b` is y"
+        ),
+        pytest.param(
+            a, b, None, pytest.raises(ValueError), id="Ensure raises `ValueError` if..."
+        ),
+    ],
+)
+def test_mock_func_with_lambda_and_raises(a, b, expected_result, expected_context):
+    with expected_context:
+        assert mock_func_with_lambda_and_raises(a, b) == expected_result

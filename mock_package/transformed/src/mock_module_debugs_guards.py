@@ -69,3 +69,16 @@ def mock_func_with_alias_typehint(data: pd.DataFrame) -> pd.DataFrame:
             f"received: [{type(data).__name__}]"
         )
     return data
+
+
+def mock_func_with_lambda_and_raises(a: int, b: bool):
+    logger.debug(locals())
+    if not all([isinstance(a, int), isinstance(b, bool)]):
+        raise TypeError(
+            "mock_func_with_lambda_and_raises expects arg types: [int, bool], "
+            f"received: [{type(a).__name__}, {type(b).__name__}]"
+        )
+    double = lambda x: x * 2
+    if b:
+        raise ValueError()
+    return double(a)

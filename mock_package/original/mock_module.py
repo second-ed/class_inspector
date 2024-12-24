@@ -38,3 +38,10 @@ def mock_constant_literal():
 
 def mock_func_with_alias_typehint(data: pd.DataFrame) -> pd.DataFrame:
     return data
+
+
+def mock_func_with_lambda_and_raises(a: int, b: bool):
+    double = lambda x: x * 2
+    if b:
+        raise ValueError()
+    return double(a)
