@@ -13,7 +13,7 @@ from class_inspector.utils import (
 
 
 def add_boilerplate(
-    obj: ModuleType | FunctionType, add_debugs: bool = True, add_guards: bool = False
+    obj: ModuleType | FunctionType, /, add_debugs: bool = True, add_guards: bool = False
 ) -> str:
     module = str_to_cst(format_code_str(inspect.getsource(obj)))
     visitor = FuncVisitor()
@@ -25,6 +25,7 @@ def add_boilerplate(
 
 def get_parametrized_tests(
     obj: ModuleType | FunctionType,
+    /,
     test_raises: bool = True,
     raises_arg_types: bool = False,
 ) -> str:
