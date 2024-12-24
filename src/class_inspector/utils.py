@@ -7,6 +7,12 @@ import isort
 import libcst as cst
 
 
+def get_src_code(path: str) -> str:
+    with open(path, "r") as f:
+        src_code = f.read()
+    return src_code
+
+
 def str_to_cst(code: str) -> cst.Module:
     return cst.parse_module(code)
 

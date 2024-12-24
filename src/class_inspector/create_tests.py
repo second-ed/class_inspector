@@ -6,14 +6,18 @@ from class_inspector.data_structures import FuncDetails
 from class_inspector.utils import camel_to_snake, format_code_str
 
 
-def get_tests(funcs: Dict[str, FuncDetails]) -> str:
+def get_tests(
+    funcs: Dict[str, FuncDetails],
+    test_raises: bool = True,
+    raises_arg_types: bool = False,
+) -> str:
     tests_str = [
         "from contextlib import nullcontext as does_not_raise",
         "import pytest",
     ]
     for func in funcs.values():
         if func.params:
-            tests_str.append(_get_test(func))
+            tests_str.append(_get_test(func, test_raises, raises_arg_types))
 
     return format_code_str("\n".join(tests_str))
 

@@ -44,10 +44,8 @@ dev = [
     "class_inspector[test,lint]",
 ]
 
-[tool.black]
-line-length = 88
-
 [tool.ruff]
+extend-exclude = ["mock_package"]
 lint.extend-select = ["I", "W"]
 lint.ignore = ["E741"]
 line-length = 88
@@ -57,11 +55,11 @@ testpaths = [
     "tests",
 ]
 
-
 [tool.coverage.run]
 branch = true
 source = ["src"]
 omit = [
+    "**/mock_package/*",
     "*__init__.py",
     "*_logger.py",
 ]
