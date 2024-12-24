@@ -1,5 +1,6 @@
 import inspect
 from types import FunctionType, ModuleType
+from typing import Union
 
 from class_inspector.create_tests import get_tests
 from class_inspector.cst_walkers import (
@@ -13,7 +14,10 @@ from class_inspector.utils import (
 
 
 def add_boilerplate(
-    obj: ModuleType | FunctionType, /, add_debugs: bool = True, add_guards: bool = False
+    obj: Union[ModuleType, FunctionType],
+    /,
+    add_debugs: bool = True,
+    add_guards: bool = False,
 ) -> str:
     module = str_to_cst(format_code_str(inspect.getsource(obj)))
     visitor = FuncVisitor()
@@ -24,7 +28,7 @@ def add_boilerplate(
 
 
 def get_parametrized_tests(
-    obj: ModuleType | FunctionType,
+    obj: Union[ModuleType, FunctionType],
     /,
     test_raises: bool = True,
     raises_arg_types: bool = False,
