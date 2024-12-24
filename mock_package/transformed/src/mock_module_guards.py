@@ -50,3 +50,7 @@ def mock_function_with_optional(param1: bool, param2: Optional[int]) -> Optional
     if param1:
         return param2
     return None
+
+
+def mock_constant_literal():
+    return "blah_blah_blah"

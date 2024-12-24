@@ -90,3 +90,4 @@ def test_mock_function(
 def test_mock_function_with_optional(param1, param2, expected_result, expected_context):
     with expected_context:
         assert mock_function_with_optional(param1, param2) == expected_result
+
