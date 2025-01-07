@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import re
+from functools import wraps
+from typing import Callable, Tuple, Union
 
 import black
 import isort
@@ -33,3 +35,30 @@ def camel_to_snake(name: str) -> str:
     s1 = re.sub("(.)([A-Z][a-z]+)", r"\1_\2", name)
     s2 = re.sub("([a-z0-9])([A-Z])", r"\1_\2", s1)
     return s2.lower()
+
+
+def catch_raise(
+    custom_exception: Exception,
+    catch_exceptions: Union[Exception, Tuple[Exception]] = Exception,
+    msg: str = "",
+) -> Callable:
+    def decorator(func: Callable):
+        @wraps(func)
+        def wrapper(*args, **kwargs):
+            try:
+                res = func(*args, **kwargs)
+                return res, None
+            except catch_exceptions as e:
+                return None, custom_exception(
+                    {
+                        "func": func.__name__,
+                        "args": args,
+                        "kwargs": kwargs,
+                        "caught_error": e,
+                        "msg": msg or e.args,
+                    }
+                )
+
+        return wrapper
+
+    return decorator
