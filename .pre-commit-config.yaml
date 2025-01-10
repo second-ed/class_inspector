@@ -19,4 +19,4 @@ repos:
       language: system
       pass_filenames: false
       always_run: true
-exclude: mock_package/*
+exclude: mock_package/

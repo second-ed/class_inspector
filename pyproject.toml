@@ -41,6 +41,9 @@ lint = [
     "ruff",
     "pylint>=3.0.1",
 ]
+docs = [
+    "sphinx",
+]
 dev = [
     "class_inspector[test,lint]",
 ]

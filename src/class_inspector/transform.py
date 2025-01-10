@@ -19,6 +19,44 @@ def add_boilerplate(
     add_debugs: bool = True,
     add_guards: bool = False,
 ) -> str:
+    """Add boilerplate to the object.
+
+    Args:
+        obj (Union[ModuleType, FunctionType]): The object to add boilerplate to.
+        add_debugs (bool, optional):
+            Add debugs to each of the functions or methods. Defaults to True.
+        add_guards (bool, optional):
+            Add guard conditions to each of the functions, will check the type hints if supplied. Defaults to False.
+
+    Returns:
+        str: The class, function or module with modifications.
+
+    Usage:
+        .. code-block:: python
+
+            from class_inspector.transform import add_boilerplate
+
+            def example_function(a: int, b: str = "default") -> str:
+                if a > 0:
+                    return str(a) + b
+                return a
+
+            print(add_boilerplate(example_function, add_debugs=True, add_guards=True))
+
+    Output:
+        .. code-block:: python
+
+            def example_function(a: int, b: str = "default") -> str:
+                logger.debug(locals())
+                if not all([isinstance(a, int), isinstance(b, str)]):
+                    raise TypeError(
+                        "example_function expects arg types: [int, str], "
+                        f"received: [{type(a).__name__}, {type(b).__name__}]"
+                    )
+                if a > 0:
+                    return str(a) + b
+                return a
+    """
     module = str_to_cst(format_code_str(inspect.getsource(obj)))
     visitor = FuncVisitor()
     module.visit(visitor)
@@ -33,6 +71,52 @@ def get_parametrized_tests(
     test_raises: bool = True,
     raises_arg_types: bool = False,
 ) -> str:
+    """_summary_
+
+    Args:
+        obj (Union[ModuleType, FunctionType]): _description_
+        test_raises (bool, optional): _description_. Defaults to True.
+        raises_arg_types (bool, optional): _description_. Defaults to False.
+
+    Returns:
+        str: _description_
+
+    Usage:
+        .. code-block :: python
+
+            from class_inspector.transform import get_parametrized_tests
+
+            def example_function(a: int, b: str = "default") -> str:
+                if a > 0:
+                    return str(a) + b
+                return a
+
+            print(get_parametrized_tests(example_function, raises_arg_types=False))
+
+    Output:
+        .. code-block:: python
+
+            from contextlib import nullcontext as does_not_raise
+
+            import pytest
+
+
+            @pytest.mark.parametrize(
+                "a, b, expected_result, expected_context",
+                [
+                    pytest.param(
+                        a, b, expected_result, does_not_raise(), id="Ensure x when `a` is y"
+                    ),
+                    pytest.param(
+                        a, b, expected_result, does_not_raise(), id="Ensure x when `b` is y"
+                    ),
+                ],
+            )
+            def test_example_function(a, b, expected_result, expected_context):
+                with expected_context:
+                    assert example_function(a, b) == expected_result
+
+    """
     module = str_to_cst(format_code_str(inspect.getsource(obj)))
     visitor = FuncVisitor()
     module.visit(visitor)
