@@ -2,8 +2,8 @@ name: publish docs
 
 on:
   push:
-    branches:
-      - "*"
+    branch:
+        - "**"
 
 jobs:
   publish_sphinx_docs:
