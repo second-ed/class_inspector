@@ -12,6 +12,7 @@ __pycache__/
 *logs/
 *envs/
 *.csv
+docs-build/
 
 # Distribution / packaging
 .Python
