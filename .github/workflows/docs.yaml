@@ -3,7 +3,7 @@ name: publish docs
 on:
   push:
     branch:
-        - "**"
+        - "main"
 
 jobs:
   publish_sphinx_docs:
