@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import re
+import threading
 from functools import wraps
 from typing import Callable, Tuple, Union
 
@@ -37,28 +38,51 @@ def camel_to_snake(name: str) -> str:
     return s2.lower()
 
 
-def catch_raise(
-    custom_exception: Exception,
-    catch_exceptions: Union[Exception, Tuple[Exception]] = Exception,
-    msg: str = "",
-) -> Callable:
-    def decorator(func: Callable):
-        @wraps(func)
-        def wrapper(*args, **kwargs):
-            try:
-                res = func(*args, **kwargs)
-                return res, None
-            except catch_exceptions as e:
-                return None, custom_exception(
-                    {
-                        "func": func.__name__,
-                        "args": args,
-                        "kwargs": kwargs,
-                        "caught_error": e,
-                        "msg": msg or e.args,
-                    }
-                )
+class SingletonMeta(type):
+    _instances = {}
 
-        return wrapper
+    def __call__(cls, *args, **kwargs):
+        if cls not in cls._instances:
+            cls._instances[cls] = super().__call__(*args, **kwargs)
+        return cls._instances[cls]
 
-    return decorator
+
+class ExceptionLogger(metaclass=SingletonMeta):
+    _log_lock = threading.Lock()
+    log = []
+
+    @classmethod
+    def catch_raise(
+        cls,
+        custom_exception: Exception = Exception,
+        catch_exceptions: Union[Exception, Tuple[Exception]] = Exception,
+        msg: str = "",
+    ) -> Callable:
+        def decorator(func: Callable):
+            @wraps(func)
+            def wrapper(*args, **kwargs):
+                try:
+                    res = func(*args, **kwargs)
+                    return res, None
+                except catch_exceptions as e:
+                    raise_exception = (
+                        custom_exception
+                        if custom_exception is not Exception
+                        else type(e)
+                    )
+                    exc = raise_exception(
+                        {
+                            "func": func.__name__,
+                            "args": args,
+                            "kwargs": kwargs,
+                            "caught_error": e,
+                            "msg": msg or str(e),
+                        }
+                    )
+                    with cls._log_lock:  # Ensure thread safety
+                        cls.log.append(exc)
+                    return None, exc
+
+            return wrapper
+
+        return decorator

@@ -97,7 +97,7 @@ def test_camel_to_snake(name, expected_result, expected_context):
 def test_catch_raise(
     args, custom_exception, catch_exceptions, msg, expected_result, expected_context
 ):
-    @utils.catch_raise(custom_exception, catch_exceptions, msg)
+    @utils.ExceptionLogger.catch_raise(custom_exception, catch_exceptions, msg)
     def div(a, b):
         return a / b
 
