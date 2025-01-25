@@ -21,7 +21,10 @@ requires-python = ">=3.6"
 version = "0.2.0"
 dependencies = [
     "attrs >= 22.2.0",
+    "libcst >=1.5.1,<2",
     "python-dotenv >= 0.20.0",
+    "black >= 24",
+    "isort >= 5",
 ]
 
 [project.optional-dependencies]
@@ -35,32 +38,32 @@ test = [
     "tox",
 ]
 lint = [
-    "black >= 24",
     "ruff",
     "pylint>=3.0.1",
+]
+docs = [
+    "sphinx",
 ]
 dev = [
     "class_inspector[test,lint]",
 ]
 
-[tool.black]
-line-length = 79
-
 [tool.ruff]
+extend-exclude = ["mock_package"]
 lint.extend-select = ["I", "W"]
 lint.ignore = ["E741"]
-line-length = 79
+line-length = 88
 
 [tool.pytest.ini_options]
 testpaths = [
     "tests",
 ]
 
-
 [tool.coverage.run]
 branch = true
 source = ["src"]
 omit = [
+    "**/mock_package/*",
     "*__init__.py",
     "*_logger.py",
 ]

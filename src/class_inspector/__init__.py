@@ -1,5 +1,3 @@
-from .attr_generator import AttrGenerator, AttrMap
-from .class_inspector import ClassInspector
 from .custom_validators import (
     validate_bool_func,
     validate_collection,
@@ -12,15 +10,11 @@ from .custom_validators import (
     validate_sequence,
     validate_sequence_of_type,
 )
-from .function_inspector import FunctionInspector
-from .module_inspector import ModuleInspector
+from .transform import add_boilerplate, get_parametrized_tests
 
 __all__ = [
-    "AttrGenerator",
-    "AttrMap",
-    "ClassInspector",
-    "FunctionInspector",
-    "ModuleInspector",
+    "add_boilerplate",
+    "get_parametrized_tests",
     "validate_sequence",
     "validate_iterable",
     "validate_collection",

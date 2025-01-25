@@ -1,20 +1,22 @@
 repos:
 - repo: local
   hooks:
-    - id: black
-      name: black
-      entry: black
+    - id: ruff format
+      name: ruff format
+      entry: ruff format
       language: system
+      args: [--exclude=mock_package]
       types_or: [python, jupyter]
-    - id: ruff
-      name: ruff
+    - id: ruff lint
+      name: ruff lint
       entry: ruff check
       language: system
       types_or: [ python, pyi, jupyter ]
-      args: [ --fix ]
+      args: [ --fix, --exclude=mock_package]
     - id: pytest-check
       name: pytest-check
       entry: pytest
       language: system
       pass_filenames: false
       always_run: true
+exclude: mock_package/

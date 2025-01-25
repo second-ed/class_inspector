@@ -12,6 +12,7 @@ __pycache__/
 *logs/
 *envs/
 *.csv
+docs-build/
 
 # Distribution / packaging
 .Python
@@ -167,3 +168,4 @@ cython_debug/
 #.idea/
 .DS_Store
 scratch.ipynb
+.python-version

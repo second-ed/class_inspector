@@ -55,9 +55,7 @@ def rename_data(value) -> str:
         cleaned_content = " ".join(content.split())
         return f"({cleaned_content})"
 
-    return re.sub(
-        r"\((.*?)\)", replacer, str(value.iloc[0, 0]), flags=re.DOTALL
-    )
+    return re.sub(r"\((.*?)\)", replacer, str(value.iloc[0, 0]), flags=re.DOTALL)
 
 
 def merge_data(data_dict: Dict):
