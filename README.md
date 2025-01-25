@@ -20,3 +20,34 @@ Meaning we can pass in any object that implements the following dunder methods `
 AND validate that each member of the collection is a float. This is possible for other types too.
 
 *on closer inspection (ironic given this repo's name) of the attrs API reference this is a solved problem with `deep_iterable()` and `deep_mapping()`. attrs: 2, me: 0
+
+# generated repo map
+```
+└── class_inspector
+    ├── docs
+    │   └── source
+    │       └── conf.py
+    ├── src
+    │   └── class_inspector
+    │       ├── __init__.py
+    │       ├── _logger.py
+    │       ├── create_tests.py
+    │       ├── cst_walkers.py
+    │       ├── custom_validators.py
+    │       ├── data_structures.py
+    │       ├── guard_conditions.py
+    │       ├── transform.py
+    │       └── utils.py
+    ├── tests
+    │   ├── __init__.py
+    │   ├── conftest.py
+    │   ├── test_create_tests.py
+    │   ├── test_custom_validators.py
+    │   ├── test_guard_conditions.py
+    │   ├── test_transform.py
+    │   └── test_utils.py
+    ├── README.md
+    ├── pyproject.toml
+    └── setup.py
+::
+```
