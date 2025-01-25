@@ -34,7 +34,7 @@ def add_boilerplate(
     Usage:
         .. code-block:: python
 
-            from class_inspector.transform import add_boilerplate
+            from class_inspector import add_boilerplate
 
             def example_function(a: int, b: str = "default") -> str:
                 if a > 0:
@@ -74,17 +74,17 @@ def get_parametrized_tests(
     """_summary_
 
     Args:
-        obj (Union[ModuleType, FunctionType]): _description_
-        test_raises (bool, optional): _description_. Defaults to True.
-        raises_arg_types (bool, optional): _description_. Defaults to False.
+        obj (Union[ModuleType, FunctionType]): The object to get tests for.
+        test_raises (bool, optional): Create tests for each of the exceptions raised in the function. Defaults to True.
+        raises_arg_types (bool, optional): Create tests to check the type of each of the input arguments. Defaults to False.
 
     Returns:
-        str: _description_
+        str: The parametrized tests for the given object, returns a test per function if given a module or per method if given classes
 
     Usage:
         .. code-block :: python
 
-            from class_inspector.transform import get_parametrized_tests
+            from class_inspector import get_parametrized_tests
 
             def example_function(a: int, b: str = "default") -> str:
                 if a > 0:
