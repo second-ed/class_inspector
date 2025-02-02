@@ -1,22 +1,25 @@
 repos:
-- repo: local
-  hooks:
-    - id: ruff format
-      name: ruff format
-      entry: ruff format
-      language: system
+  - repo: https://github.com/astral-sh/uv-pre-commit
+    # uv version.
+    rev: 0.5.26
+    hooks:
+      - id: uv-lock
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    # Ruff version.
+    rev: v0.9.4
+    hooks:
+      # linter.
+    - id: ruff
+      args: [ --fix , --exclude=mock_package]
+      # formatter.
+    - id: ruff-format
       args: [--exclude=mock_package]
-      types_or: [python, jupyter]
-    - id: ruff lint
-      name: ruff lint
-      entry: ruff check
-      language: system
-      types_or: [ python, pyi, jupyter ]
-      args: [ --fix, --exclude=mock_package]
-    - id: pytest-check
-      name: pytest-check
-      entry: pytest
-      language: system
-      pass_filenames: false
-      always_run: true
+  - repo: local
+    hooks:
+      - id: pytest
+        name: pytest
+        entry: ./.venv/bin/pytest -v --cov=src --cov-report term-missing
+        language: python
+        pass_filenames: false
+        always_run: true
 exclude: mock_package/

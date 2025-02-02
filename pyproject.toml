@@ -27,25 +27,18 @@ dependencies = [
     "isort >= 5",
 ]
 
-[project.optional-dependencies]
-test = [
-    "numpy >= 1.19.5",
-    "pandas",
-    "pytest",
-    "pytest-cov",
-    "hypothesis",
-    "pre-commit",
-    "tox",
-]
-lint = [
-    "ruff",
-    "pylint>=3.0.1",
-]
-docs = [
-    "sphinx",
-]
+[dependency-groups]
 dev = [
-    "class_inspector[test,lint,docs]",
+    "hypothesis>=6.124.9",
+    "ipykernel>=6.29.5",
+    "numpy>=2.0.2",
+    "pandas>=2.2.3",
+    "pre-commit>=4.1.0",
+    "pytest>=8.3.4",
+    "pytest-cov>=6.0.0",
+    "ruff>=0.9.4",
+    "sphinx>=7.4.7",
+    "tox>=4.24.1",
 ]
 
 [tool.ruff]
