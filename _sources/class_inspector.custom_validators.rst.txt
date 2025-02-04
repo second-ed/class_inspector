@@ -1,0 +1,7 @@
+class\_inspector.custom\_validators module
+==========================================
+
+.. automodule:: class_inspector.custom_validators
+   :members:
+   :undoc-members:
+   :show-inheritance:

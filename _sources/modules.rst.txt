@@ -1,0 +1,7 @@
+class_inspector
+===============
+
+.. toctree::
+   :maxdepth: 4
+
+   class_inspector

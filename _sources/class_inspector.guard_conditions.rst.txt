@@ -1,0 +1,7 @@
+class\_inspector.guard\_conditions module
+=========================================
+
+.. automodule:: class_inspector.guard_conditions
+   :members:
+   :undoc-members:
+   :show-inheritance:

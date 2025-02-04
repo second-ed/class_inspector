@@ -1,0 +1,7 @@
+class\_inspector.utils module
+=============================
+
+.. automodule:: class_inspector.utils
+   :members:
+   :undoc-members:
+   :show-inheritance:

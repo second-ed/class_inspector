@@ -1,0 +1,7 @@
+class\_inspector.cst\_walkers module
+====================================
+
+.. automodule:: class_inspector.cst_walkers
+   :members:
+   :undoc-members:
+   :show-inheritance:
