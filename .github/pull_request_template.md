@@ -9,6 +9,7 @@ Fixes # (issue)
 - [ ] This change requires a documentation update
 
 ## Checklist:
+- [ ] All pre-commits pass locally
 - [ ] I have performed a self-review of my code / this code was reviewed during pair work
 - [ ] I have made corresponding changes to the documentation
 - [ ] My changes generate no new warnings
