@@ -54,7 +54,7 @@ testpaths = [
 
 [tool.coverage.run]
 branch = true
-source = ["src"]
+source = ["**/site-packages/class_inspector"]    
 omit = [
     "**/mock_package/*",
     "*__init__.py",
