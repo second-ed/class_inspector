@@ -26,4 +26,4 @@ jobs:
           uv pip install .
       - name: Run tests
         run: |
-          uv run pytest -vv --cov=headline --cov-report term-missing --cov-fail-under=80
+          uv run pytest -vv --cov=class_inspector --cov-report term-missing --cov-fail-under=80
