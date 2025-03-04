@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>class_inspector.cst_walkers module &#8212; class-inspector 2024 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="_static/classic.css?v=2bf1fcf8" />
+    
+    <script src="_static/documentation_options.js?v=6fefd858"></script>
+    <script src="_static/doctools.js?v=9bcbadda"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="Related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">class-inspector 2024 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">class_inspector.cst_walkers module</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="module-class_inspector.cst_walkers">
+<span id="class-inspector-cst-walkers-module"></span><h1>class_inspector.cst_walkers module<a class="headerlink" href="#module-class_inspector.cst_walkers" title="Link to this heading">¶</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="class_inspector.cst_walkers.AddBoilerplateTransformer">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">class_inspector.cst_walkers.</span></span><span class="sig-name descname"><span class="pre">AddBoilerplateTransformer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">funcs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="class_inspector.data_structures.html#class_inspector.data_structures.FuncDetails" title="class_inspector.data_structures.FuncDetails"><span class="pre">FuncDetails</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">add_debugs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">add_guards</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#class_inspector.cst_walkers.AddBoilerplateTransformer" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">CSTTransformer</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="class_inspector.cst_walkers.AddBoilerplateTransformer.add_debugs">
+<span class="sig-name descname"><span class="pre">add_debugs</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#class_inspector.cst_walkers.AddBoilerplateTransformer.add_debugs" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="class_inspector.cst_walkers.AddBoilerplateTransformer.add_guards">
+<span class="sig-name descname"><span class="pre">add_guards</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#class_inspector.cst_walkers.AddBoilerplateTransformer.add_guards" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="class_inspector.cst_walkers.AddBoilerplateTransformer.funcs">
+<span class="sig-name descname"><span class="pre">funcs</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="class_inspector.data_structures.html#class_inspector.data_structures.FuncDetails" title="class_inspector.data_structures.FuncDetails"><span class="pre">FuncDetails</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#class_inspector.cst_walkers.AddBoilerplateTransformer.funcs" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="class_inspector.cst_walkers.AddBoilerplateTransformer.leave_FunctionDef">
+<span class="sig-name descname"><span class="pre">leave_FunctionDef</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">original_node</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">FunctionDef</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">updated_node</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">FunctionDef</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">FunctionDef</span></span></span><a class="headerlink" href="#class_inspector.cst_walkers.AddBoilerplateTransformer.leave_FunctionDef" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="class_inspector.cst_walkers.FuncVisitor">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">class_inspector.cst_walkers.</span></span><span class="sig-name descname"><span class="pre">FuncVisitor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">funcs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="class_inspector.data_structures.html#class_inspector.data_structures.FuncDetails" title="class_inspector.data_structures.FuncDetails"><span class="pre">FuncDetails</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">curr_class</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">curr_func</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">curr_param</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">in_lambda</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#class_inspector.cst_walkers.FuncVisitor" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">CSTVisitor</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="class_inspector.cst_walkers.FuncVisitor.curr_class">
+<span class="sig-name descname"><span class="pre">curr_class</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#class_inspector.cst_walkers.FuncVisitor.curr_class" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="class_inspector.cst_walkers.FuncVisitor.curr_func">
+<span class="sig-name descname"><span class="pre">curr_func</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#class_inspector.cst_walkers.FuncVisitor.curr_func" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="class_inspector.cst_walkers.FuncVisitor.curr_param">
+<span class="sig-name descname"><span class="pre">curr_param</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#class_inspector.cst_walkers.FuncVisitor.curr_param" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="class_inspector.cst_walkers.FuncVisitor.funcs">
+<span class="sig-name descname"><span class="pre">funcs</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="class_inspector.data_structures.html#class_inspector.data_structures.FuncDetails" title="class_inspector.data_structures.FuncDetails"><span class="pre">FuncDetails</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#class_inspector.cst_walkers.FuncVisitor.funcs" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="class_inspector.cst_walkers.FuncVisitor.in_lambda">
+<span class="sig-name descname"><span class="pre">in_lambda</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#class_inspector.cst_walkers.FuncVisitor.in_lambda" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="class_inspector.cst_walkers.FuncVisitor.leave_ClassDef">
+<span class="sig-name descname"><span class="pre">leave_ClassDef</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ClassDef</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#class_inspector.cst_walkers.FuncVisitor.leave_ClassDef" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="class_inspector.cst_walkers.FuncVisitor.leave_FunctionDef">
+<span class="sig-name descname"><span class="pre">leave_FunctionDef</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">FunctionDef</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#class_inspector.cst_walkers.FuncVisitor.leave_FunctionDef" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="class_inspector.cst_walkers.FuncVisitor.leave_Lambda">
+<span class="sig-name descname"><span class="pre">leave_Lambda</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Lambda</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#class_inspector.cst_walkers.FuncVisitor.leave_Lambda" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="class_inspector.cst_walkers.FuncVisitor.visit_ClassDef">
+<span class="sig-name descname"><span class="pre">visit_ClassDef</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ClassDef</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#class_inspector.cst_walkers.FuncVisitor.visit_ClassDef" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="class_inspector.cst_walkers.FuncVisitor.visit_FunctionDef">
+<span class="sig-name descname"><span class="pre">visit_FunctionDef</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">FunctionDef</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#class_inspector.cst_walkers.FuncVisitor.visit_FunctionDef" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="class_inspector.cst_walkers.FuncVisitor.visit_Lambda">
+<span class="sig-name descname"><span class="pre">visit_Lambda</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Lambda</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#class_inspector.cst_walkers.FuncVisitor.visit_Lambda" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="class_inspector.cst_walkers.FuncVisitor.visit_Param">
+<span class="sig-name descname"><span class="pre">visit_Param</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Param</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#class_inspector.cst_walkers.FuncVisitor.visit_Param" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="class_inspector.cst_walkers.FuncVisitor.visit_Raise">
+<span class="sig-name descname"><span class="pre">visit_Raise</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Raise</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#class_inspector.cst_walkers.FuncVisitor.visit_Raise" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="class_inspector.cst_walkers.get_annotation_type">
+<span class="sig-prename descclassname"><span class="pre">class_inspector.cst_walkers.</span></span><span class="sig-name descname"><span class="pre">get_annotation_type</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">annot_node</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Annotation</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#class_inspector.cst_walkers.get_annotation_type" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+  <div>
+    <h3><a href="index.html">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">class_inspector.cst_walkers module</a><ul>
+<li><a class="reference internal" href="#class_inspector.cst_walkers.AddBoilerplateTransformer"><code class="docutils literal notranslate"><span class="pre">AddBoilerplateTransformer</span></code></a><ul>
+<li><a class="reference internal" href="#class_inspector.cst_walkers.AddBoilerplateTransformer.add_debugs"><code class="docutils literal notranslate"><span class="pre">AddBoilerplateTransformer.add_debugs</span></code></a></li>
+<li><a class="reference internal" href="#class_inspector.cst_walkers.AddBoilerplateTransformer.add_guards"><code class="docutils literal notranslate"><span class="pre">AddBoilerplateTransformer.add_guards</span></code></a></li>
+<li><a class="reference internal" href="#class_inspector.cst_walkers.AddBoilerplateTransformer.funcs"><code class="docutils literal notranslate"><span class="pre">AddBoilerplateTransformer.funcs</span></code></a></li>
+<li><a class="reference internal" href="#class_inspector.cst_walkers.AddBoilerplateTransformer.leave_FunctionDef"><code class="docutils literal notranslate"><span class="pre">AddBoilerplateTransformer.leave_FunctionDef()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#class_inspector.cst_walkers.FuncVisitor"><code class="docutils literal notranslate"><span class="pre">FuncVisitor</span></code></a><ul>
+<li><a class="reference internal" href="#class_inspector.cst_walkers.FuncVisitor.curr_class"><code class="docutils literal notranslate"><span class="pre">FuncVisitor.curr_class</span></code></a></li>
+<li><a class="reference internal" href="#class_inspector.cst_walkers.FuncVisitor.curr_func"><code class="docutils literal notranslate"><span class="pre">FuncVisitor.curr_func</span></code></a></li>
+<li><a class="reference internal" href="#class_inspector.cst_walkers.FuncVisitor.curr_param"><code class="docutils literal notranslate"><span class="pre">FuncVisitor.curr_param</span></code></a></li>
+<li><a class="reference internal" href="#class_inspector.cst_walkers.FuncVisitor.funcs"><code class="docutils literal notranslate"><span class="pre">FuncVisitor.funcs</span></code></a></li>
+<li><a class="reference internal" href="#class_inspector.cst_walkers.FuncVisitor.in_lambda"><code class="docutils literal notranslate"><span class="pre">FuncVisitor.in_lambda</span></code></a></li>
+<li><a class="reference internal" href="#class_inspector.cst_walkers.FuncVisitor.leave_ClassDef"><code class="docutils literal notranslate"><span class="pre">FuncVisitor.leave_ClassDef()</span></code></a></li>
+<li><a class="reference internal" href="#class_inspector.cst_walkers.FuncVisitor.leave_FunctionDef"><code class="docutils literal notranslate"><span class="pre">FuncVisitor.leave_FunctionDef()</span></code></a></li>
+<li><a class="reference internal" href="#class_inspector.cst_walkers.FuncVisitor.leave_Lambda"><code class="docutils literal notranslate"><span class="pre">FuncVisitor.leave_Lambda()</span></code></a></li>
+<li><a class="reference internal" href="#class_inspector.cst_walkers.FuncVisitor.visit_ClassDef"><code class="docutils literal notranslate"><span class="pre">FuncVisitor.visit_ClassDef()</span></code></a></li>
+<li><a class="reference internal" href="#class_inspector.cst_walkers.FuncVisitor.visit_FunctionDef"><code class="docutils literal notranslate"><span class="pre">FuncVisitor.visit_FunctionDef()</span></code></a></li>
+<li><a class="reference internal" href="#class_inspector.cst_walkers.FuncVisitor.visit_Lambda"><code class="docutils literal notranslate"><span class="pre">FuncVisitor.visit_Lambda()</span></code></a></li>
+<li><a class="reference internal" href="#class_inspector.cst_walkers.FuncVisitor.visit_Param"><code class="docutils literal notranslate"><span class="pre">FuncVisitor.visit_Param()</span></code></a></li>
+<li><a class="reference internal" href="#class_inspector.cst_walkers.FuncVisitor.visit_Raise"><code class="docutils literal notranslate"><span class="pre">FuncVisitor.visit_Raise()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#class_inspector.cst_walkers.get_annotation_type"><code class="docutils literal notranslate"><span class="pre">get_annotation_type()</span></code></a></li>
+</ul>
+</li>
+</ul>
+
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/class_inspector.cst_walkers.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="Related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">class-inspector 2024 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">class_inspector.cst_walkers module</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+    &#169; Copyright 2025, ed cuss.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.1.3.
+    </div>
+  </body>
+</html>

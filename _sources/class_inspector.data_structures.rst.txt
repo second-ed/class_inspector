@@ -1,0 +1,7 @@
+class\_inspector.data\_structures module
+========================================
+
+.. automodule:: class_inspector.data_structures
+   :members:
+   :undoc-members:
+   :show-inheritance:

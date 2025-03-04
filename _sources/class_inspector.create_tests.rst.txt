@@ -1,0 +1,7 @@
+class\_inspector.create\_tests module
+=====================================
+
+.. automodule:: class_inspector.create_tests
+   :members:
+   :undoc-members:
+   :show-inheritance:

@@ -1,0 +1,7 @@
+class\_inspector.transform module
+=================================
+
+.. automodule:: class_inspector.transform
+   :members:
+   :undoc-members:
+   :show-inheritance:

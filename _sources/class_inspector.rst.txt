@@ -1,0 +1,24 @@
+class\_inspector package
+========================
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   class_inspector.create_tests
+   class_inspector.cst_walkers
+   class_inspector.custom_validators
+   class_inspector.data_structures
+   class_inspector.guard_conditions
+   class_inspector.transform
+   class_inspector.utils
+
+Module contents
+---------------
+
+.. automodule:: class_inspector
+   :members:
+   :undoc-members:
+   :show-inheritance:
