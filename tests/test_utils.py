@@ -17,7 +17,9 @@ import class_inspector.utils as utils
 )
 def test_str_cst_conversions(input_str, expected_context):
     with expected_context:
-        assert utils.cst_to_str(utils.str_to_cst(input_str)) == input_str
+        assert utils.format_code_str(
+            utils.cst_to_str(utils.str_to_cst(input_str))
+        ) == utils.format_code_str(input_str)
 
 
 @pytest.mark.parametrize(

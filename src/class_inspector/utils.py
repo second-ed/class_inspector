@@ -21,7 +21,7 @@ def str_to_cst(code: str) -> cst.Module:
 
 
 def cst_to_str(node) -> str:
-    return cst.Module([]).code_for_node(node)
+    return format_code_str(cst.Module([]).code_for_node(node))
 
 
 def format_code_str(code_snippet: str) -> str:
